@@ -1,1 +1,57 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #120d0b;
+  --bg-strong: #1c1714;
+  --panel: #1d1815;
+  --panel-soft: rgba(255, 255, 255, 0.03);
+  --text: #f7f1ed;
+  --muted: rgba(247, 241, 237, 0.72);
+  --primary: #8b3a10;
+  --primary-strong: #b8662d;
+  --gold: #e8b979;
+  --danger: #9f1c1c;
+  --success: #1d6347;
+  --purple: #5b3fa0;
+  --shadow: rgba(12, 9, 8, 0.42);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(139, 58, 16, 0.18), transparent 28%),
+    linear-gradient(180deg, #120d0b 0%, #1a130f 100%);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+a,
+button {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+button {
+  appearance: none;
+}
+
