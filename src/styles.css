@@ -133,10 +133,13 @@ button {
    -------------------------------------------------------------------------- */
 .primary-btn,
 .secondary-btn {
+  display: inline-block;
   border: none;
   border-radius: 999px;
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
