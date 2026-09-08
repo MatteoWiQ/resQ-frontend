@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { LandingTopbar } from './components/topbar/topbar.component';
 import { LandingHero } from './components/hero/hero.component';
 import { LandingSteps } from './components/steps/steps.component';
-import { LandingMapSection } from './components/map-section/map-section.component';
 import { LandingCasesSection } from './components/cases-section/cases-section.component';
 import { LandingHelpSection } from './components/help-section/help-section.component';
 
@@ -13,7 +12,6 @@ import { LandingHelpSection } from './components/help-section/help-section.compo
     LandingTopbar,
     LandingHero,
     LandingSteps,
-    LandingMapSection,
     LandingCasesSection,
     LandingHelpSection
   ],
