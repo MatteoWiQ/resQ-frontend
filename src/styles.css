@@ -3,25 +3,26 @@
    Tokens de marca, reset base y utilidades de UI compartidas por toda la app.
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap');
 
 /* --------------------------------------------------------------------------
    Tokens de marca
    -------------------------------------------------------------------------- */
 :root {
-  --bg: #120d0b;
-  --bg-strong: #1c1714;
-  --panel: #1d1815;
-  --panel-soft: rgba(255, 255, 255, 0.03);
-  --text: #f7f1ed;
-  --muted: rgba(247, 241, 237, 0.72);
-  --primary: #8b3a10;
-  --primary-strong: #b8662d;
-  --gold: #e8b979;
-  --danger: #9f1c1c;
-  --success: #1d6347;
-  --purple: #5b3fa0;
-  --shadow: rgba(12, 9, 8, 0.42);
+  --bg: #f2e7db;
+  --bg-strong: #fdf4ea;
+  --panel: #ffffff;
+  --panel-soft: #faf0e5;
+  --text: #581325;
+  --muted: #7f2a3f;
+  --primary: #7f2a3f;
+  --primary-strong: #581325;
+  --accent: #aa5165;
+  --border: #d8a7a5;
+  --danger: #7f2a3f;
+  --success: #7f2a3f;
+  --purple: #aa5165;
+  --shadow: rgba(127, 42, 63, 0.15);
 }
 
 /* --------------------------------------------------------------------------
@@ -39,10 +40,11 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(139, 58, 16, 0.18), transparent 28%),
-    linear-gradient(180deg, #120d0b 0%, #1a130f 100%);
+    radial-gradient(circle at top left, rgba(170, 81, 101, 0.12), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(216, 167, 165, 0.18), transparent 30%),
+    var(--bg);
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 a,
@@ -87,16 +89,16 @@ button {
 }
 
 .section-heading h2 {
-  font-family: 'DM Serif Display', serif;
-  letter-spacing: -0.04em;
-  color: #f7f1ed;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--text);
   margin: 0;
   font-size: clamp(2rem, 3vw, 3rem);
 }
 
 .eyebrow {
   display: inline-block;
-  color: #e7b277;
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 0.72rem;
@@ -111,19 +113,19 @@ button {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #b97032, #f7c7a1);
-  color: #170f0d;
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  color: #fffaf6;
   display: grid;
   place-items: center;
   font-weight: 800;
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .brand-name {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.8rem;
-  letter-spacing: -0.04em;
-  color: #f6f0eb;
+  letter-spacing: -0.03em;
+  color: var(--text);
 }
 
 /* --------------------------------------------------------------------------
@@ -139,22 +141,26 @@ button {
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, #8b3a10, #b8662d);
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
   color: #fffaf6;
   padding: 0.9rem 1.4rem;
-  box-shadow: 0 16px 24px rgba(139, 58, 16, 0.3);
+  box-shadow: 0 16px 24px var(--shadow);
 }
 
 .secondary-btn {
-  background: rgba(255, 255, 255, 0.04);
-  color: #f5ede8;
+  background: var(--panel);
+  color: var(--text);
   padding: 0.9rem 1.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid var(--border);
 }
 
 .primary-btn:hover,
 .secondary-btn:hover {
   transform: translateY(-1px);
+}
+
+.primary-btn:hover {
+  background: linear-gradient(135deg, var(--accent), var(--primary));
 }
 
 .secondary-btn.small {
@@ -175,21 +181,21 @@ button {
 }
 
 .label.danger {
-  background: rgba(159, 28, 28, 0.18);
-  color: #f8b7b7;
+  background: #f4d7d2;
+  color: var(--danger);
 }
 
 .label.warning {
-  background: rgba(200, 137, 45, 0.18);
-  color: #f5d29f;
+  background: #f3e0cf;
+  color: #7f4a20;
 }
 
 .label.success {
-  background: rgba(29, 99, 71, 0.18);
-  color: #a9e0c2;
+  background: #dfe9e0;
+  color: #29523a;
 }
 
 .label.info {
-  background: rgba(91, 63, 160, 0.18);
-  color: #d3c5fa;
+  background: #e4e0ef;
+  color: #4b3a6e;
 }
