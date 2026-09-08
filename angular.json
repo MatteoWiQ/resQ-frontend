@@ -3,7 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "02cb6351-0d34-455f-a251-6857546d1aef"
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -55,6 +55,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "angular-frontend:build:production"

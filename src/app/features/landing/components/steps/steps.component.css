@@ -1,0 +1,36 @@
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.step-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 24px 22px;
+}
+
+.step-number {
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e0a76e;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+.step-card h3 {
+  margin: 0 0 10px;
+  color: #f5ece6;
+}
+
+.step-card p {
+  color: rgba(249, 236, 227, 0.7);
+}
+
+@media (max-width: 980px) {
+  .steps-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,110 @@
+.map-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.map-art {
+  position: relative;
+  min-height: 340px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(17, 15, 13, 0.3), rgba(17, 15, 13, 0.65)),
+    url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80') center/cover
+    no-repeat;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: 0.4;
+}
+
+.pin {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.pin:nth-child(2) {
+  top: 30%;
+  left: 47%;
+}
+
+.pin:nth-child(3) {
+  top: 48%;
+  left: 58%;
+}
+
+.pin:nth-child(4) {
+  top: 64%;
+  left: 68%;
+}
+
+.pin:nth-child(5) {
+  top: 56%;
+  left: 32%;
+}
+
+.pin:nth-child(6) {
+  top: 38%;
+  left: 72%;
+}
+
+.pin-red {
+  color: #a9332d;
+}
+
+.pin-gold {
+  color: #d8892d;
+}
+
+.pin-green {
+  color: #3a8d67;
+}
+
+.case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.case-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.case-item.active {
+  border-color: rgba(232, 166, 112, 0.3);
+}
+
+.case-item strong {
+  display: block;
+  color: #f9eee7;
+  margin-top: 8px;
+}
+
+.case-item small {
+  color: rgba(249, 236, 227, 0.7);
+}
+
+@media (max-width: 980px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+}
