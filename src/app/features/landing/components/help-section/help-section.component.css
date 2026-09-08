@@ -1,0 +1,38 @@
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.help-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px 20px;
+}
+
+.icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #f4d7d2;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.help-card h3 {
+  margin: 0 0 10px;
+  color: var(--text);
+}
+
+.help-card p {
+  color: var(--muted);
+}
+
+@media (max-width: 980px) {
+  .help-grid {
+    grid-template-columns: 1fr;
+  }
+}
