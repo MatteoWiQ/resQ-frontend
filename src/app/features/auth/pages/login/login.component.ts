@@ -21,7 +21,16 @@ export class LoginComponent {
   onLogin(): void {
     this.authService.login(this.credentials).subscribe({
       next: (response) => this.message.set(`Login exitoso: ${JSON.stringify(response)}`),
-      error: (error: HttpErrorResponse) => this.message.set(`Error al conectar: ${error.message}`),
+      error: (error: HttpErrorResponse) => {
+        // Mensaje genérico para el usuario (como pidieron tus compañeros)
+        if (error.status === 404) {
+          this.message.set('No se encontró el servicio. Contacta al administrador.');
+        } else if (error.status === 0) {
+          this.message.set('No se pudo conectar al servidor. Inténtalo más tarde.');
+        } else {
+          this.message.set('No se pudo conectar a la base de datos. Verifica tu conexión.');
+        }
+      },
     });
   }
 }
