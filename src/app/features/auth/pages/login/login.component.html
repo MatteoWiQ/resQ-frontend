@@ -1,0 +1,41 @@
+<main class="login-page">
+  <section class="login-card">
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <span class="brand-name">ResQ</span>
+    </div>
+
+    <h1>Iniciar sesión</h1>
+    <p class="subtitle">Accede a la red de rescate animal.</p>
+
+    <form (ngSubmit)="onLogin()">
+      <label for="username">Usuario</label>
+      <input
+        id="username"
+        type="text"
+        name="username"
+        [(ngModel)]="credentials.username"
+        placeholder="Tu usuario"
+        required
+        autocomplete="username"
+      />
+
+      <label for="password">Contraseña</label>
+      <input
+        id="password"
+        type="password"
+        name="password"
+        [(ngModel)]="credentials.password"
+        placeholder="Tu contraseña"
+        required
+        autocomplete="current-password"
+      />
+
+      <button class="primary-btn submit" type="submit">Iniciar sesión</button>
+    </form>
+
+    @if (message()) {
+      <p class="message">{{ message() }}</p>
+    }
+  </section>
+</main>
