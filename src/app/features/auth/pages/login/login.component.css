@@ -84,6 +84,25 @@ input:focus {
   word-break: break-word;
 }
 
+.register-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 22px;
+}
+
+.register-prompt span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.register-link {
+  padding: 0.8rem 1.4rem;
+  text-align: center;
+  width: 100%;
+}
+
 @media (max-width: 640px) {
   .login-card {
     padding: 32px 24px;
