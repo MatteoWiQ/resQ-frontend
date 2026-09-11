@@ -7,6 +7,10 @@
       <span class="brand-name">ResQ</span>
     </div>
 
+    @if (message()) {
+      <p class="message">{{ message() }}</p>
+    }
+
     <h1>Crear cuenta</h1>
     <p class="subtitle">Regístrate en ResQ</p>
 
