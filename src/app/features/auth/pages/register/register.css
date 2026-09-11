@@ -79,6 +79,17 @@ select:focus {
   border-color: var(--primary);
 }
 
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+
+.field-error {
+  margin: -6px 0 0;
+  color: var(--danger);
+  font-size: 0.8rem;
+}
+
 .submit {
   margin-top: 10px;
   width: 100%;

@@ -41,19 +41,29 @@
         id="password"
         type="password"
         name="password"
+        #password="ngModel"
         [(ngModel)]="usuario.password"
         placeholder="Tu contraseña"
         required
+        minlength="8"
       />
+      @if (password.invalid && (password.dirty || password.touched)) {
+        <p class="field-error">La contraseña debe tener al menos 8 caracteres.</p>
+      }
 
       <label for="telefono">Teléfono</label>
       <input
         id="telefono"
         type="tel"
         name="telefono"
+        #telefono="ngModel"
         [(ngModel)]="usuario.telefono"
         placeholder="Tu teléfono"
+        required
       />
+      @if (telefono.invalid && (telefono.dirty || telefono.touched)) {
+        <p class="field-error">El teléfono es obligatorio.</p>
+      }
 
       <label for="rol">Rol</label>
       <select
