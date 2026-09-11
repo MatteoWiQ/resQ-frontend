@@ -7,6 +7,10 @@
       <span class="brand-name">ResQ</span>
     </div>
 
+    @if (message()) {
+      <p class="message">{{ message() }}</p>
+    }
+
     <h1>Iniciar sesión</h1>
 
 
@@ -35,10 +39,6 @@
 
       <button class="primary-btn submit" type="submit">Iniciar sesión</button>
     </form>
-
-    @if (message()) {
-      <p class="message">{{ message() }}</p>
-    }
 
     <div class="register-prompt">
       <span>¿No tienes una cuenta?</span>
