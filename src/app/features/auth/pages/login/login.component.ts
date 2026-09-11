@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { LoginRequest } from '../../../../shared/models/auth.models';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, BackButtonComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
