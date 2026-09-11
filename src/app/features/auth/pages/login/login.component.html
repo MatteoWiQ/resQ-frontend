@@ -1,12 +1,18 @@
 <main class="login-page">
+  <app-back-button/>
+
   <section class="login-card">
     <div class="brand">
       <div class="brand-mark">R</div>
       <span class="brand-name">ResQ</span>
     </div>
 
+    @if (message()) {
+      <p class="message">{{ message() }}</p>
+    }
+
     <h1>Iniciar sesión</h1>
-    <p class="subtitle">Accede a la red de rescate animal.</p>
+
 
     <form (ngSubmit)="onLogin()">
       <label for="username">Usuario</label>
@@ -34,8 +40,9 @@
       <button class="primary-btn submit" type="submit">Iniciar sesión</button>
     </form>
 
-    @if (message()) {
-      <p class="message">{{ message() }}</p>
-    }
+    <div class="register-prompt">
+      <span>¿No tienes una cuenta?</span>
+      <a class="secondary-btn register-link" routerLink="/register">Regístrate aquí</a>
+    </div>
   </section>
 </main>

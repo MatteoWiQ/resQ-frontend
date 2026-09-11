@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink, BackButtonComponent],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -18,17 +20,18 @@ export class Register {
     rol: ''
   };
 
+  message = signal('');
+
   constructor(private authService: AuthService) {}
 
   onRegister() {
+    this.message.set('');
     this.authService.register(this.usuario).subscribe({
-      next: (response) => {
-        console.log('Usuario registrado correctamente:', response);
-        alert('Usuario registrado correctamente');
+      next: () => {
+        this.message.set('Usuario registrado correctamente');
       },
-      error: (error) => {
-        console.error('Error al registrar usuario:', error);
-        alert('Error al registrar usuario');
+      error: () => {
+        this.message.set('No se pudo conectar con la base de datos. Inténtalo de nuevo más tarde.');
       }
     });
   }

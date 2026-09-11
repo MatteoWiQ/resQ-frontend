@@ -1,7 +1,18 @@
 <main class="register-page">
+  <app-back-button />
+
   <section class="register-card">
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <span class="brand-name">ResQ</span>
+    </div>
+
+    @if (message()) {
+      <p class="message">{{ message() }}</p>
+    }
+
     <h1>Crear cuenta</h1>
-    <p>Regístrate en ResQ</p>
+    <p class="subtitle">Regístrate en ResQ</p>
 
     <form (ngSubmit)="onRegister()">
 
@@ -30,19 +41,29 @@
         id="password"
         type="password"
         name="password"
+        #password="ngModel"
         [(ngModel)]="usuario.password"
         placeholder="Tu contraseña"
         required
+        minlength="8"
       />
+      @if (password.invalid && (password.dirty || password.touched)) {
+        <p class="field-error">La contraseña debe tener al menos 8 caracteres.</p>
+      }
 
       <label for="telefono">Teléfono</label>
       <input
         id="telefono"
         type="tel"
         name="telefono"
+        #telefono="ngModel"
         [(ngModel)]="usuario.telefono"
         placeholder="Tu teléfono"
+        required
       />
+      @if (telefono.invalid && (telefono.dirty || telefono.touched)) {
+        <p class="field-error">El teléfono es obligatorio.</p>
+      }
 
       <label for="rol">Rol</label>
       <select
@@ -56,8 +77,13 @@
         <option value="VOLUNTARIO">Voluntario</option>
       </select>
 
-      <button type="submit">Registrarse</button>
+      <button class="primary-btn submit" type="submit">Registrarse</button>
 
     </form>
+
+    <div class="login-prompt">
+      <span>¿Ya tienes una cuenta?</span>
+      <a class="secondary-btn login-link" routerLink="/login">Inicia sesión</a>
+    </div>
   </section>
 </main>
