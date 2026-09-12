@@ -46,8 +46,6 @@ export class PerfilComponent implements OnInit {
       },
     });
 
-    // El servicio ya maneja el caso de que el endpoint no exista aún
-    // (ver reporte.service.ts), así que aquí solo consumimos el resultado.
     this.reporteService.obtenerMisReportes(idUsuario).subscribe((reportes) => {
       this.reportes.set(reportes);
       this.cargandoReportes.set(false);

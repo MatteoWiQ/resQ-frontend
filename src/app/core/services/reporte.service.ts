@@ -11,22 +11,8 @@ export class ReporteService {
   constructor(private readonly http: HttpClient) {}
 
   /**
-   * ESQUELETO: este endpoint todavía NO existe en el backend.
-   *
-   * Cuando se implemente la funcionalidad de "Reportar", agregar en un
-   * ReporteController algo así:
-   *
-   *   @GetMapping("/usuario/{idUsuario}")
-   *   public List<ReporteDTO> obtenerPorUsuario(@PathVariable Long idUsuario) {
-   *       return reporteRepository.findByIdUsuario(idUsuario)...
-   *   }
-   *
-   * (también hay que agregar el método findByIdUsuario a ReporteRepository)
-   *
-   * Mientras tanto, esta llamada va a fallar (404) y el catchError
-   * devuelve una lista vacía para que la pantalla de "Mi Perfil" no se
-   * rompa: simplemente muestra "Todavía no has hecho ningún reporte".
-   * En cuanto el endpoint real exista, esto empieza a traer datos solo.
+   * Reportes de un usuario mediante GET /api/reportes/usuario/{idUsuario},
+   * expuesto por ReporteController en el backend.
    */
   obtenerMisReportes(idUsuario: number): Observable<Reporte[]> {
     return this.http
