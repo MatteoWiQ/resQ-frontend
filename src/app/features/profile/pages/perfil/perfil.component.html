@@ -1,0 +1,51 @@
+<section class="perfil-page">
+
+  @if (cargandoPerfil()) {
+    <p class="hint">Cargando tu perfil...</p>
+  } @else if (error()) {
+    <p class="message">{{ error() }}</p>
+  } @else if (usuario(); as u) {
+    <div class="perfil-card">
+      <div class="avatar">
+        <!-- 🔜 Cuando exista foto de perfil real: <img [src]="u.fotoUrl" /> -->
+        <span>{{ iniciales(u.nombre) }}</span>
+      </div>
+
+      <div class="perfil-info">
+        <h1>{{ u.nombre }}</h1>
+        <span class="badge">{{ u.rol }}</span>
+
+        <dl>
+          <dt>Correo</dt>
+          <dd>{{ u.email }}</dd>
+
+          <dt>Teléfono</dt>
+          <dd>{{ u.telefono || 'No registrado' }}</dd>
+        </dl>
+      </div>
+    </div>
+  }
+
+  <div class="reportes-section">
+    <h2>Mis reportes</h2>
+
+    @if (cargandoReportes()) {
+      <p class="hint">Cargando reportes...</p>
+    } @else if (reportes().length === 0) {
+      <p class="hint">Todavía no has hecho ningún reporte.</p>
+    } @else {
+      <ul class="reportes-lista">
+        @for (reporte of reportes(); track reporte.idReporte) {
+          <li class="reporte-item">
+            <div>
+              <strong>{{ reporte.tipoCaso }}</strong>
+              <p>{{ reporte.descripcion }}</p>
+            </div>
+            <span [class]="claseEstado(reporte.estado)">{{ reporte.estado }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+</section>

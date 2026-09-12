@@ -9,6 +9,9 @@
     <a href="#mapa">Mapa</a>
     <a href="#casos">Casos</a>
     <a href="#ayudar">Ayudar</a>
+    @if (authService.usuarioActual()) {
+      <a routerLink="/perfil">Mi Perfil</a>
+    }
   </nav>
 
   <a routerLink="/login" class="primary-btn">Reportar</a>
