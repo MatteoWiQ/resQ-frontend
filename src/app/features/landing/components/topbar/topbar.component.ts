@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-landing-topbar',
@@ -7,4 +8,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css',
 })
-export class LandingTopbar {}
+
+export class LandingTopbar {
+  protected readonly authService = inject(AuthService);
+}
