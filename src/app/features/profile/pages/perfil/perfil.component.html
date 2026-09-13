@@ -1,4 +1,5 @@
 <section class="perfil-page">
+  <app-back-button ruta="/" />
 
   @if (cargandoPerfil()) {
     <p class="hint">Cargando tu perfil...</p>
@@ -27,7 +28,10 @@
   }
 
   <div class="reportes-section">
-    <h2>Mis reportes</h2>
+    <div class="reportes-head">
+      <h2>Mis reportes</h2>
+      <a class="primary-btn reportes-nuevo" routerLink="/reportes/nuevo">Crear nuevo reporte</a>
+    </div>
 
     @if (cargandoReportes()) {
       <p class="hint">Cargando reportes...</p>

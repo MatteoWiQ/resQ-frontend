@@ -1,10 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-<<<<<<< Updated upstream
-import { RouterLink } from '@angular/router';
-=======
-import { Router } from '@angular/router';
->>>>>>> Stashed changes
+import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
@@ -27,13 +23,8 @@ export class LoginComponent {
   onLogin(): void {
     this.message.set('');
     this.authService.login(this.credentials).subscribe({
-<<<<<<< Updated upstream
-      next: (response) => this.message.set(`Login exitoso: ${JSON.stringify(response)}`),
-      error: () => this.message.set('No se pudo conectar con la base de datos. Inténtalo de nuevo más tarde.'),
-=======
       next: () => this.router.navigate(['/']),
-      error: (error: HttpErrorResponse) => this.message.set(`Error al conectar: ${error.message}`),
->>>>>>> Stashed changes
+      error: () => this.message.set('No se pudo conectar con la base de datos. Inténtalo de nuevo más tarde.'),
     });
   }
 }
