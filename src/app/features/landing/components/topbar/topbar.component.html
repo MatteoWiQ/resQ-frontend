@@ -14,5 +14,9 @@
     }
   </nav>
 
-  <a routerLink="/login" class="primary-btn">Reportar</a>
+  @if (esAdmin()) {
+    <a routerLink="/admin" class="primary-btn">Panel administrativo</a>
+  } @else {
+    <a routerLink="/login" class="primary-btn">Reportar</a>
+  }
 </header>

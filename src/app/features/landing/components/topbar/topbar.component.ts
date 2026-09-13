@@ -11,4 +11,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 
 export class LandingTopbar {
   protected readonly authService = inject(AuthService);
+
+  esAdmin(): boolean {
+    return this.authService.usuarioActual()?.rol === 'ADMIN';
+  }
 }
