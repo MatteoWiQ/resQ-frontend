@@ -1,0 +1,80 @@
+<main class="crear-reporte-page">
+  <app-back-button />
+
+  <section class="crear-reporte-card">
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <span class="brand-name">ResQ</span>
+    </div>
+
+    <h1>Crear nuevo reporte</h1>
+    <p class="subtitle">Ayúdanos a registrar el caso de una mascota.</p>
+
+    @if (message()) {
+      <p class="message">{{ message() }}</p>
+    }
+
+    <div class="progreso" aria-hidden="true">
+      <div class="segmento" [class.activo]="paso() >= 1">
+        <span class="numero">1</span>
+        <span class="etiqueta">Tipo de reporte</span>
+      </div>
+      <div class="linea"></div>
+      <div class="segmento" [class.activo]="paso() >= 2">
+        <span class="numero">2</span>
+        <span class="etiqueta">Detalles</span>
+      </div>
+    </div>
+
+    @if (paso() === 1) {
+      <div class="tipo-caso">
+        @for (tipo of tiposCaso; track tipo) {
+          <button
+            type="button"
+            class="tipo-card"
+            [class.seleccionado]="form.tipoCaso === tipo"
+            (click)="seleccionarTipo(tipo)"
+          >
+            <strong>{{ tipo }}</strong>
+          </button>
+        }
+      </div>
+
+      <button type="button" class="btn-accion" (click)="continuar()">Continuar</button>
+    }
+
+    @if (paso() === 2) {
+      <form (ngSubmit)="crearReporte()">
+        <p class="tipo-elegido">
+          Tipo de reporte: <strong>{{ form.tipoCaso }}</strong>
+        </p>
+
+        <label for="descripcion">Descripción</label>
+        <textarea
+          id="descripcion"
+          name="descripcion"
+          [(ngModel)]="form.descripcion"
+          placeholder="Describe el caso: raza, color, nombres, lugar y hora, señas particulares..."
+          rows="5"
+          required
+        ></textarea>
+
+        <label for="fotoUrl">URL de foto (opcional)</label>
+        <input
+          id="fotoUrl"
+          type="url"
+          name="fotoUrl"
+          [(ngModel)]="form.fotoUrl"
+          placeholder="https://..."
+        />
+
+        <div class="acciones">
+          <button type="button" class="btn-volver" (click)="atras()">Atrás</button>
+          <button type="submit" class="btn-accion" [disabled]="enviando()">
+            {{ enviando() ? 'Creando...' : 'Crear reporte' }}
+          </button>
+        </div>
+      </form>
+    }
+  </section>
+</main>

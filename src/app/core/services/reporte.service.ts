@@ -33,4 +33,20 @@ export class ReporteService {
       .get<Reporte[]>(`${this.baseUrl}/usuario/${idUsuario}`)
       .pipe(catchError(() => of([])));
   }
+
+  /**
+   * Crea un reporte nuevo. El estado siempre se inicializa como PENDIENTE:
+   * un voluntario verificará el caso después.
+   */
+  crearReporte(reporte: {
+    idUsuario: number;
+    tipoCaso: string;
+    descripcion: string;
+    fotoUrl: string | null;
+  }): Observable<Reporte> {
+    return this.http.post<Reporte>(this.baseUrl, {
+      ...reporte,
+      estado: 'PENDIENTE',
+    });
+  }
 }

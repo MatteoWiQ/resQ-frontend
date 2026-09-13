@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,10 +9,17 @@ import { Router } from '@angular/router';
   styleUrl: './back-button.component.css',
 })
 export class BackButtonComponent {
+  readonly ruta = input<string>();
+
   private readonly location = inject(Location);
   private readonly router = inject(Router);
 
   goBack(): void {
+    const destino = this.ruta();
+    if (destino) {
+      this.router.navigate([destino]);
+      return;
+    }
     if (window.history.length > 1) {
       this.location.back();
     } else {
