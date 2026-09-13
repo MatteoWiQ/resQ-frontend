@@ -27,6 +27,7 @@ export class PerfilComponent implements OnInit {
   readonly cargandoPerfil = signal(true);
   readonly cargandoReportes = signal(true);
   readonly error = signal('');
+  readonly reporteSeleccionado = signal<Reporte | null>(null);
 
   ngOnInit(): void {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
@@ -49,8 +50,6 @@ export class PerfilComponent implements OnInit {
       },
     });
 
-    // El servicio ya maneja el caso de que el endpoint no exista aún
-    // (ver reporte.service.ts), así que aquí solo consumimos el resultado.
     this.reporteService.obtenerMisReportes(idUsuario).subscribe((reportes) => {
       this.reportes.set(reportes);
       this.cargandoReportes.set(false);
@@ -69,5 +68,22 @@ export class PerfilComponent implements OnInit {
 
   claseEstado(estado: string): string {
     return `estado estado-${estado.toLowerCase()}`;
+  }
+
+  verDetalle(reporte: Reporte): void {
+    this.reporteSeleccionado.set(reporte);
+  }
+
+  cerrarDetalle(): void {
+    this.reporteSeleccionado.set(null);
+  }
+
+  formatearFecha(fecha: string): string {
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-CO', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   }
 }
