@@ -41,15 +41,59 @@
       <ul class="reportes-lista">
         @for (reporte of reportes(); track reporte.idReporte) {
           <li class="reporte-item">
-            <div>
+            <div class="reporte-info">
               <strong>{{ reporte.tipoCaso }}</strong>
               <p>{{ reporte.descripcion }}</p>
             </div>
-            <span [class]="claseEstado(reporte.estado)">{{ reporte.estado }}</span>
+            <div class="reporte-acciones">
+              <span [class]="claseEstado(reporte.estado)">{{ reporte.estado }}</span>
+              <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">Ver</button>
+            </div>
           </li>
         }
       </ul>
     }
   </div>
+
+  @if (reporteSeleccionado(); as r) {
+    <div class="modal-overlay" (click)="cerrarDetalle()">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reporte-titulo"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="modal-head">
+          <h3 id="reporte-titulo">{{ r.tipoCaso }}</h3>
+          <button type="button" class="btn-cerrar" aria-label="Cerrar" (click)="cerrarDetalle()">
+            &times;
+          </button>
+        </div>
+
+        <dl class="modal-datos">
+          <dt>ID</dt>
+          <dd>#{{ r.idReporte }}</dd>
+
+          <dt>Estado</dt>
+          <dd><span [class]="claseEstado(r.estado)">{{ r.estado }}</span></dd>
+
+          <dt>Descripción</dt>
+          <dd class="modal-descripcion">{{ r.descripcion }}</dd>
+
+          <dt>Fecha de creación</dt>
+          <dd>{{ formatearFecha(r.fechaCreacion) }}</dd>
+        </dl>
+
+        @if (r.fotoUrl) {
+          <img class="modal-foto" [src]="r.fotoUrl" alt="Foto del reporte" />
+        }
+
+        <button type="button" class="primary-btn modal-cerrar-boton" (click)="cerrarDetalle()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  }
 
 </section>
