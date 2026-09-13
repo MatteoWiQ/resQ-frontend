@@ -13,6 +13,6 @@ export class LandingTopbar {
   protected readonly authService = inject(AuthService);
 
   esAdmin(): boolean {
-    return this.authService.usuarioActual()?.rol === 'ADMIN';
+    return this.authService.usuarioActual()?.rol === 'ADMINISTRADOR';
   }
 }
