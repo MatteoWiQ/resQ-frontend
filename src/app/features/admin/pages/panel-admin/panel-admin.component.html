@@ -10,6 +10,107 @@
     <h1>Panel administrativo</h1>
     <p class="subtitle">Gestiona los reportes y usuarios de ResQ.</p>
 
-    <p class="hint">Este panel está en construcción. Aquí podrás administrar reportes, usuarios y permisos.</p>
+    @if (mensaje()) {
+      <div class="mensaje">{{ mensaje() }}</div>
+    }
+
+    <!-- ==================== USUARIOS ==================== -->
+    <h2 class="seccion">Usuarios</h2>
+    <div class="tabla-wrapper">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of usuarios(); track u.idUsuario) {
+            <tr>
+              @if (editandoUsuarioId() === u.idUsuario) {
+                <td>{{ u.idUsuario }}</td>
+                <td><input [(ngModel)]="usuarioEdit.nombre" /></td>
+                <td><input [(ngModel)]="usuarioEdit.email" /></td>
+                <td><input [(ngModel)]="usuarioEdit.telefono" /></td>
+                <td>
+                  <select [(ngModel)]="usuarioEdit.rol">
+                    <option value="USUARIO">USUARIO</option>
+                    <option value="VOLUNTARIO">VOLUNTARIO</option>
+                    <option value="ADMIN">ADMIN</option>
+                  </select>
+                </td>
+                <td>
+                  <button class="btn guardar" (click)="guardarUsuario(u.idUsuario)">Guardar</button>
+                  <button class="btn cancelar" (click)="cancelarEdicion()">Cancelar</button>
+                </td>
+              } @else {
+                <td>{{ u.idUsuario }}</td>
+                <td>{{ u.nombre }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.telefono }}</td>
+                <td>{{ u.rol }}</td>
+                <td>
+                  <button class="btn editar" (click)="editarUsuario(u)">Editar</button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ==================== REPORTES ==================== -->
+    <h2 class="seccion">Reportes</h2>
+    <div class="tabla-wrapper">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ID Usuario</th>
+            <th>Tipo de caso</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of reportes(); track r.idReporte) {
+            <tr>
+              @if (editandoReporteId() === r.idReporte) {
+                <td>{{ r.idReporte }}</td>
+                <td>{{ r.idUsuario }}</td>
+                <td><input [(ngModel)]="reporteEdit.tipoCaso" /></td>
+                <td><input [(ngModel)]="reporteEdit.descripcion" /></td>
+                <td>
+                  <select [(ngModel)]="reporteEdit.estado">
+                    <option value="PENDIENTE">PENDIENTE</option>
+                    <option value="EN_PROCESO">EN_PROCESO</option>
+                    <option value="RESUELTO">RESUELTO</option>
+                    <option value="CANCELADO">CANCELADO</option>
+                  </select>
+                </td>
+                <td>
+                  <button class="btn guardar" (click)="guardarReporte(r.idReporte)">Guardar</button>
+                  <button class="btn cancelar" (click)="cancelarEdicion()">Cancelar</button>
+                </td>
+              } @else {
+                <td>{{ r.idReporte }}</td>
+                <td>{{ r.idUsuario }}</td>
+                <td>{{ r.tipoCaso }}</td>
+                <td>{{ r.descripcion }}</td>
+                <td>{{ r.estado }}</td>
+                <td>
+                  <button class="btn editar" (click)="editarReporte(r)">Editar</button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>

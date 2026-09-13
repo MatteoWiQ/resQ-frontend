@@ -10,34 +10,19 @@ export class ReporteService {
 
   constructor(private readonly http: HttpClient) {}
 
-  /**
-   * ESQUELETO: este endpoint todavía NO existe en el backend.
-   *
-   * Cuando se implemente la funcionalidad de "Reportar", agregar en un
-   * ReporteController algo así:
-   *
-   *   @GetMapping("/usuario/{idUsuario}")
-   *   public List<ReporteDTO> obtenerPorUsuario(@PathVariable Long idUsuario) {
-   *       return reporteRepository.findByIdUsuario(idUsuario)...
-   *   }
-   *
-   * (también hay que agregar el método findByIdUsuario a ReporteRepository)
-   *
-   * Mientras tanto, esta llamada va a fallar (404) y el catchError
-   * devuelve una lista vacía para que la pantalla de "Mi Perfil" no se
-   * rompa: simplemente muestra "Todavía no has hecho ningún reporte".
-   * En cuanto el endpoint real exista, esto empieza a traer datos solo.
-   */
+  // Lista TODOS los reportes (para el panel admin)
+  obtenerTodos(): Observable<Reporte[]> {
+    return this.http.get<Reporte[]>(this.baseUrl);
+  }
+
+  // Reportes de un usuario (ya existía en tu código)
   obtenerMisReportes(idUsuario: number): Observable<Reporte[]> {
     return this.http
       .get<Reporte[]>(`${this.baseUrl}/usuario/${idUsuario}`)
       .pipe(catchError(() => of([])));
   }
 
-  /**
-   * Crea un reporte nuevo. El estado siempre se inicializa como PENDIENTE:
-   * un voluntario verificará el caso después.
-   */
+  // Crea un reporte
   crearReporte(reporte: {
     idUsuario: number;
     tipoCaso: string;
@@ -48,5 +33,16 @@ export class ReporteService {
       ...reporte,
       estado: 'PENDIENTE',
     });
+  }
+
+  // Actualiza un reporte (PUT /api/reportes/{id})
+  actualizar(id: number, datos: {
+    idUsuario: number;
+    tipoCaso: string;
+    descripcion: string;
+    estado: string;
+    fotoUrl: string | null;
+  }): Observable<Reporte> {
+    return this.http.put<Reporte>(`${this.baseUrl}/${id}`, datos);
   }
 }
