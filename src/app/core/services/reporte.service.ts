@@ -16,6 +16,10 @@ export class ReporteService {
   }
 
   // Reportes de un usuario (ya existía en tu código)
+  /**
+   * Reportes de un usuario mediante GET /api/reportes/usuario/{idUsuario},
+   * expuesto por ReporteController en el backend.
+   */
   obtenerMisReportes(idUsuario: number): Observable<Reporte[]> {
     return this.http
       .get<Reporte[]>(`${this.baseUrl}/usuario/${idUsuario}`)
