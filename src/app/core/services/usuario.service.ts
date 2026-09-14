@@ -10,17 +10,14 @@ export class UsuarioService {
 
   constructor(private readonly http: HttpClient) {}
 
-  // Lista TODOS los usuarios (para el panel admin)
   obtenerTodos(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.baseUrl);
   }
 
-  // Obtiene un usuario por ID
   obtenerPorId(id: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.baseUrl}/${id}`);
   }
 
-  // Actualiza un usuario (PUT /api/usuarios/{id})
   actualizar(id: number, datos: {
     nombre: string;
     email: string;

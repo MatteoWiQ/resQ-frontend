@@ -5,8 +5,6 @@ export interface Usuario {
   telefono: string;
   rol: string;
   fechaRegistro?: string;
-
-  // fotoUrl?: string;
 }
 
 export interface UsuarioActual {

@@ -12,8 +12,6 @@ export class AuthService {
   private readonly loginEndpoint = '/api/login';
   private readonly registerEndpoint = '/api/usuarios';
 
-  // Señal reactiva con el usuario logueado (null si no hay sesión activa).
-  // Cualquier componente puede leerla con authService.usuarioActual()
   readonly usuarioActual = signal<UsuarioActual | null>(this.recuperarUsuarioGuardado());
 
   constructor(private readonly http: HttpClient) {}
@@ -39,7 +37,6 @@ export class AuthService {
     this.usuarioActual.set(null);
   }
 
-  /** Devuelve el idUsuario de la sesión activa, o null si no hay sesión. */
   obtenerIdUsuarioActual(): number | null {
     return this.usuarioActual()?.idUsuario ?? null;
   }

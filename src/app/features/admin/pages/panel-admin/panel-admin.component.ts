@@ -42,14 +42,14 @@ export class PanelAdminComponent implements OnInit {
   cargarUsuarios(): void {
     this.usuarioService.obtenerTodos().subscribe({
       next: (data) => this.usuarios.set(data),
-      error: (err) => this.mensaje.set('❌ Error al cargar usuarios: ' + err.message),
+      error: (err) => this.mensaje.set('Error al cargar usuarios: ' + err.message),
     });
   }
 
   cargarReportes(): void {
     this.reporteService.obtenerTodos().subscribe({
       next: (data) => this.reportes.set(data),
-      error: (err) => this.mensaje.set('❌ Error al cargar reportes: ' + err.message),
+      error: (err) => this.mensaje.set('Error al cargar reportes: ' + err.message),
     });
   }
 
@@ -67,11 +67,11 @@ export class PanelAdminComponent implements OnInit {
   guardarUsuario(id: number): void {
     this.usuarioService.actualizar(id, this.usuarioEdit).subscribe({
       next: () => {
-        this.mensaje.set('✅ Usuario actualizado correctamente');
+        this.mensaje.set('Usuario actualizado correctamente');
         this.cancelarEdicion();
         this.cargarUsuarios();
       },
-      error: (err) => this.mensaje.set('❌ Error al actualizar usuario: ' + err.message),
+      error: (err) => this.mensaje.set('Error al actualizar usuario: ' + err.message),
     });
   }
 
@@ -90,11 +90,11 @@ export class PanelAdminComponent implements OnInit {
   guardarReporte(id: number): void {
     this.reporteService.actualizar(id, this.reporteEdit).subscribe({
       next: () => {
-        this.mensaje.set('✅ Reporte actualizado correctamente');
+        this.mensaje.set('Reporte actualizado correctamente');
         this.cancelarEdicion();
         this.cargarReportes();
       },
-      error: (err) => this.mensaje.set('❌ Error al actualizar reporte: ' + err.message),
+      error: (err) => this.mensaje.set('Error al actualizar reporte: ' + err.message),
     });
   }
 
