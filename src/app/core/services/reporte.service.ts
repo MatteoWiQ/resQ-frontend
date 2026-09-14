@@ -10,6 +10,12 @@ export class ReporteService {
 
   constructor(private readonly http: HttpClient) {}
 
+  // Lista TODOS los reportes (para el panel admin)
+  obtenerTodos(): Observable<Reporte[]> {
+    return this.http.get<Reporte[]>(this.baseUrl);
+  }
+
+  // Reportes de un usuario (ya existía en tu código)
   /**
    * Reportes de un usuario mediante GET /api/reportes/usuario/{idUsuario},
    * expuesto por ReporteController en el backend.
@@ -20,10 +26,7 @@ export class ReporteService {
       .pipe(catchError(() => of([])));
   }
 
-  /**
-   * Crea un reporte nuevo. El estado siempre se inicializa como PENDIENTE:
-   * un voluntario verificará el caso después.
-   */
+  // Crea un reporte
   crearReporte(reporte: {
     idUsuario: number;
     tipoCaso: string;
@@ -34,5 +37,16 @@ export class ReporteService {
       ...reporte,
       estado: 'PENDIENTE',
     });
+  }
+
+  // Actualiza un reporte (PUT /api/reportes/{id})
+  actualizar(id: number, datos: {
+    idUsuario: number;
+    tipoCaso: string;
+    descripcion: string;
+    estado: string;
+    fotoUrl: string | null;
+  }): Observable<Reporte> {
+    return this.http.put<Reporte>(`${this.baseUrl}/${id}`, datos);
   }
 }
