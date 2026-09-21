@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
@@ -13,7 +14,7 @@ import { Reporte } from '../../../../shared/models/reporte.model';
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, BackButtonComponent],
+  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })
@@ -28,6 +29,12 @@ export class PerfilComponent implements OnInit {
   readonly cargandoReportes = signal(true);
   readonly error = signal('');
   readonly reporteSeleccionado = signal<Reporte | null>(null);
+
+  // ============ HU13: actualizar estado ============
+  readonly estadosValidos = ['PENDIENTE', 'EN_PROCESO', 'RESUELTO', 'CANCELADO'];
+  readonly nuevoEstado = signal<string>('');
+  readonly guardandoEstado = signal(false);
+  readonly mensajeEstado = signal('');
 
   ngOnInit(): void {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
@@ -72,10 +79,14 @@ export class PerfilComponent implements OnInit {
 
   verDetalle(reporte: Reporte): void {
     this.reporteSeleccionado.set(reporte);
+    this.nuevoEstado.set(reporte.estado);
+    this.mensajeEstado.set('');
   }
 
   cerrarDetalle(): void {
     this.reporteSeleccionado.set(null);
+    this.nuevoEstado.set('');
+    this.mensajeEstado.set('');
   }
 
   formatearFecha(fecha: string): string {
@@ -85,5 +96,56 @@ export class PerfilComponent implements OnInit {
       month: 'short',
       year: 'numeric',
     });
+  }
+
+  // ============ HU13: solo voluntarios y admins pueden cambiar el estado ============
+  puedeCambiarEstado(): boolean {
+    const rol = this.usuario()?.rol;
+    return rol === 'VOLUNTARIO' || rol === 'ADMIN';
+  }
+
+  actualizarEstado(): void {
+    const reporte = this.reporteSeleccionado();
+    if (!reporte) return;
+
+    if (!this.nuevoEstado() || this.nuevoEstado() === reporte.estado) {
+      this.mensajeEstado.set('Selecciona un estado diferente al actual.');
+      return;
+    }
+
+    this.guardandoEstado.set(true);
+    this.mensajeEstado.set('');
+
+    this.reporteService
+      .actualizar(reporte.idReporte, {
+        idUsuario: reporte.idUsuario,
+        tipoCaso: reporte.tipoCaso,
+        descripcion: reporte.descripcion,
+        estado: this.nuevoEstado(),
+        fotoUrl: reporte.fotoUrl,
+      })
+      .subscribe({
+        next: (actualizado) => {
+          this.guardandoEstado.set(false);
+          this.mensajeEstado.set('✅ Estado actualizado correctamente.');
+
+          // Reflejar el cambio en la lista de reportes
+          this.reportes.update((lista) =>
+            lista.map((r) => (r.idReporte === actualizado.idReporte ? actualizado : r))
+          );
+
+          // Reflejar el cambio en el modal abierto
+          this.reporteSeleccionado.set(actualizado);
+        },
+        error: (err) => {
+          this.guardandoEstado.set(false);
+          this.mensajeEstado.set(
+            '❌ No se pudo actualizar el estado. ' +
+              (err.status === 403
+                ? 'No tienes permisos para realizar esta acción.'
+                : 'Inténtalo de nuevo.')
+          );
+        },
+      });
   }
 }

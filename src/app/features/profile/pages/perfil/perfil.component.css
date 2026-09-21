@@ -273,3 +273,42 @@ dd {
 .modal-cerrar-boton {
   width: 100%;
 }
+
+/* ============ HU13: editor de estado dentro del modal ============ */
+.estado-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(92, 26, 43, 0.05);
+  border: 1px solid var(--border);
+}
+
+.estado-editor label {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.estado-editor select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.estado-editor .primary-btn {
+  align-self: flex-start;
+}
+
+.estado-mensaje {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+}

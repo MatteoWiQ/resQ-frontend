@@ -88,11 +88,39 @@
           <img class="modal-foto" [src]="r.fotoUrl" alt="Foto del reporte" />
         }
 
+        <!-- ============ HU13: editor de estado (solo voluntarios y admins) ============ -->
+        @if (puedeCambiarEstado()) {
+          <div class="estado-editor">
+            <label for="nuevoEstado">Actualizar estado del informe</label>
+            <select
+              id="nuevoEstado"
+              [ngModel]="nuevoEstado()"
+              (ngModelChange)="nuevoEstado.set($event)"
+            >
+              @for (estado of estadosValidos; track estado) {
+                <option [value]="estado">{{ estado }}</option>
+              }
+            </select>
+
+            <button
+              type="button"
+              class="primary-btn"
+              [disabled]="guardandoEstado()"
+              (click)="actualizarEstado()"
+            >
+              {{ guardandoEstado() ? 'Guardando...' : 'Actualizar estado' }}
+            </button>
+
+            @if (mensajeEstado()) {
+              <p class="estado-mensaje">{{ mensajeEstado() }}</p>
+            }
+          </div>
+        }
+
         <button type="button" class="primary-btn modal-cerrar-boton" (click)="cerrarDetalle()">
           Cerrar
         </button>
       </div>
     </div>
   }
-
 </section>
