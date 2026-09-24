@@ -118,6 +118,8 @@ dd {
   color: var(--text);
 }
 
+.reporte-fecha{font-size:.8rem;margin-top:2px}
+
 .reporte-item p {
   margin: 4px 0 0;
   color: var(--muted);

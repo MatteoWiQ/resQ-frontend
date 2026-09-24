@@ -42,6 +42,7 @@
           <li class="reporte-item">
             <div class="reporte-info">
               <strong>{{ reporte.tipoCaso }}</strong>
+              <p class="reporte-fecha">{{ 'perfil.fechaReporte' | translate }} {{ formatearFecha(reporte.fechaCreacion) }}</p>
               <p>{{ reporte.descripcion }}</p>
             </div>
             <div class="reporte-acciones">

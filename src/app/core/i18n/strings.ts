@@ -149,6 +149,7 @@ export const es = {
     cargandoReportes: 'Cargando reportes...',
     sinReportes: 'Todavía no has hecho ningún reporte.',
     ver: 'Ver',
+    fechaReporte: 'Fecha del reporte:',
     modal: {
       cerrarAria: 'Cerrar',
       id: 'ID',
