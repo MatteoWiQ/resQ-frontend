@@ -52,6 +52,10 @@ export const es = {
         titulo: 'Conectar',
         descripcion: 'Voluntarios, transportistas y veterinarios se unen para resolverlo.',
       },
+      paso4: {
+        titulo: 'Ayudar',
+        descripcion: '',
+      },
     },
     help: {
       eyebrow: 'Ofrecer ayuda',
