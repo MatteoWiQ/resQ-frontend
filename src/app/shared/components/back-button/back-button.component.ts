@@ -1,10 +1,11 @@
 import { Location } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-back-button',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './back-button.component.html',
   styleUrl: './back-button.component.css',
 })

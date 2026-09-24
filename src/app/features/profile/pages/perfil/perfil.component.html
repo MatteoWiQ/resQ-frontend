@@ -2,7 +2,7 @@
   <app-back-button ruta="/" />
 
   @if (cargandoPerfil()) {
-    <p class="hint">Cargando tu perfil...</p>
+    <p class="hint">{{ 'perfil.cargandoPerfil' | translate }}</p>
   } @else if (error()) {
     <p class="message">{{ error() }}</p>
   } @else if (usuario(); as u) {
@@ -16,11 +16,11 @@
         <span class="badge">{{ u.rol }}</span>
 
         <dl>
-          <dt>Correo</dt>
+          <dt>{{ 'perfil.correo' | translate }}</dt>
           <dd>{{ u.email }}</dd>
 
-          <dt>Teléfono</dt>
-          <dd>{{ u.telefono || 'No registrado' }}</dd>
+          <dt>{{ 'perfil.telefono' | translate }}</dt>
+          <dd>{{ u.telefono || ('perfil.noRegistrado' | translate) }}</dd>
         </dl>
       </div>
     </div>
@@ -28,14 +28,14 @@
 
   <div class="reportes-section">
     <div class="reportes-head">
-      <h2>Mis reportes</h2>
-      <a class="primary-btn reportes-nuevo" routerLink="/reportes/nuevo">Crear nuevo reporte</a>
+      <h2>{{ 'perfil.misReportes' | translate }}</h2>
+      <a class="primary-btn reportes-nuevo" routerLink="/reportes/nuevo">{{ 'perfil.crearNuevoReporte' | translate }}</a>
     </div>
 
     @if (cargandoReportes()) {
-      <p class="hint">Cargando reportes...</p>
+      <p class="hint">{{ 'perfil.cargandoReportes' | translate }}</p>
     } @else if (reportes().length === 0) {
-      <p class="hint">Todavía no has hecho ningún reporte.</p>
+      <p class="hint">{{ 'perfil.sinReportes' | translate }}</p>
     } @else {
       <ul class="reportes-lista">
         @for (reporte of reportes(); track reporte.idReporte) {
@@ -46,7 +46,7 @@
             </div>
             <div class="reporte-acciones">
               <span [class]="claseEstado(reporte.estado)">{{ reporte.estado }}</span>
-              <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">Ver</button>
+              <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">{{ 'perfil.ver' | translate }}</button>
             </div>
           </li>
         }
@@ -65,33 +65,33 @@
       >
         <div class="modal-head">
           <h3 id="reporte-titulo">{{ r.tipoCaso }}</h3>
-          <button type="button" class="btn-cerrar" aria-label="Cerrar" (click)="cerrarDetalle()">
+          <button type="button" class="btn-cerrar" [attr.aria-label]="'perfil.modal.cerrarAria' | translate" (click)="cerrarDetalle()">
             &times;
           </button>
         </div>
 
         <dl class="modal-datos">
-          <dt>ID</dt>
+          <dt>{{ 'perfil.modal.id' | translate }}</dt>
           <dd>#{{ r.idReporte }}</dd>
 
-          <dt>Estado</dt>
+          <dt>{{ 'perfil.modal.estado' | translate }}</dt>
           <dd><span [class]="claseEstado(r.estado)">{{ r.estado }}</span></dd>
 
-          <dt>Descripción</dt>
+          <dt>{{ 'perfil.modal.descripcion' | translate }}</dt>
           <dd class="modal-descripcion">{{ r.descripcion }}</dd>
 
-          <dt>Fecha de creación</dt>
+          <dt>{{ 'perfil.modal.fechaCreacion' | translate }}</dt>
           <dd>{{ formatearFecha(r.fechaCreacion) }}</dd>
         </dl>
 
         @if (r.fotoUrl) {
-          <img class="modal-foto" [src]="r.fotoUrl" alt="Foto del reporte" />
+          <img class="modal-foto" [src]="r.fotoUrl" [attr.alt]="'perfil.modal.fotoAlt' | translate" />
         }
 
         <!-- ============ HU13: editor de estado (solo voluntarios y admins) ============ -->
         @if (puedeCambiarEstado()) {
           <div class="estado-editor">
-            <label for="nuevoEstado">Actualizar estado del informe</label>
+            <label for="nuevoEstado">{{ 'perfil.modal.etiquetaEstado' | translate }}</label>
             <select
               id="nuevoEstado"
               [ngModel]="nuevoEstado()"
@@ -108,7 +108,7 @@
               [disabled]="guardandoEstado()"
               (click)="actualizarEstado()"
             >
-              {{ guardandoEstado() ? 'Guardando...' : 'Actualizar estado' }}
+              {{ guardandoEstado() ? ('perfil.modal.guardando' | translate) : ('perfil.modal.actualizarEstado' | translate) }}
             </button>
 
             @if (mensajeEstado()) {
@@ -118,7 +118,7 @@
         }
 
         <button type="button" class="primary-btn modal-cerrar-boton" (click)="cerrarDetalle()">
-          Cerrar
+          {{ 'perfil.modal.cerrarBoton' | translate }}
         </button>
       </div>
     </div>

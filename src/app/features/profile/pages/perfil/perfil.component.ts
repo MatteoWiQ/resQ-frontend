@@ -8,13 +8,15 @@ import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslateService } from '../../../../core/i18n/translate.service';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent],
+  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, TranslatePipe],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })
@@ -22,6 +24,7 @@ export class PerfilComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly reporteService = inject(ReporteService);
+  private readonly translate = inject(TranslateService);
 
   readonly usuario = signal<Usuario | null>(null);
   readonly reportes = signal<Reporte[]>([]);
@@ -40,7 +43,7 @@ export class PerfilComponent implements OnInit {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
 
     if (!idUsuario) {
-      this.error.set('No hay una sesión activa.');
+      this.error.set(this.translate.t('perfil.sinSesion'));
       this.cargandoPerfil.set(false);
       this.cargandoReportes.set(false);
       return;
@@ -52,7 +55,7 @@ export class PerfilComponent implements OnInit {
         this.cargandoPerfil.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar tu información de perfil.');
+        this.error.set(this.translate.t('perfil.errorCargarPerfil'));
         this.cargandoPerfil.set(false);
       },
     });
@@ -109,7 +112,7 @@ export class PerfilComponent implements OnInit {
     if (!reporte) return;
 
     if (!this.nuevoEstado() || this.nuevoEstado() === reporte.estado) {
-      this.mensajeEstado.set('Selecciona un estado diferente al actual.');
+      this.mensajeEstado.set(this.translate.t('perfil.estado.errorDistinto'));
       return;
     }
 
@@ -127,7 +130,7 @@ export class PerfilComponent implements OnInit {
       .subscribe({
         next: (actualizado) => {
           this.guardandoEstado.set(false);
-          this.mensajeEstado.set('✅ Estado actualizado correctamente.');
+          this.mensajeEstado.set(this.translate.t('perfil.estado.ok'));
 
           // Reflejar el cambio en la lista de reportes
           this.reportes.update((lista) =>
@@ -139,12 +142,11 @@ export class PerfilComponent implements OnInit {
         },
         error: (err) => {
           this.guardandoEstado.set(false);
-          this.mensajeEstado.set(
-            '❌ No se pudo actualizar el estado. ' +
-              (err.status === 403
-                ? 'No tienes permisos para realizar esta acción.'
-                : 'Inténtalo de nuevo.')
-          );
+          const detalle =
+            err.status === 403
+              ? this.translate.t('perfil.estado.sinPermisos')
+              : this.translate.t('perfil.estado.reintentar');
+          this.mensajeEstado.set(this.translate.t('perfil.estado.errorBase') + detalle);
         },
       });
   }

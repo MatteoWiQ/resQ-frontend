@@ -4,12 +4,14 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslateService } from '../../../../core/i18n/translate.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 
 @Component({
   selector: 'app-crear-reporte',
   standalone: true,
-  imports: [FormsModule, BackButtonComponent],
+  imports: [FormsModule, BackButtonComponent, TranslatePipe],
   templateUrl: './crear-reporte.component.html',
   styleUrl: './crear-reporte.component.css',
 })
@@ -28,6 +30,7 @@ export class CrearReporteComponent {
 
   private readonly authService = inject(AuthService);
   private readonly reporteService = inject(ReporteService);
+  private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
 
   descripcionValida(): boolean {
@@ -41,7 +44,7 @@ export class CrearReporteComponent {
 
   continuar(): void {
     if (!this.form.tipoCaso) {
-      this.message.set('Selecciona un tipo de reporte.');
+      this.message.set(this.translate.t('reportes.nuevo.seleccionaTipo'));
       return;
     }
     this.message.set('');
@@ -56,15 +59,15 @@ export class CrearReporteComponent {
   crearReporte(): void {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
     if (!idUsuario) {
-      this.message.set('No hay una sesión activa. Vuelve a iniciar sesión.');
+      this.message.set(this.translate.t('reportes.nuevo.sinSesion'));
       return;
     }
     if (!this.form.tipoCaso) {
-      this.message.set('Selecciona un tipo de reporte.');
+      this.message.set(this.translate.t('reportes.nuevo.seleccionaTipo'));
       return;
     }
     if (!this.descripcionValida()) {
-      this.message.set('La descripción es obligatoria.');
+      this.message.set(this.translate.t('reportes.nuevo.descripcionObligatoria'));
       return;
     }
 
@@ -81,7 +84,7 @@ export class CrearReporteComponent {
         next: () => this.router.navigate(['/perfil']),
         error: () => {
           this.enviando.set(false);
-          this.message.set('No se pudo crear el reporte. Inténtalo de nuevo.');
+          this.message.set(this.translate.t('reportes.nuevo.errorCrear'));
         },
       });
   }

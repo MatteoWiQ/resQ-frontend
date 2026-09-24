@@ -3,28 +3,28 @@
 
   <div class="admin-card">
     <div class="brand">
-      <div class="brand-mark">R</div>
-      <span class="brand-name">ResQ</span>
+      <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+      <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
     </div>
 
-    <h1>Panel administrativo</h1>
-    <p class="subtitle">Gestiona los reportes y usuarios de ResQ.</p>
+    <h1>{{ 'admin.titulo' | translate }}</h1>
+    <p class="subtitle">{{ 'admin.subtitle' | translate }}</p>
 
     @if (mensaje()) {
       <div class="mensaje">{{ mensaje() }}</div>
     }
 
-    <h2 class="seccion">Usuarios</h2>
+    <h2 class="seccion">{{ 'admin.usuarios' | translate }}</h2>
     <div class="tabla-wrapper">
       <table class="tabla">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Teléfono</th>
-            <th>Rol</th>
-            <th>Acciones</th>
+            <th>{{ 'admin.id' | translate }}</th>
+            <th>{{ 'admin.nombre' | translate }}</th>
+            <th>{{ 'admin.email' | translate }}</th>
+            <th>{{ 'admin.telefono' | translate }}</th>
+            <th>{{ 'admin.rol' | translate }}</th>
+            <th>{{ 'admin.acciones' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -43,8 +43,8 @@
                   </select>
                 </td>
                 <td>
-                  <button class="btn guardar" (click)="guardarUsuario(u.idUsuario)">Guardar</button>
-                  <button class="btn cancelar" (click)="cancelarEdicion()">Cancelar</button>
+                  <button class="btn guardar" (click)="guardarUsuario(u.idUsuario)">{{ 'admin.guardar' | translate }}</button>
+                  <button class="btn cancelar" (click)="cancelarEdicion()">{{ 'admin.cancelar' | translate }}</button>
                 </td>
               } @else {
                 <td>{{ u.idUsuario }}</td>
@@ -53,7 +53,7 @@
                 <td>{{ u.telefono }}</td>
                 <td>{{ u.rol }}</td>
                 <td>
-                  <button class="btn editar" (click)="editarUsuario(u)">Editar</button>
+                  <button class="btn editar" (click)="editarUsuario(u)">{{ 'admin.editar' | translate }}</button>
                 </td>
               }
             </tr>
@@ -62,17 +62,17 @@
       </table>
     </div>
 
-    <h2 class="seccion">Reportes</h2>
+    <h2 class="seccion">{{ 'admin.reportes' | translate }}</h2>
     <div class="tabla-wrapper">
       <table class="tabla">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>ID Usuario</th>
-            <th>Tipo de caso</th>
-            <th>Descripción</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th>{{ 'admin.id' | translate }}</th>
+            <th>{{ 'admin.idUsuario' | translate }}</th>
+            <th>{{ 'admin.tipoCaso' | translate }}</th>
+            <th>{{ 'admin.descripcion' | translate }}</th>
+            <th>{{ 'admin.estado' | translate }}</th>
+            <th>{{ 'admin.acciones' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -92,8 +92,8 @@
                   </select>
                 </td>
                 <td>
-                  <button class="btn guardar" (click)="guardarReporte(r.idReporte)">Guardar</button>
-                  <button class="btn cancelar" (click)="cancelarEdicion()">Cancelar</button>
+                  <button class="btn guardar" (click)="guardarReporte(r.idReporte)">{{ 'admin.guardar' | translate }}</button>
+                  <button class="btn cancelar" (click)="cancelarEdicion()">{{ 'admin.cancelar' | translate }}</button>
                 </td>
               } @else {
                 <td>{{ r.idReporte }}</td>
@@ -102,7 +102,7 @@
                 <td>{{ r.descripcion }}</td>
                 <td>{{ r.estado }}</td>
                 <td>
-                  <button class="btn editar" (click)="editarReporte(r)">Editar</button>
+                  <button class="btn editar" (click)="editarReporte(r)">{{ 'admin.editar' | translate }}</button>
                 </td>
               }
             </tr>

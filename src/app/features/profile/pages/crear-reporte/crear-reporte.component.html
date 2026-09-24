@@ -3,12 +3,12 @@
 
   <section class="crear-reporte-card">
     <div class="brand">
-      <div class="brand-mark">R</div>
-      <span class="brand-name">ResQ</span>
+      <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+      <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
     </div>
 
-    <h1>Crear nuevo reporte</h1>
-    <p class="subtitle">Ayúdanos a registrar el caso de una mascota.</p>
+    <h1>{{ 'reportes.nuevo.titulo' | translate }}</h1>
+    <p class="subtitle">{{ 'reportes.nuevo.subtitle' | translate }}</p>
 
     @if (message()) {
       <p class="message">{{ message() }}</p>
@@ -17,12 +17,12 @@
     <div class="progreso" aria-hidden="true">
       <div class="segmento" [class.activo]="paso() >= 1">
         <span class="numero">1</span>
-        <span class="etiqueta">Tipo de reporte</span>
+        <span class="etiqueta">{{ 'reportes.nuevo.paso1' | translate }}</span>
       </div>
       <div class="linea"></div>
       <div class="segmento" [class.activo]="paso() >= 2">
         <span class="numero">2</span>
-        <span class="etiqueta">Detalles</span>
+        <span class="etiqueta">{{ 'reportes.nuevo.paso2' | translate }}</span>
       </div>
     </div>
 
@@ -40,38 +40,38 @@
         }
       </div>
 
-      <button type="button" class="btn-accion" (click)="continuar()">Continuar</button>
+      <button type="button" class="btn-accion" (click)="continuar()">{{ 'reportes.nuevo.continuar' | translate }}</button>
     }
 
     @if (paso() === 2) {
       <form (ngSubmit)="crearReporte()">
         <p class="tipo-elegido">
-          Tipo de reporte: <strong>{{ form.tipoCaso }}</strong>
+          {{ 'reportes.nuevo.tipoElegido' | translate }}<strong>{{ form.tipoCaso }}</strong>
         </p>
 
-        <label for="descripcion">Descripción</label>
+        <label for="descripcion">{{ 'reportes.nuevo.descripcion' | translate }}</label>
         <textarea
           id="descripcion"
           name="descripcion"
           [(ngModel)]="form.descripcion"
-          placeholder="Describe el caso: raza, color, nombres, lugar y hora, señas particulares..."
+          [placeholder]="'reportes.nuevo.descripcionPlaceholder' | translate"
           rows="5"
           required
         ></textarea>
 
-        <label for="fotoUrl">URL de foto (opcional)</label>
+        <label for="fotoUrl">{{ 'reportes.nuevo.fotoUrl' | translate }}</label>
         <input
           id="fotoUrl"
           type="url"
           name="fotoUrl"
           [(ngModel)]="form.fotoUrl"
-          placeholder="https://..."
+          [placeholder]="'reportes.nuevo.fotoUrlPlaceholder' | translate"
         />
 
         <div class="acciones">
-          <button type="button" class="btn-volver" (click)="atras()">Atrás</button>
+          <button type="button" class="btn-volver" (click)="atras()">{{ 'reportes.nuevo.atras' | translate }}</button>
           <button type="submit" class="btn-accion" [disabled]="enviando()">
-            {{ enviando() ? 'Creando...' : 'Crear reporte' }}
+            {{ enviando() ? ('reportes.nuevo.creando' | translate) : ('reportes.nuevo.crear' | translate) }}
           </button>
         </div>
       </form>

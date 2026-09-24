@@ -3,22 +3,20 @@
 
   <main class="guide-page">
     <header class="guide-header">
-      <span class="eyebrow">Guía para reportar</span>
-      <h1>Haz un reporte claro y útil</h1>
+      <span class="eyebrow">{{ 'landing.guia.eyebrow' | translate }}</span>
+      <h1>{{ 'landing.guia.titulo' | translate }}</h1>
       <p>
-        Sigue estos pasos para compartir la información que ayudará a encontrar o proteger a una
-        mascota.
+        {{ 'landing.guia.descripcion' | translate }}
       </p>
     </header>
 
-    <section class="guide-steps" aria-label="Pasos para crear un reporte">
+    <section class="guide-steps" [attr.aria-label]="'landing.guia.pasosAriaLabel' | translate">
       <article class="guide-step">
         <div class="step-number">01</div>
         <div>
-          <h2>Elige el tipo de reporte</h2>
+          <h2>{{ 'landing.guia.paso1.titulo' | translate }}</h2>
           <p>
-            Indica si la mascota está perdida, fue encontrada o necesita ayuda por abandono. Esto
-            permite que el caso llegue a las personas correctas.
+            {{ 'landing.guia.paso1.descripcion' | translate }}
           </p>
         </div>
       </article>
@@ -26,10 +24,9 @@
       <article class="guide-step">
         <div class="step-number">02</div>
         <div>
-          <h2>Cuenta los detalles del caso</h2>
+          <h2>{{ 'landing.guia.paso2.titulo' | translate }}</h2>
           <p>
-            Describe dónde y cuándo ocurrió, además de su raza, color, nombre y cualquier seña
-            particular. También puedes agregar una URL con una foto.
+            {{ 'landing.guia.paso2.descripcion' | translate }}
           </p>
         </div>
       </article>
@@ -37,10 +34,9 @@
       <article class="guide-step">
         <div class="step-number">03</div>
         <div>
-          <h2>Revisa y envía</h2>
+          <h2>{{ 'landing.guia.paso3.titulo' | translate }}</h2>
           <p>
-            Comprueba que la información sea correcta y envía el reporte. Necesitas iniciar sesión
-            para registrar el caso en tu perfil.
+            {{ 'landing.guia.paso3.descripcion' | translate }}
           </p>
         </div>
       </article>
@@ -48,10 +44,10 @@
 
     <section class="guide-action" aria-labelledby="guide-action-title">
       <div>
-        <span class="action-kicker">¿Listo para ayudar?</span>
-        <h2 id="guide-action-title">Comienza tu reporte</h2>
+        <span class="action-kicker">{{ 'landing.guia.accion.kicker' | translate }}</span>
+        <h2 id="guide-action-title">{{ 'landing.guia.accion.titulo' | translate }}</h2>
       </div>
-      <a routerLink="/reportes/nuevo" class="primary-btn">Hacer un reporte</a>
+      <a routerLink="/reportes/nuevo" class="primary-btn">{{ 'landing.guia.accion.boton' | translate }}</a>
     </section>
   </main>
 </div>

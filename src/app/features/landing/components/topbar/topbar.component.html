@@ -1,23 +1,23 @@
 <header class="topbar">
   <div class="brand-wrap">
-    <div class="brand-mark">R</div>
-    <span class="brand-name">ResQ</span>
+    <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+    <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
   </div>
 
-  <nav class="nav" aria-label="Navegación principal">
-    <a href="#inicio">Inicio</a>
-    <a href="#mapa">Mapa</a>
-    <a href="#casos">Casos</a>
-    <a href="#ayudar">Ayudar</a>
-    <a routerLink="/guia-reporte" class="guide-link">Guía para reportar</a>
+  <nav class="nav" [attr.aria-label]="'landing.topbar.ariaLabel' | translate">
+    <a href="#inicio">{{ 'landing.topbar.inicio' | translate }}</a>
+    <a href="#mapa">{{ 'landing.topbar.mapa' | translate }}</a>
+    <a href="#casos">{{ 'landing.topbar.casos' | translate }}</a>
+    <a href="#ayudar">{{ 'landing.topbar.ayudar' | translate }}</a>
+    <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
     @if (authService.usuarioActual()) {
-      <a routerLink="/perfil">Mi Perfil</a>
+      <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
     }
   </nav>
 
   @if (esAdmin()) {
-    <a routerLink="/admin" class="primary-btn">Panel administrativo</a>
+    <a routerLink="/admin" class="primary-btn">{{ 'landing.topbar.panelAdmin' | translate }}</a>
   } @else {
-    <a routerLink="/login" class="primary-btn">Reportar</a>
+    <a routerLink="/login" class="primary-btn">{{ 'landing.topbar.reportar' | translate }}</a>
   }
 </header>
