@@ -1,0 +1,123 @@
+<div class="mapa-page" [class.page-shell]="paginaCompleta()">
+  @if (paginaCompleta()) {
+    <app-back-button ruta="/" />
+  }
+
+  <header class="mapa-header">
+    <div class="header-content">
+      <span class="eyebrow">{{ 'landing.mapa.eyebrow' | translate }}</span>
+      <h2>{{ 'landing.mapa.titulo' | translate }}</h2>
+      <p class="subtitle">{{ 'landing.mapa.subtitulo' | translate }}</p>
+    </div>
+
+    <div class="header-stats">
+      <div class="stat">
+        <span class="stat-value">{{ reportesConUbicacion().length }}</span>
+        <span class="stat-label">{{ 'landing.mapa.casosUbicados' | translate }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ reportes().length }}</span>
+        <span class="stat-label">{{ 'landing.mapa.totalCasos' | translate }}</span>
+      </div>
+    </div>
+  </header>
+
+  <ul class="leyenda" [attr.aria-label]="'landing.mapa.leyenda' | translate">
+    @for (estado of estados; track estado) {
+      <li class="leyenda__item">
+        <span class="leyenda__punto" [style.background-color]="colorEstado(estado)"></span>
+        {{ etiquetaEstado(estado) }}
+      </li>
+    }
+  </ul>
+
+  <div class="mapa-layout">
+    <div class="mapa-container" #mapContainer></div>
+
+    @if (cargando()) {
+      <div class="mapa-overlay">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>{{ 'landing.mapa.cargando' | translate }}</p>
+      </div>
+    } @else if (error(); as mensajeError) {
+      <div class="mapa-overlay">
+        <p>{{ mensajeError }}</p>
+        <button type="button" class="primary-btn" (click)="cargarReportes()">
+          {{ 'landing.mapa.reintentar' | translate }}
+        </button>
+      </div>
+    } @else if (reportesConUbicacion().length === 0) {
+      <div class="mapa-overlay">
+        <p>{{ 'landing.mapa.sinCasos' | translate }}</p>
+      </div>
+    }
+  </div>
+
+  @if (reporteSeleccionado(); as reporte) {
+    <div class="panel-backdrop" (click)="cerrarDetalle()"></div>
+
+    <aside class="detalle-panel" [attr.aria-labelledby]="'detalle-' + reporte.idReporte">
+      <div class="detalle-header">
+        <h3 [id]="'detalle-' + reporte.idReporte">
+          {{ 'landing.mapa.detalleCaso' | translate }} #{{ reporte.idReporte }}
+        </h3>
+        <button
+          type="button"
+          class="detalle-cerrar"
+          (click)="cerrarDetalle()"
+          [attr.aria-label]="'landing.mapa.cerrarDetalle' | translate"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="detalle-content">
+        @if (reporte.fotoUrl) {
+          <img class="detalle-foto" [src]="reporte.fotoUrl" [alt]="'landing.mapa.fotoAlt' | translate" />
+        }
+
+        <dl class="detalle-lista">
+          <div class="detalle-fila">
+            <dt>{{ 'landing.mapa.tipoCaso' | translate }}</dt>
+            <dd>{{ reporte.tipoCaso }}</dd>
+          </div>
+          <div class="detalle-fila">
+            <dt>{{ 'landing.mapa.estado' | translate }}</dt>
+            <dd>
+              <span
+                class="label"
+                [style.background-color]="colorEstado(reporte.estado) + '1f'"
+                [style.color]="colorEstado(reporte.estado)"
+              >
+                {{ etiquetaEstado(reporte.estado) }}
+              </span>
+            </dd>
+          </div>
+          <div class="detalle-fila">
+            <dt>{{ 'landing.mapa.descripcion' | translate }}</dt>
+            <dd class="detalle-descripcion">{{ reporte.descripcion }}</dd>
+          </div>
+          <div class="detalle-fila">
+            <dt>{{ 'landing.mapa.fechaCreacion' | translate }}</dt>
+            <dd>{{ reporte.fechaCreacion | date: 'medium' }}</dd>
+          </div>
+          <div class="detalle-fila">
+            <dt>{{ 'landing.mapa.ubicacion' | translate }}</dt>
+            <dd class="detalle-coords">
+              {{ reporte.latitud | number: '1.4-4' }}, {{ reporte.longitud | number: '1.4-4' }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="detalle-acciones">
+        <button type="button" class="primary-btn" (click)="cerrarDetalle()">
+          {{ 'landing.mapa.cerrar' | translate }}
+        </button>
+      </div>
+    </aside>
+  }
+</div>

@@ -7,11 +7,12 @@ import { ReporteService } from '../../../../core/services/reporte.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { SelectorUbicacionComponent } from '../../../../shared/components/selector-ubicacion/selector-ubicacion.component';
 
 @Component({
   selector: 'app-crear-reporte',
   standalone: true,
-  imports: [FormsModule, BackButtonComponent, TranslatePipe],
+  imports: [FormsModule, BackButtonComponent, TranslatePipe, SelectorUbicacionComponent],
   templateUrl: './crear-reporte.component.html',
   styleUrl: './crear-reporte.component.css',
 })
@@ -22,6 +23,8 @@ export class CrearReporteComponent {
     tipoCaso: '',
     descripcion: '',
     fotoUrl: '',
+    latitud: null as number | null,
+    longitud: null as number | null,
   };
 
   readonly paso = signal(1);
@@ -79,6 +82,8 @@ export class CrearReporteComponent {
         tipoCaso: this.form.tipoCaso,
         descripcion: this.form.descripcion.trim(),
         fotoUrl: this.form.fotoUrl.trim() || null,
+        latitud: this.form.latitud,
+        longitud: this.form.longitud,
       })
       .subscribe({
         next: () => this.router.navigate(['/perfil']),

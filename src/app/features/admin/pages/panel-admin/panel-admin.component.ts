@@ -35,6 +35,8 @@ export class PanelAdminComponent implements OnInit {
     descripcion: '',
     estado: 'PENDIENTE',
     fotoUrl: null as string | null,
+    latitud: null as number | null,
+    longitud: null as number | null,
   };
 
   ngOnInit(): void {
@@ -92,6 +94,8 @@ export class PanelAdminComponent implements OnInit {
       descripcion: r.descripcion,
       estado: r.estado,
       fotoUrl: r.fotoUrl,
+      latitud: r.latitud ?? null,
+      longitud: r.longitud ?? null,
     };
   }
 

@@ -126,6 +126,8 @@ export class PerfilComponent implements OnInit {
         descripcion: reporte.descripcion,
         estado: this.nuevoEstado(),
         fotoUrl: reporte.fotoUrl,
+        latitud: reporte.latitud,
+        longitud: reporte.longitud,
       })
       .subscribe({
         next: (actualizado) => {
