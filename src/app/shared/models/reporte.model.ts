@@ -8,4 +8,6 @@ export interface Reporte {
   estado: EstadoReporte;
   fotoUrl: string | null;
   fechaCreacion: string;
+  latitud?: number | null;
+  longitud?: number | null;
 }

@@ -1,0 +1,16 @@
+<div class="selector">
+  <div class="selector__mapa" #mapa></div>
+
+  <div class="selector__pie">
+    <p class="selector__ayuda">{{ 'reportes.nuevo.ubicacionAyuda' | translate }}</p>
+
+    @if (latitud() != null && longitud() != null) {
+      <p class="selector__coords">
+        {{ latitud() | number: '1.4-4' }}, {{ longitud() | number: '1.4-4' }}
+      </p>
+      <button type="button" class="selector__quitar" (click)="quitar()">
+        {{ 'reportes.nuevo.ubicacionQuitar' | translate }}
+      </button>
+    }
+  </div>
+</div>

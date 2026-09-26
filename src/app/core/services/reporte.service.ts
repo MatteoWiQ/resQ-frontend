@@ -25,6 +25,8 @@ export class ReporteService {
     tipoCaso: string;
     descripcion: string;
     fotoUrl: string | null;
+    latitud?: number | null;
+    longitud?: number | null;
   }): Observable<Reporte> {
     return this.http.post<Reporte>(this.baseUrl, {
       ...reporte,
@@ -38,6 +40,8 @@ export class ReporteService {
     descripcion: string;
     estado: string;
     fotoUrl: string | null;
+    latitud?: number | null;
+    longitud?: number | null;
   }): Observable<Reporte> {
     return this.http.put<Reporte>(`${this.baseUrl}/${id}`, datos);
   }

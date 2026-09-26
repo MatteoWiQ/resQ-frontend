@@ -132,6 +132,12 @@ label {
   color: #444;
 }
 
+.etiqueta-campo {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
 input,
 textarea {
   width: 100%;

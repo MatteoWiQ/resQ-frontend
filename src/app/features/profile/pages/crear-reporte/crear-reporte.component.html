@@ -68,6 +68,12 @@
           [placeholder]="'reportes.nuevo.fotoUrlPlaceholder' | translate"
         />
 
+        <span class="etiqueta-campo">{{ 'reportes.nuevo.ubicacion' | translate }}</span>
+        <app-selector-ubicacion
+          [(latitud)]="form.latitud"
+          [(longitud)]="form.longitud"
+        />
+
         <div class="acciones">
           <button type="button" class="btn-volver" (click)="atras()">{{ 'reportes.nuevo.atras' | translate }}</button>
           <button type="submit" class="btn-accion" [disabled]="enviando()">

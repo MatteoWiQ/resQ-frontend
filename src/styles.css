@@ -4,6 +4,43 @@
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+/* --------------------------------------------------------------------------
+   Marcadores del mapa
+   -------------------------------------------------------------------------- */
+.resq-marker {
+  background: transparent;
+  border: none;
+}
+
+.resq-marker__pin {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 10px rgba(88, 19, 37, 0.35);
+  transition: transform 0.2s ease;
+}
+
+.resq-marker:hover .resq-marker__pin,
+.resq-marker:focus-visible .resq-marker__pin {
+  transform: rotate(-45deg) scale(1.12);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* --------------------------------------------------------------------------
    Tokens de marca

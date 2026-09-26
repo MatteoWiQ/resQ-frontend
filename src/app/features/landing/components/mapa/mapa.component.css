@@ -1,0 +1,316 @@
+.mapa-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mapa-page.page-shell {
+  margin-top: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   Encabezado
+   -------------------------------------------------------------------------- */
+.mapa-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-content .eyebrow {
+  margin-bottom: 8px;
+}
+
+.header-content h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 0;
+}
+
+.header-stats {
+  display: flex;
+  gap: 28px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* --------------------------------------------------------------------------
+   Leyenda de estados
+   -------------------------------------------------------------------------- */
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  align-self: flex-start;
+}
+
+.leyenda__item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.leyenda__punto {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--panel);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+/* --------------------------------------------------------------------------
+   Mapa
+   -------------------------------------------------------------------------- */
+.mapa-layout {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 24px var(--shadow);
+}
+
+.mapa-container {
+  height: clamp(420px, 60vh, 640px);
+  width: 100%;
+}
+
+.mapa-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(253, 244, 234, 0.94);
+}
+
+.mapa-overlay p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 34ch;
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: mapa-spin 0.9s linear infinite;
+}
+
+@keyframes mapa-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Detalle del caso
+   -------------------------------------------------------------------------- */
+.panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(88, 19, 37, 0.32);
+  z-index: 900;
+}
+
+.detalle-panel {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: min(400px, 100vw - 32px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border-radius: 20px 0 0 20px;
+  box-shadow: -12px 0 32px var(--shadow);
+  z-index: 901;
+  animation: detalle-entra 0.25s ease;
+}
+
+@keyframes detalle-entra {
+  from {
+    opacity: 0;
+    transform: translate(24px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+.detalle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--panel-soft);
+  border-bottom: 1px solid var(--border);
+  border-radius: 20px 0 0 0;
+}
+
+.detalle-header h3 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.detalle-cerrar {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.detalle-cerrar:hover {
+  color: var(--primary);
+  background: var(--panel-soft);
+}
+
+.detalle-content {
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.detalle-foto {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+.detalle-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+}
+
+.detalle-fila dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.detalle-fila dd {
+  margin: 0;
+  color: var(--text);
+}
+
+.detalle-descripcion {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.detalle-coords {
+  font-family: ui-monospace, 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+.detalle-acciones {
+  padding: 14px 18px;
+  background: var(--panel-soft);
+  border-top: 1px solid var(--border);
+}
+
+.detalle-acciones .primary-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .mapa-header {
+    align-items: flex-start;
+  }
+
+  .header-stats {
+    gap: 20px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .detalle-panel {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 72vh;
+    border-radius: 20px 20px 0 0;
+    transform: none;
+    animation: detalle-entra-movil 0.25s ease;
+  }
+
+  @keyframes detalle-entra-movil {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .detalle-header {
+    border-radius: 20px 20px 0 0;
+  }
+}

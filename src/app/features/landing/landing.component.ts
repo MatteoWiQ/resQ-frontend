@@ -5,6 +5,7 @@ import { LandingHero } from './components/hero/hero.component';
 import { LandingSteps } from './components/steps/steps.component';
 import { LandingCasesSection } from './components/cases-section/cases-section.component';
 import { LandingHelpSection } from './components/help-section/help-section.component';
+import { MapaComponent } from './components/mapa/mapa.component';
 
 @Component({
   selector: 'app-landing',
@@ -13,7 +14,8 @@ import { LandingHelpSection } from './components/help-section/help-section.compo
     LandingHero,
     LandingSteps,
     LandingCasesSection,
-    LandingHelpSection
+    LandingHelpSection,
+    MapaComponent
   ],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
