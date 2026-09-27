@@ -27,4 +27,14 @@ export class UsuarioService {
   }): Observable<Usuario> {
     return this.http.put<Usuario>(`${this.baseUrl}/${id}`, datos);
   }
+
+  // HU-17: solicitar convertirse en voluntario (primera vez)
+  registrarComoVoluntario(id: number, tiposAyuda: string[]): Observable<Usuario> {
+    return this.http.patch<Usuario>(`${this.baseUrl}/${id}/voluntario`, { tiposAyuda });
+  }
+
+  // HU-17: editar qué tipos de ayuda ofrece un voluntario existente
+  actualizarTiposAyuda(id: number, tiposAyuda: string[]): Observable<Usuario> {
+    return this.http.patch<Usuario>(`${this.baseUrl}/${id}/voluntario/tipos-ayuda`, { tiposAyuda });
+  }
 }

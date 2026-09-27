@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -10,8 +11,10 @@ import { ReporteService } from '../../../../core/services/reporte.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
+import { TranslationKey } from '../../../../core/i18n/strings';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
+import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model';
 
 @Component({
   selector: 'app-perfil',
@@ -33,11 +36,18 @@ export class PerfilComponent implements OnInit {
   readonly error = signal('');
   readonly reporteSeleccionado = signal<Reporte | null>(null);
 
-  // ============ HU13: actualizar estado ============
+  // ============ HU-13: actualizar estado ============
   readonly estadosValidos = ['PENDIENTE', 'EN_PROCESO', 'RESUELTO', 'CANCELADO'];
   readonly nuevoEstado = signal<string>('');
   readonly guardandoEstado = signal(false);
   readonly mensajeEstado = signal('');
+
+  // ============ HU-17: registrarse / editar como voluntario ============
+  readonly tiposAyudaDisponibles = TIPOS_AYUDA_VALORES;
+  readonly mostrarModalVoluntario = signal(false);
+  readonly tiposSeleccionados = signal<string[]>([]);
+  readonly enviandoVoluntario = signal(false);
+  readonly errorVoluntario = signal('');
 
   ngOnInit(): void {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
@@ -101,7 +111,7 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  // ============ HU13: solo voluntarios y admins pueden cambiar el estado ============
+  // ============ HU-13: solo voluntarios y admins pueden cambiar el estado ============
   puedeCambiarEstado(): boolean {
     const rol = this.usuario()?.rol;
     return rol === 'VOLUNTARIO' || rol === 'ADMIN';
@@ -134,12 +144,10 @@ export class PerfilComponent implements OnInit {
           this.guardandoEstado.set(false);
           this.mensajeEstado.set(this.translate.t('perfil.estado.ok'));
 
-          // Reflejar el cambio en la lista de reportes
           this.reportes.update((lista) =>
             lista.map((r) => (r.idReporte === actualizado.idReporte ? actualizado : r))
           );
 
-          // Reflejar el cambio en el modal abierto
           this.reporteSeleccionado.set(actualizado);
         },
         error: (err) => {
@@ -151,5 +159,77 @@ export class PerfilComponent implements OnInit {
           this.mensajeEstado.set(this.translate.t('perfil.estado.errorBase') + detalle);
         },
       });
+  }
+
+  // ============ HU-17 ============
+
+  esVoluntario(usuario: Usuario): boolean {
+    return usuario.rol?.toUpperCase() === 'VOLUNTARIO';
+  }
+
+  etiquetaTipoAyuda(valor: string): string {
+    return this.translate.t(('voluntario.tipos.' + valor) as TranslationKey);
+  }
+
+  tituloModalVoluntario(): string {
+    const usuario = this.usuario();
+    const key =
+      usuario && this.esVoluntario(usuario)
+        ? 'voluntario.modalTituloEditar'
+        : 'voluntario.modalTituloRegistro';
+    return this.translate.t(key as TranslationKey);
+  }
+
+  abrirModalVoluntario(): void {
+    const usuario = this.usuario();
+    this.tiposSeleccionados.set(
+      usuario && this.esVoluntario(usuario) ? [...usuario.tiposAyuda] : []
+    );
+    this.errorVoluntario.set('');
+    this.mostrarModalVoluntario.set(true);
+  }
+
+  cerrarModalVoluntario(): void {
+    this.mostrarModalVoluntario.set(false);
+  }
+
+  toggleTipoAyuda(valor: string): void {
+    const actuales = this.tiposSeleccionados();
+    this.tiposSeleccionados.set(
+      actuales.includes(valor) ? actuales.filter((v) => v !== valor) : [...actuales, valor]
+    );
+  }
+
+  confirmarVoluntario(): void {
+    const usuario = this.usuario();
+    if (!usuario) {
+      return;
+    }
+
+    if (this.tiposSeleccionados().length === 0) {
+      this.errorVoluntario.set(this.translate.t('voluntario.errorSeleccion'));
+      return;
+    }
+
+    this.enviandoVoluntario.set(true);
+    this.errorVoluntario.set('');
+
+    const peticion = this.esVoluntario(usuario)
+      ? this.usuarioService.actualizarTiposAyuda(usuario.idUsuario, this.tiposSeleccionados())
+      : this.usuarioService.registrarComoVoluntario(usuario.idUsuario, this.tiposSeleccionados());
+
+    peticion.subscribe({
+      next: (usuarioActualizado) => {
+        this.usuario.set(usuarioActualizado);
+        this.enviandoVoluntario.set(false);
+        this.cerrarModalVoluntario();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.enviandoVoluntario.set(false);
+        this.errorVoluntario.set(
+          error.error?.message ?? this.translate.t('voluntario.errorGenerico')
+        );
+      },
+    });
   }
 }
