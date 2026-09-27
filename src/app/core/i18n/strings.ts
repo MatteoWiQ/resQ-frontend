@@ -223,6 +223,23 @@ export const es = {
       errorCrear: 'No se pudo crear el reporte. Inténtalo de nuevo.',
     },
   },
+  voluntario: {
+    boton: 'Quiero ser voluntario',
+    botonEditar: 'Editar tipos de ayuda',
+    modalTituloRegistro: 'Quiero ser voluntario',
+    modalTituloEditar: 'Editar tipos de ayuda',
+    modalSubtitulo: 'Selecciona el tipo de ayuda que puedes ofrecer:',
+    confirmar: 'Confirmar',
+    enviando: 'Enviando...',
+    errorSeleccion: 'Selecciona al menos un tipo de ayuda.',
+    errorGenerico: 'Ocurrió un error. Inténtalo de nuevo.',
+    tipos: {
+      TRANSPORTE: 'Transporte',
+      HOGAR_TEMPORAL: 'Hogar temporal',
+      ALIMENTO: 'Alimento',
+      RESCATE: 'Rescate',
+    },
+  },
   admin: {
     titulo: 'Panel administrativo',
     subtitle: 'Gestiona los reportes y usuarios de ResQ.',
