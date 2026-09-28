@@ -223,7 +223,23 @@ export const es = {
       fotoUrlPlaceholder: 'https://...',
       ubicacion: 'Ubicación (opcional)',
       ubicacionAyuda: 'Haz clic en el mapa para marcar dónde se encuentra el animal.',
+      ubicacionActual: 'Usar mi ubicación actual',
+      ubicacionObteniendo: 'Obteniendo tu ubicación...',
       ubicacionQuitar: 'Quitar ubicación',
+      ubicacionError: {
+        NO_SOPORTADA:
+          'Este dispositivo no permite obtener la ubicación. Marca el punto en el mapa.',
+        CONTEXTO_SEGURO:
+          'Para obtener tu ubicación hace falta una conexión segura (https). Marca el punto en el mapa.',
+        PERMISO_DENEGADO:
+          'No diste permiso para usar tu ubicación. Marca el punto en el mapa.',
+        POSICION_NO_DISPONIBLE:
+          'No se pudo determinar tu ubicación. Inténtalo de nuevo o marca el punto en el mapa.',
+        TIEMPO_AGOTADO:
+          'Tu ubicación tardó demasiado en obtenerse. Inténtalo de nuevo o marca el punto en el mapa.',
+        ERROR_DESCONOCIDO:
+          'No se pudo obtener tu ubicación. Inténtalo de nuevo o marca el punto en el mapa.',
+      },
       atras: 'Atrás',
       creando: 'Creando...',
       crear: 'Crear reporte',
