@@ -6,6 +6,11 @@ import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
+import {
+  ClaveFiltro,
+  FILTROS_REPORTE,
+  filtroPorClave,
+} from '../../../../shared/constants/filtros-reporte';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
 
@@ -24,6 +29,10 @@ export class PanelAdminComponent implements OnInit {
   usuarios = signal<Usuario[]>([]);
   reportes = signal<Reporte[]>([]);
   mensaje = signal('');
+
+  // ============ HU15: filtrar reportes por estado ============
+  readonly filtros = FILTROS_REPORTE;
+  readonly filtroReporte = signal<ClaveFiltro>('TODOS');
 
   editandoUsuarioId = signal<number | null>(null);
   editandoReporteId = signal<number | null>(null);
@@ -53,11 +62,24 @@ export class PanelAdminComponent implements OnInit {
   }
 
   cargarReportes(): void {
-    this.reporteService.obtenerTodos().subscribe({
+    const { estados } = filtroPorClave(this.filtroReporte());
+
+    this.reporteService.obtenerTodos(estados).subscribe({
       next: (data) => this.reportes.set(data),
       error: (err) =>
         this.mensaje.set(this.translate.t('admin.errorCargarReportes', { detalle: err.message })),
     });
+  }
+
+  // ============ HU15: cambiar el filtro recarga la tabla ============
+  filtrarReportes(clave: ClaveFiltro): void {
+    this.filtroReporte.set(clave);
+    this.cancelarEdicion();
+    this.cargarReportes();
+  }
+
+  etiquetaFiltro(clave: ClaveFiltro): string {
+    return this.translate.t(`reportes.filtros.${clave}`);
   }
 
   editarUsuario(u: Usuario): void {

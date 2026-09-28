@@ -30,6 +30,8 @@ export const es = {
       errorCargar: 'Error al cargar los casos: {{detalle}}',
       reintentar: 'Reintentar',
       sinCasos: 'No hay casos con ubicación registrada todavía.',
+      sinCasosFiltrado: 'No hay casos con esos estados.',
+      filtrandoPor: 'Mostrando:',
       detalleCaso: 'Detalle del caso',
       tipoCaso: 'Tipo de caso',
       estado: 'Estado',
@@ -199,6 +201,14 @@ export const es = {
     },
   },
   reportes: {
+    filtros: {
+      titulo: 'Filtrar casos por estado',
+      TODOS: 'Todos',
+      URGENTES: 'Urgentes',
+      ACTIVOS: 'Activos',
+      RESUELTOS: 'Resueltos',
+      CANCELADOS: 'Cancelados',
+    },
     nuevo: {
       titulo: 'Crear nuevo reporte',
       subtitle: 'Ayúdanos a registrar el caso de una mascota.',
@@ -245,6 +255,8 @@ export const es = {
     subtitle: 'Gestiona los reportes y usuarios de ResQ.',
     usuarios: 'Usuarios',
     reportes: 'Reportes',
+    filtrarPor: 'Filtrar por estado:',
+    casosMostrados: 'Casos mostrados',
     id: 'ID',
     nombre: 'Nombre',
     email: 'Email',

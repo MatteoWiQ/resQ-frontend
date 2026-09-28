@@ -1,4 +1,4 @@
-<div class="mapa-page" [class.page-shell]="paginaCompleta()">
+﻿<div class="mapa-page" [class.page-shell]="paginaCompleta()">
   @if (paginaCompleta()) {
     <app-back-button ruta="/" />
   }
@@ -19,8 +19,26 @@
         <span class="stat-value">{{ reportes().length }}</span>
         <span class="stat-label">{{ 'landing.mapa.totalCasos' | translate }}</span>
       </div>
+      <p class="header-filtro">
+        {{ 'landing.mapa.filtrandoPor' | translate }}
+        <strong>{{ etiquetaFiltroActual() }}</strong>
+      </p>
     </div>
   </header>
+
+  <nav class="filtros" [attr.aria-label]="'reportes.filtros.titulo' | translate">
+    @for (filtro of filtros; track filtro.clave) {
+      <button
+        type="button"
+        class="filtros__btn"
+        [class.filtros__btn--activo]="estaActivo(filtro.clave)"
+        [attr.aria-pressed]="estaActivo(filtro.clave)"
+        (click)="seleccionarFiltro(filtro.clave)"
+      >
+        {{ etiquetaFiltro(filtro.clave) }}
+      </button>
+    }
+  </nav>
 
   <ul class="leyenda" [attr.aria-label]="'landing.mapa.leyenda' | translate">
     @for (estado of estados; track estado) {
@@ -48,7 +66,14 @@
       </div>
     } @else if (reportesConUbicacion().length === 0) {
       <div class="mapa-overlay">
-        <p>{{ 'landing.mapa.sinCasos' | translate }}</p>
+        @if (filtroActivo() === 'TODOS') {
+          <p>{{ 'landing.mapa.sinCasos' | translate }}</p>
+        } @else {
+          <p>{{ 'landing.mapa.sinCasosFiltrado' | translate }}</p>
+          <button type="button" class="primary-btn" (click)="seleccionarFiltro('TODOS')">
+            {{ etiquetaFiltro('TODOS') }}
+          </button>
+        }
       </div>
     }
   </div>

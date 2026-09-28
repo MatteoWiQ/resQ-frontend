@@ -1,4 +1,4 @@
-<section class="admin-page">
+﻿<section class="admin-page">
   <app-back-button ruta="/" />
 
   <div class="admin-card">
@@ -63,6 +63,26 @@
     </div>
 
     <h2 class="seccion">{{ 'admin.reportes' | translate }}</h2>
+    <div class="filtro-reportes">
+      <label class="filtro-reportes__label" for="filtro-estado">
+        {{ 'admin.filtrarPor' | translate }}
+      </label>
+      <select
+        id="filtro-estado"
+        class="filtro-reportes__select"
+        [value]="filtroReporte()"
+        (change)="filtrarReportes($any($event.target).value)"
+      >
+        @for (filtro of filtros; track filtro.clave) {
+          <option [value]="filtro.clave">
+            {{ etiquetaFiltro(filtro.clave) }}
+          </option>
+        }
+      </select>
+      <span class="filtro-reportes__conteo">
+        {{ 'admin.casosMostrados' | translate }}: {{ reportes().length }}
+      </span>
+    </div>
     <div class="tabla-wrapper">
       <table class="tabla">
         <thead>
