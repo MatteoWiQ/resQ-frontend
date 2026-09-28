@@ -100,6 +100,43 @@
   border-bottom: none;
 }
 
+/* ---------- HU15: filtro por estado ---------- */
+
+.filtro-reportes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.filtro-reportes__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.filtro-reportes__select {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.filtro-reportes__select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.filtro-reportes__conteo {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
 .tabla input,
 .tabla select {
   width: 100%;

@@ -18,6 +18,11 @@ import { TranslateService } from '../../../../core/i18n/translate.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { CENTRO_CIUDAD, ESTADOS, ZOOM_CIUDAD, colorEstado } from '../../../../shared/constants/geo';
+import {
+  ClaveFiltro,
+  FILTROS_REPORTE,
+  filtroPorClave,
+} from '../../../../shared/constants/filtros-reporte';
 import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model';
 
 @Component({
@@ -44,6 +49,13 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   );
   readonly estados = ESTADOS;
 
+  // ============ HU15: filtrar casos por estado ============
+  readonly filtros = FILTROS_REPORTE;
+  readonly filtroActivo = signal<ClaveFiltro>('TODOS');
+  readonly etiquetaFiltroActual = computed(
+    () => this.translate.t(`reportes.filtros.${this.filtroActivo()}`)
+  );
+
   private mapa?: L.Map;
   private marcadores: L.Marker[] = [];
 
@@ -63,7 +75,9 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cargando.set(true);
     this.error.set(null);
 
-    this.reporteService.obtenerTodos().subscribe({
+    const { estados } = filtroPorClave(this.filtroActivo());
+
+    this.reporteService.obtenerTodos(estados).subscribe({
       next: (data) => {
         this.reportes.set(data);
         this.cargando.set(false);
@@ -74,6 +88,21 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cargando.set(false);
       },
     });
+  }
+
+  // ============ HU15: cambiar el filtro recarga desde el backend ============
+  seleccionarFiltro(clave: ClaveFiltro): void {
+    if (this.filtroActivo() === clave) {
+      return;
+    }
+
+    this.filtroActivo.set(clave);
+    this.reporteSeleccionado.set(null);
+    this.cargarReportes();
+  }
+
+  estaActivo(clave: ClaveFiltro): boolean {
+    return this.filtroActivo() === clave;
   }
 
   seleccionarReporte(reporte: Reporte): void {
@@ -92,6 +121,10 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   etiquetaEstado(estado: EstadoReporte): string {
     return this.translate.t(`landing.mapa.estados.${estado}`);
+  }
+
+  etiquetaFiltro(clave: ClaveFiltro): string {
+    return this.translate.t(`reportes.filtros.${clave}`);
   }
 
   private inicializarMapa(): void {
