@@ -6,12 +6,19 @@ import {
   ViewChild,
   inject,
   model,
+  signal,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import * as L from 'leaflet';
+import { Subscription } from 'rxjs';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../core/i18n/translate.service';
+import {
+  ErrorGeolocalizacion,
+  GeolocalizacionService,
+  MotivoFallaGeolocalizacion,
+} from '../../../core/services/geolocalizacion.service';
 import { CENTRO_CIUDAD, ZOOM_CIUDAD } from '../../constants/geo';
 
 @Component({
@@ -23,13 +30,17 @@ import { CENTRO_CIUDAD, ZOOM_CIUDAD } from '../../constants/geo';
 export class SelectorUbicacionComponent implements AfterViewInit, OnDestroy {
   readonly latitud = model<number | null>(null);
   readonly longitud = model<number | null>(null);
+  readonly obteniendo = signal(false);
+  readonly error = signal('');
 
   @ViewChild('mapa') private mapaRef!: ElementRef<HTMLDivElement>;
 
   private readonly translate = inject(TranslateService);
+  private readonly geolocalizacion = inject(GeolocalizacionService);
 
   private mapa?: L.Map;
   private marcador?: L.Marker;
+  private solicitud?: Subscription;
 
   ngAfterViewInit(): void {
     this.mapa = L.map(this.mapaRef.nativeElement, {
@@ -55,6 +66,7 @@ export class SelectorUbicacionComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.solicitud?.unsubscribe();
     this.mapa?.remove();
   }
 
@@ -63,8 +75,33 @@ export class SelectorUbicacionComponent implements AfterViewInit, OnDestroy {
       this.mapa?.removeLayer(this.marcador);
       this.marcador = undefined;
     }
+    this.error.set('');
     this.latitud.set(null);
     this.longitud.set(null);
+  }
+
+  usarMiUbicacion(): void {
+    this.solicitud?.unsubscribe();
+    this.error.set('');
+    this.obteniendo.set(true);
+
+    this.solicitud = this.geolocalizacion.obtenerPosicionActual().subscribe({
+      next: (posicion) => {
+        this.obteniendo.set(false);
+        this.colocarMarcador(posicion.latitud, posicion.longitud);
+      },
+      error: (fallo) => {
+        this.obteniendo.set(false);
+        this.error.set(this.mensajeDeFalla(fallo));
+      },
+    });
+  }
+
+  mensajeDeFalla(fallo: unknown): string {
+    const motivo: MotivoFallaGeolocalizacion =
+      fallo instanceof ErrorGeolocalizacion ? fallo.motivo : 'ERROR_DESCONOCIDO';
+
+    return this.translate.t(`reportes.nuevo.ubicacionError.${motivo}`);
   }
 
   private colocarMarcador(lat: number, lng: number, recentrar = true): void {

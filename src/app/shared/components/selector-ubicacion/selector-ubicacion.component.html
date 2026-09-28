@@ -1,6 +1,25 @@
 <div class="selector">
   <div class="selector__mapa" #mapa></div>
 
+  <div class="selector__acciones">
+    <button
+      type="button"
+      class="selector__mi-ubicacion"
+      [disabled]="obteniendo()"
+      (click)="usarMiUbicacion()"
+    >
+      {{
+        obteniendo()
+          ? ('reportes.nuevo.ubicacionObteniendo' | translate)
+          : ('reportes.nuevo.ubicacionActual' | translate)
+      }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="selector__error" role="alert">{{ error() }}</p>
+  }
+
   <div class="selector__pie">
     <p class="selector__ayuda">{{ 'reportes.nuevo.ubicacionAyuda' | translate }}</p>
 
