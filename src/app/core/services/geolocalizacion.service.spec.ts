@@ -99,15 +99,17 @@ describe('GeolocalizacionService: ubicacion actual del dispositivo (HU-16)', () 
     expect(recibida).toEqual({ latitud: -17.389512, longitud: -66.156799 });
   });
 
-  it('debe pedir la posicion con maxima precision y sin cache', () => {
+  it('debe pedir la posicion rapido y aceptando una cache reciente', () => {
     const registro = instalarGeolocalizacion((exito) => exito(posicion(0, 0)));
 
     servicio.obtenerPosicionActual().subscribe();
 
+    // Sin cache aceptada ni margen de red, un escritorio sin GPS agota el
+    // timeout antes de que el proveedor de red responda.
     expect(registro.opciones[0]).toEqual({
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0,
+      enableHighAccuracy: false,
+      timeout: 20000,
+      maximumAge: 300000,
     });
   });
 

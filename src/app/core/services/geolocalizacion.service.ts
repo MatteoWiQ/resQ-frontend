@@ -3,6 +3,28 @@ import { Observable, throwError } from 'rxjs';
 
 const PRECISION_MAXIMA = 6;
 
+/**
+ * false a proposito. Pedir precisión alta empuja al proveedor de red, que es el
+ * camino lento. Para ordenar casos por kilometros una precisión de cientos de
+ * metros no aporta nada, asi que se prefiere la respuesta rapida.
+ */
+const EXIGIR_PRECISION = false;
+
+/**
+ * Margen para un escaneo de red lento, para cuando todavia no hay nada en cache.
+ */
+const TIEMPO_MAXIMO_MS = 20000;
+
+/**
+ * En escritorio no hay GPS: Chromium pide la posicion a un proveedor de red y
+ * hace backoff cuando la maquina no se mueve (10 s, 2 min, 10 min). Con
+ * maximumAge en 0 le prohibimos reusar la posicion ya conocida, asi que exigia
+ * una estimacion nueva que puede tardar minutos mientras el timeout cortaba
+ * antes. Aceptar una cache de hasta 5 minutos es lo que hace que responde de
+ * inmediato; para este caso una posicion de hace un rato sirve igual.
+ */
+const EDAD_MAXIMA_CACHE_MS = 5 * 60 * 1000;
+
 const MOTIVO_POR_CODIGO: Record<number, MotivoFallaGeolocalizacion> = {
   1: 'PERMISO_DENEGADO',
   2: 'POSICION_NO_DISPONIBLE',
@@ -39,9 +61,9 @@ function redondear(coords: GeolocationCoordinates): PosicionGeografica {
 @Injectable({ providedIn: 'root' })
 export class GeolocalizacionService {
   private readonly opciones: PositionOptions = {
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 0,
+    enableHighAccuracy: EXIGIR_PRECISION,
+    timeout: TIEMPO_MAXIMO_MS,
+    maximumAge: EDAD_MAXIMA_CACHE_MS,
   };
 
   obtenerPosicionActual(): Observable<PosicionGeografica> {
