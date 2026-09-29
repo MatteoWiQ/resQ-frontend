@@ -15,19 +15,9 @@ import * as L from 'leaflet';
 
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
-import {
-  ErrorGeolocalizacion,
-  GeolocalizacionService,
-} from '../../../../core/services/geolocalizacion.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
-import {
-  CENTRO_CIUDAD,
-  ESTADOS,
-  Punto,
-  ZOOM_CIUDAD,
-  colorEstado,
-} from '../../../../shared/constants/geo';
+import { CENTRO_CIUDAD, ESTADOS, Punto, ZOOM_CIUDAD, colorEstado } from '../../../../shared/constants/geo';
 import {
   ClaveFiltro,
   FILTROS_REPORTE,
@@ -35,7 +25,6 @@ import {
 } from '../../../../shared/constants/filtros-reporte';
 import {
   ClaveRadio,
-  RADIOS_CERCANIA,
   RADIO_TODOS,
   ReporteCercano,
   dentroDelRadio,
@@ -44,10 +33,12 @@ import {
   reportesConDistancia,
 } from '../../../../shared/constants/cercania';
 import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model';
+import { Traducir, formatearDistancia } from '../../../../shared/utils/distancia';
+import { MapaCercaniaComponent } from './mapa-cercania.component';
 
 @Component({
   selector: 'app-mapa',
-  imports: [CommonModule, TranslatePipe, BackButtonComponent],
+  imports: [CommonModule, TranslatePipe, BackButtonComponent, MapaCercaniaComponent],
   templateUrl: './mapa.component.html',
   styleUrl: './mapa.component.css',
 })
@@ -56,7 +47,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly reporteService = inject(ReporteService);
   private readonly translate = inject(TranslateService);
-  private readonly geolocalizacion = inject(GeolocalizacionService);
+  private readonly traducir: Traducir = (clave, params) => this.translate.t(clave, params);
 
   @ViewChild('mapContainer') private mapContainer!: ElementRef<HTMLDivElement>;
 
@@ -78,11 +69,10 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   );
 
   // ============ HU-41: buscar casos cercanos a mi ubicación ============
-  readonly radios = RADIOS_CERCANIA;
+  // El panel vive en MapaCercaniaComponent; aca solo se conserva el estado que
+  // el mapa necesita para pintar los marcadores y encuadrar el mapa.
   readonly radioActivo = signal<ClaveRadio>('SIN_LIMITE');
   readonly origen = signal<Punto | null>(null);
-  readonly obteniendoUbicacion = signal(false);
-  readonly errorUbicacion = signal<string | null>(null);
 
   readonly buscandoPorCercania = computed(() => this.origen() !== null);
 
@@ -176,49 +166,23 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.translate.t(`reportes.filtros.${clave}`);
   }
 
-  // ============ HU-41: ubicacion actual, radio y alcance ============
+  // ============ HU-41: estado que el mapa comparte con el panel de cercanía ============
 
-  usarMiUbicacion(): void {
-    if (this.obteniendoUbicacion()) {
-      return;
-    }
-
-    this.obteniendoUbicacion.set(true);
-    this.errorUbicacion.set(null);
-
-    this.geolocalizacion.obtenerPosicionActual().subscribe({
-      next: (posicion) => {
-        this.origen.set(posicion);
-        this.obteniendoUbicacion.set(false);
-        this.centrarEnOrigen();
-        this.pintarMarcadores();
-      },
-      error: (fallo: unknown) => {
-        this.obteniendoUbicacion.set(false);
-        this.errorUbicacion.set(this.mensajeDeFallaDeUbicacion(fallo));
-      },
-    });
+  aplicarOrigen(origen: Punto | null): void {
+    this.origen.set(origen);
+    this.reporteSeleccionado.set(null);
+    this.centrarEnOrigen();
+    this.pintarMarcadores();
   }
 
-  seleccionarRadio(clave: ClaveRadio): void {
-    if (this.radioActivo() === clave) {
-      return;
-    }
-
+  aplicarRadio(clave: ClaveRadio): void {
     this.radioActivo.set(clave);
     this.pintarMarcadores();
   }
 
   limpiarCercania(): void {
-    this.origen.set(null);
     this.radioActivo.set(RADIO_TODOS.clave);
-    this.errorUbicacion.set(null);
-    this.reporteSeleccionado.set(null);
-    this.pintarMarcadores();
-  }
-
-  radioActivoEs(clave: ClaveRadio): boolean {
-    return this.radioActivo() === clave;
+    this.aplicarOrigen(null);
   }
 
   etiquetaRadio(clave: ClaveRadio): string {
@@ -234,25 +198,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   formatoDistancia(distanciaKm: number | null): string {
-    if (distanciaKm === null) {
-      return this.translate.t('landing.mapa.cercania.distanciaDesconocida');
-    }
-
-    if (distanciaKm < 1) {
-      return this.translate.t('landing.mapa.cercania.metros', {
-        metros: Math.round(distanciaKm * 1000),
-      });
-    }
-
-    return this.translate.t('landing.mapa.cercania.kilometros', {
-      km: distanciaKm.toFixed(1),
-    });
-  }
-
-  private mensajeDeFallaDeUbicacion(fallo: unknown): string {
-    const motivo =
-      fallo instanceof ErrorGeolocalizacion ? fallo.motivo : ('ERROR_DESCONOCIDO' as const);
-    return this.translate.t(`landing.mapa.cercania.error.${motivo}`);
+    return formatearDistancia(distanciaKm, this.traducir);
   }
 
   private centrarEnOrigen(): void {

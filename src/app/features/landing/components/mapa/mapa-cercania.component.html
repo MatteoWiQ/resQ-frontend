@@ -1,0 +1,91 @@
+<section class="cercania" [attr.aria-label]="'landing.mapa.cercania.titulo' | translate">
+  <div class="cercania__cabecera">
+    <div class="cercania__texto">
+      <h3 class="cercania__titulo">{{ 'landing.mapa.cercania.titulo' | translate }}</h3>
+      <p class="cercania__ayuda">
+        {{
+          (buscando()
+            ? 'landing.mapa.cercania.ayuda'
+            : 'landing.mapa.cercania.requiereUbicacion'
+          ) | translate
+        }}
+      </p>
+    </div>
+
+    @if (!buscando()) {
+      <button
+        type="button"
+        class="primary-btn cercania__accion"
+        [disabled]="obteniendo()"
+        (click)="usarMiUbicacion()"
+      >
+        {{
+          (obteniendo()
+            ? 'landing.mapa.cercania.obteniendo'
+            : 'landing.mapa.cercania.usarMiUbicacion'
+          ) | translate
+        }}
+      </button>
+    } @else {
+      <button type="button" class="cercania__limpiar" (click)="pedirLimpiar()">
+        {{ 'landing.mapa.cercania.limpiar' | translate }}
+      </button>
+    }
+  </div>
+
+  @if (error(); as mensajeError) {
+    <p class="cercania__error" role="alert">{{ mensajeError }}</p>
+  }
+
+  @if (buscando()) {
+    <div class="cercania__alcance">
+      <span class="cercania__alcance-titulo" id="cercania-alcance">
+        {{ 'landing.mapa.cercania.alcance' | translate }}
+      </span>
+      <div class="cercania__radios" role="group" aria-labelledby="cercania-alcance">
+        @for (radio of radios; track radio.clave) {
+          <button
+            type="button"
+            class="cercania__radio"
+            [class.cercania__radio--activo]="radioActivoEs(radio.clave)"
+            [attr.aria-pressed]="radioActivoEs(radio.clave)"
+            (click)="seleccionarRadio(radio.clave)"
+          >
+            {{ etiquetaRadio(radio.clave) }}
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (casos().length > 0) {
+      <p class="cercania__conteo">
+        {{ 'landing.mapa.cercania.enAlcance' | translate }}
+        <strong>{{ casos().length }}</strong>
+      </p>
+
+      <ol class="cercania__lista">
+        @for (caso of casos(); track caso.reporte.idReporte) {
+          <li class="cercania__item">
+            <button
+              type="button"
+              class="cercania__enlace"
+              (click)="reporteElegido.emit(caso.reporte)"
+            >
+              <span class="cercania__item-id">#{{ caso.reporte.idReporte }}</span>
+              <span class="cercania__item-estado">
+                <span
+                  class="cercania__punto"
+                  [style.background-color]="colorEstado(caso.reporte.estado)"
+                ></span>
+                {{ etiquetaEstado(caso.reporte.estado) }}
+              </span>
+              <span class="cercania__item-distancia">
+                {{ formatoDistancia(caso.distanciaKm) }}
+              </span>
+            </button>
+          </li>
+        }
+      </ol>
+    }
+  }
+</section>

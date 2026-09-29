@@ -9,6 +9,9 @@
 /* --------------------------------------------------------------------------
    Marcadores del mapa
    -------------------------------------------------------------------------- */
+/* Estas reglas son globales a proposito: Leaflet inyecta el DOM de cada
+   marcador por imperativa, asi que el HTML nunca recibe el atributo de
+   encapsulamiento y el CSS de un componente no lo alcanzaria. */
 .resq-marker {
   background: transparent;
   border: none;
@@ -28,6 +31,21 @@
 .resq-marker:hover .resq-marker__pin,
 .resq-marker:focus-visible .resq-marker__pin {
   transform: rotate(-45deg) scale(1.12);
+}
+
+.resq-marker--origen {
+  background: transparent;
+  border: none;
+}
+
+.resq-marker__origen {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1d4ed8;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.45);
 }
 
 .visually-hidden {
