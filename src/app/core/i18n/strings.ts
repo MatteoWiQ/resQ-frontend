@@ -42,6 +42,39 @@ export const es = {
       marcadorTexto: 'Reporte {{id}}, {{estado}}',
       cerrar: 'Cerrar',
       cerrarDetalle: 'Cerrar detalle del caso',
+      /* ---------- HU-41: buscar casos cercanos ---------- */
+      cercania: {
+        titulo: 'Casos cercanos a mi ubicación',
+        ayuda: 'Ordena los casos por distancia para saber a dónde acudir primero.',
+        requiereUbicacion:
+          'Indica tu ubicación para ordenar los casos por distancia y acotar la búsqueda.',
+        usarMiUbicacion: 'Usar mi ubicación actual',
+        obteniendo: 'Obteniendo tu ubicación...',
+        limpiar: 'Limpiar búsqueda',
+        ubicacionActual: 'Tú estás aquí',
+        sinCasosCercanos: 'No hay casos registrados dentro de este alcance.',
+        alcance: 'Alcance de la búsqueda',
+        enAlcance: 'Casos encontrados',
+        distancia: 'Distancia',
+        distanciaDesconocida: 'Distancia no disponible',
+        metros: 'a {{metros}} m',
+        kilometros: 'a {{km}} km',
+        radio: {
+          SIN_LIMITE: 'Sin límite',
+          KM_1: '1 km',
+          KM_5: '5 km',
+          KM_10: '10 km',
+        },
+        error: {
+          NO_SOPORTADA: 'Este dispositivo no permite obtener tu ubicación.',
+          CONTEXTO_SEGURO:
+            'Para usar tu ubicación hace falta una conexión segura (https).',
+          PERMISO_DENEGADO: 'No diste permiso para usar tu ubicación.',
+          POSICION_NO_DISPONIBLE: 'No se pudo determinar tu ubicación.',
+          TIEMPO_AGOTADO: 'Tu ubicación tardó demasiado en obtenerse.',
+          ERROR_DESCONOCIDO: 'No se pudo obtener tu ubicación.',
+        },
+      },
       estados: {
         PENDIENTE: 'Pendiente',
         EN_PROCESO: 'En proceso',

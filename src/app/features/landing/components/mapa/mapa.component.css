@@ -63,6 +63,228 @@
 }
 
 /* --------------------------------------------------------------------------
+   HU-41: buscar casos cercanos
+   -------------------------------------------------------------------------- */
+.cercania {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+}
+
+.cercania__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cercania__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cercania__titulo {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.98rem;
+  color: var(--text);
+}
+
+.cercania__ayuda {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  max-width: 52ch;
+}
+
+.cercania__accion {
+  flex: none;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.82rem;
+}
+
+.cercania__accion:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.cercania__limpiar {
+  flex: none;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-soft);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.cercania__limpiar:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.cercania__error {
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 0.79rem;
+}
+
+.cercania__alcance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cercania__alcance-titulo {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.cercania__radios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-soft);
+}
+
+.cercania__radio {
+  padding: 5px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cercania__radio:hover {
+  color: var(--primary);
+}
+
+.cercania__radio--activo,
+.cercania__radio--activo:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.cercania__radio:focus-visible,
+.cercania__limpiar:focus-visible,
+.cercania__enlace:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.cercania__conteo {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.cercania__conteo strong {
+  color: var(--primary);
+}
+
+.cercania__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.cercania__enlace {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-soft);
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.cercania__enlace:hover {
+  border-color: var(--primary);
+  background: var(--panel);
+}
+
+.cercania__item-id {
+  font-family: ui-monospace, 'Courier New', monospace;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.cercania__item-estado {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.cercania__item-distancia {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* Marcador de "tú estás aquí" */
+.resq-marker--origen {
+  background: transparent;
+  border: 0;
+}
+
+.resq-marker__origen {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1d4ed8;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.45);
+}
+
+@media (max-width: 768px) {
+  .cercania__enlace {
+    font-size: 0.78rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
    Leyenda de estados
    -------------------------------------------------------------------------- */
 .leyenda {
