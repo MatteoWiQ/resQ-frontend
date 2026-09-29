@@ -44,6 +44,10 @@ const SIN_UBICACION = reporte(5, { latitud: null, longitud: null });
 
 const TODOS_LOS_CASOS = [EN_EL_ORIGEN, A_550_M, A_4_KM, A_9_KM, SIN_UBICACION];
 
+/**
+ * Integracion del mapa con el panel de cercania: lo que el hijo ya no tiene que
+ * probar solo, porque necesita Leaflet, el reporte real y los marcadores pintados.
+ */
 describe('MapaComponent: buscar casos cercanos (HU-41)', () => {
   async function crearMapa(
     casos: Reporte[] = TODOS_LOS_CASOS,
@@ -66,8 +70,18 @@ describe('MapaComponent: buscar casos cercanos (HU-41)', () => {
     return fixture;
   }
 
-  function texto(compiled: HTMLElement, selector: string): string {
-    return compiled.querySelector(selector)?.textContent?.trim() ?? '';
+  function compiled(fixture: { nativeElement: HTMLElement }): HTMLElement {
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  function idsVisibles(fixture: { nativeElement: HTMLElement }): number[] {
+    return Array.from(
+      compiled(fixture).querySelectorAll<HTMLElement>('.cercania__item-id')
+    ).map((elemento) => Number(elemento.textContent?.replace('#', '')));
+  }
+
+  function marcadores(compiled: HTMLElement): NodeListOf<Element> {
+    return compiled.querySelectorAll('.leaflet-marker-icon');
   }
 
   function radios(compiled: HTMLElement): HTMLButtonElement[] {
@@ -82,38 +96,11 @@ describe('MapaComponent: buscar casos cercanos (HU-41)', () => {
     return encontrado;
   }
 
-  function idsVisibles(fixture: { nativeElement: HTMLElement }): number[] {
-    return Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('.cercania__item-id'),
-    ).map((elemento) => Number(elemento.textContent?.replace('#', '')));
-  }
-
-  async function buscarDesde(compiled: HTMLElement) {
-    (compiled.querySelector('.cercania__accion') as HTMLButtonElement).click();
+  async function buscarDesde(fixture: { nativeElement: HTMLElement; detectChanges: () => void }) {
+    (compiled(fixture).querySelector('.cercania__accion') as HTMLButtonElement).click();
     await Promise.resolve();
+    fixture.detectChanges();
   }
-
-  it('debe pedir la ubicacion solo cuando el usuario lo acepta', async () => {
-    let pedidos = 0;
-    await crearMapa(TODOS_LOS_CASOS, {
-      obtenerPosicionActual: () => {
-        pedidos += 1;
-        return of(ORIGEN);
-      },
-    });
-
-    expect(pedidos).toBe(0);
-  });
-
-  it('debe invitar a indicar la ubicacion antes de ordenar', async () => {
-    const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-
-    expect(texto(compiled, '.cercania__ayuda')).toContain('Indica tu ubicación');
-    expect(compiled.querySelector('.cercania__accion')).toBeTruthy();
-    expect(compiled.querySelector('.cercania__radios')).toBeNull();
-    expect(compiled.querySelector('.cercania__lista')).toBeNull();
-  });
 
   it('debe listar todos los casos con ubicacion mientras no haya origen', async () => {
     const fixture = await crearMapa();
@@ -126,9 +113,7 @@ describe('MapaComponent: buscar casos cercanos (HU-41)', () => {
 
   it('debe ordenar los casos por distancia al obtener la ubicacion', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
+    await buscarDesde(fixture);
 
     expect(fixture.componentInstance.origen()).toEqual(ORIGEN);
     expect(idsVisibles(fixture)).toEqual([1, 2, 3, 4]);
@@ -136,67 +121,40 @@ describe('MapaComponent: buscar casos cercanos (HU-41)', () => {
 
   it('debe mostrar la distancia de cada caso', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
+    await buscarDesde(fixture);
 
-    const distancias = Array.from(compiled.querySelectorAll('.cercania__item-distancia')).map(
-      (elemento) => elemento.textContent?.trim(),
-    );
+    const distancias = Array.from(
+      compiled(fixture).querySelectorAll('.cercania__item-distancia')
+    ).map((elemento) => elemento.textContent?.trim());
 
-    expect(distancias[0]).toBe('a 0 m');
-    expect(distancias[1]).toBe('a 550 m');
-    expect(distancias[2]).toBe('a 4.0 km');
-    expect(distancias[3]).toBe('a 9.0 km');
+    expect(distancias).toEqual(['a 0 m', 'a 550 m', 'a 4.0 km', 'a 9.0 km']);
   });
 
   it('debe marcar en el mapa donde esta el usuario', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
+    await buscarDesde(fixture);
 
-    expect(compiled.querySelector('.resq-marker__origen')).toBeTruthy();
-  });
-
-  it('debe ofrecer los cuatro alcances acordados', async () => {
-    const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
-
-    expect(radios(compiled).map((b) => b.textContent?.trim())).toEqual([
-      'Sin límite',
-      '1 km',
-      '5 km',
-      '10 km',
-    ]);
+    expect(compiled(fixture).querySelector('.resq-marker__origen')).toBeTruthy();
   });
 
   it('debe quedarse con los casos dentro de 1 km', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
-
-    radio(compiled, '1 km').click();
+    await buscarDesde(fixture);
+    radio(compiled(fixture), '1 km').click();
     fixture.detectChanges();
 
     expect(fixture.componentInstance.radioActivo()).toBe('KM_1');
     expect(idsVisibles(fixture)).toEqual([1, 2]);
-    expect(compiled.querySelectorAll('.resq-marker__pin').length).toBe(2);
-    expect(compiled.querySelectorAll('.resq-marker__origen').length).toBe(1);
+    expect(compiled(fixture).querySelectorAll('.resq-marker__pin').length).toBe(2);
+    expect(compiled(fixture).querySelectorAll('.resq-marker__origen').length).toBe(1);
   });
 
   it('debe ampliar el alcance a 5 km', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
+    await buscarDesde(fixture);
+    radio(compiled(fixture), '1 km').click();
     fixture.detectChanges();
-
-    radio(compiled, '1 km').click();
-    fixture.detectChanges();
-    radio(compiled, '5 km').click();
+    radio(compiled(fixture), '5 km').click();
     fixture.detectChanges();
 
     expect(idsVisibles(fixture)).toEqual([1, 2, 3]);
@@ -204,55 +162,33 @@ describe('MapaComponent: buscar casos cercanos (HU-41)', () => {
 
   it('debe devolver todos los casos al elegir sin limite', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
+    await buscarDesde(fixture);
+    radio(compiled(fixture), '1 km').click();
     fixture.detectChanges();
-
-    radio(compiled, '1 km').click();
-    fixture.detectChanges();
-    radio(compiled, 'Sin límite').click();
+    radio(compiled(fixture), 'Sin límite').click();
     fixture.detectChanges();
 
     expect(fixture.componentInstance.radioActivo()).toBe('SIN_LIMITE');
     expect(idsVisibles(fixture)).toEqual([1, 2, 3, 4]);
   });
 
-  it('debe marcar el alcance elegido', async () => {
-    const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
-
-    radio(compiled, '5 km').click();
-    fixture.detectChanges();
-
-    expect(radio(compiled, '5 km').classList).toContain('cercania__radio--activo');
-    expect(radio(compiled, '1 km').getAttribute('aria-pressed')).toBe('false');
-  });
-
   it('debe avisar cuando el alcance queda sin casos', async () => {
     const fixture = await crearMapa([reporte(9, alNorte(20))]);
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
+    await buscarDesde(fixture);
+    radio(compiled(fixture), '1 km').click();
     fixture.detectChanges();
 
-    radio(compiled, '1 km').click();
-    fixture.detectChanges();
-
-    expect(compiled.querySelector('.mapa-overlay')?.textContent).toContain(
+    expect(compiled(fixture).querySelector('.mapa-overlay')?.textContent).toContain(
       'No hay casos registrados dentro de este alcance',
     );
   });
 
   it('debe ofrecer volver a sin limite cuando el alcance queda vacio', async () => {
     const fixture = await crearMapa([reporte(9, alNorte(20))]);
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
+    await buscarDesde(fixture);
+    radio(compiled(fixture), '1 km').click();
     fixture.detectChanges();
-    radio(compiled, '1 km').click();
-    fixture.detectChanges();
-
-    (compiled.querySelector('.mapa-overlay .primary-btn') as HTMLButtonElement).click();
+    (compiled(fixture).querySelector('.mapa-overlay .primary-btn') as HTMLButtonElement).click();
     fixture.detectChanges();
 
     expect(idsVisibles(fixture)).toEqual([9]);
@@ -260,98 +196,42 @@ describe('MapaComponent: buscar casos cercanos (HU-41)', () => {
 
   it('debe abrir el detalle con la distancia del caso', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
+    await buscarDesde(fixture);
+    (compiled(fixture).querySelectorAll('.cercania__enlace')[2] as HTMLButtonElement).click();
     fixture.detectChanges();
 
-    (compiled.querySelectorAll('.cercania__enlace')[2] as HTMLButtonElement).click();
-    fixture.detectChanges();
-
-    const panel = compiled.querySelector('.detalle-panel') as HTMLElement;
+    const panel = compiled(fixture).querySelector('.detalle-panel') as HTMLElement;
     expect(panel.textContent).toContain('#3');
     expect(panel.textContent).toContain('a 4.0 km');
   });
 
   it('debe volver a todos los casos al limpiar la busqueda', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
+    await buscarDesde(fixture);
+    radio(compiled(fixture), '1 km').click();
     fixture.detectChanges();
-    radio(compiled, '1 km').click();
-    fixture.detectChanges();
-
-    (compiled.querySelector('.cercania__limpiar') as HTMLButtonElement).click();
+    (compiled(fixture).querySelector('.cercania__limpiar') as HTMLButtonElement).click();
     fixture.detectChanges();
 
     expect(fixture.componentInstance.origen()).toBeNull();
     expect(fixture.componentInstance.radioActivo()).toBe('SIN_LIMITE');
-    expect(compiled.querySelector('.cercania__radios')).toBeNull();
-    expect(compiled.querySelectorAll('.leaflet-marker-icon').length).toBe(4);
-  });
-
-  it('debe explicar el motivo cuando se deniega el permiso', async () => {
-    const fixture = await crearMapa(TODOS_LOS_CASOS, {
-      obtenerPosicionActual: () =>
-        throwError(() => new ErrorGeolocalizacion('PERMISO_DENEGADO')),
-    });
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
-
-    expect(texto(compiled, '.cercania__error')).toContain('No diste permiso');
-    expect(fixture.componentInstance.origen()).toBeNull();
-    expect(compiled.querySelector('.cercania__radios')).toBeNull();
-  });
-
-  it('debe explicar cuando hace falta una conexion segura', async () => {
-    const fixture = await crearMapa(TODOS_LOS_CASOS, {
-      obtenerPosicionActual: () => throwError(() => new ErrorGeolocalizacion('CONTEXTO_SEGURO')),
-    });
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
-
-    expect(texto(compiled, '.cercania__error')).toContain('conexión segura');
+    expect(compiled(fixture).querySelector('.cercania__radios')).toBeNull();
+    expect(marcadores(compiled(fixture)).length).toBe(4);
   });
 
   it('debe mantener el mapa con todos los casos si la ubicacion falla', async () => {
     const fixture = await crearMapa(TODOS_LOS_CASOS, {
       obtenerPosicionActual: () => throwError(() => new ErrorGeolocalizacion('TIEMPO_AGOTADO')),
     });
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
+    await buscarDesde(fixture);
 
-    expect(compiled.querySelectorAll('.leaflet-marker-icon').length).toBe(4);
-    expect(compiled.querySelector('.cercania__accion')).toBeTruthy();
-  });
-
-  it('debe formatear la distancia en metros por debajo de un kilometro', async () => {
-    const fixture = await crearMapa();
-
-    expect(fixture.componentInstance.formatoDistancia(0)).toBe('a 0 m');
-    expect(fixture.componentInstance.formatoDistancia(0.42)).toBe('a 420 m');
-    expect(fixture.componentInstance.formatoDistancia(0.999)).toBe('a 999 m');
-  });
-
-  it('debe formatear la distancia en kilometros desde un kilometro', async () => {
-    const fixture = await crearMapa();
-
-    expect(fixture.componentInstance.formatoDistancia(1)).toBe('a 1.0 km');
-    expect(fixture.componentInstance.formatoDistancia(4.26)).toBe('a 4.3 km');
-  });
-
-  it('debe avisar cuando la distancia no se conoce', async () => {
-    const fixture = await crearMapa();
-
-    expect(fixture.componentInstance.formatoDistancia(null)).toBe('Distancia no disponible');
+    expect(marcadores(compiled(fixture)).length).toBe(4);
+    expect(compiled(fixture).querySelector('.cercania__accion')).toBeTruthy();
   });
 
   it('debe comparar contra el origen activo y no contra el reporte', async () => {
     const fixture = await crearMapa();
-    const compiled = fixture.nativeElement as HTMLElement;
-    await buscarDesde(compiled);
-    fixture.detectChanges();
+    await buscarDesde(fixture);
 
     expect(fixture.componentInstance.distanciaDe(EN_EL_ORIGEN)).toBe(0);
     expect(fixture.componentInstance.distanciaDe(SIN_UBICACION)).toBeNull();
