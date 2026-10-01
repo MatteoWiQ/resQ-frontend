@@ -44,12 +44,20 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly error = signal<string | null>(null);
   readonly reporteSeleccionado = signal<Reporte | null>(null);
 
-  readonly reportesConUbicacion = computed(() =>
-    this.reportes().filter((r) => r.latitud != null && r.longitud != null)
-  );
+  // ============ NUEVO: filtro por estado individual (desde la leyenda) ============
+  readonly estadoFiltro = signal<EstadoReporte | null>(null);
+
+  readonly reportesConUbicacion = computed(() => {
+    const estado = this.estadoFiltro();
+    return this.reportes().filter((r) => {
+      if (r.latitud == null || r.longitud == null) return false;
+      if (estado && r.estado !== estado) return false;
+      return true;
+    });
+  });
   readonly estados = ESTADOS;
 
-  // ============ HU15: filtrar casos por estado ============
+  // ============ HU15: filtrar casos por estado (grupos) ============
   readonly filtros = FILTROS_REPORTE;
   readonly filtroActivo = signal<ClaveFiltro>('TODOS');
   readonly etiquetaFiltroActual = computed(
@@ -90,19 +98,36 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ============ HU15: cambiar el filtro recarga desde el backend ============
   seleccionarFiltro(clave: ClaveFiltro): void {
     if (this.filtroActivo() === clave) {
       return;
     }
 
     this.filtroActivo.set(clave);
+    // Al cambiar el grupo, reseteamos el filtro de la leyenda para evitar conflictos
+    this.estadoFiltro.set(null);
     this.reporteSeleccionado.set(null);
     this.cargarReportes();
   }
 
   estaActivo(clave: ClaveFiltro): boolean {
     return this.filtroActivo() === clave;
+  }
+
+  // ============ NUEVO: seleccionar/deseleccionar estado desde la leyenda ============
+  seleccionarEstadoFiltro(estado: EstadoReporte): void {
+    // Si ya está activo, lo quitamos (toggle)
+    if (this.estadoFiltro() === estado) {
+      this.estadoFiltro.set(null);
+    } else {
+      this.estadoFiltro.set(estado);
+    }
+    this.reporteSeleccionado.set(null);
+    this.pintarMarcadores();
+  }
+
+  estaEstadoActivo(estado: EstadoReporte): boolean {
+    return this.estadoFiltro() === estado;
   }
 
   seleccionarReporte(reporte: Reporte): void {
