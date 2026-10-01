@@ -373,3 +373,54 @@
     border-radius: 20px 20px 0 0;
   }
 }
+
+/* ============ Leyenda interactiva ============ */
+.leyenda__item {
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.leyenda__item:hover {
+  background: rgba(88, 19, 37, 0.06);
+  border-color: var(--border);
+}
+
+.leyenda__item--activo {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.leyenda__item--activo .leyenda__punto {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.leyenda__item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ============ Botón para limpiar filtro ============ */
+.limpiar-filtro {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.limpiar-filtro:hover {
+  background: var(--primary);
+  color: #fff;
+}
