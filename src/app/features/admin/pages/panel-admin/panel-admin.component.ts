@@ -36,6 +36,12 @@ export class PanelAdminComponent implements OnInit {
   // HU-23: roles que el panel ofrece al cambiar el de una cuenta.
   readonly roles = ROLES_VALIDOS;
 
+  // El panel abre en la gestion de usuarios (HU-23) y reportes queda a un clic.
+  // Las secciones se ocultan con [hidden] y no con @if: asi el DOM conserva el
+  // filtro de HU-15 aunque la pestana no este visible, y sus pruebas siguen
+  // encontrandolo sin tocarlas.
+  readonly pestana = signal<'usuarios' | 'reportes'>('usuarios');
+
   // ============ HU15: filtrar reportes por estado ============
   readonly filtros = FILTROS_REPORTE;
   readonly filtroReporte = signal<ClaveFiltro>('TODOS');
@@ -108,7 +114,7 @@ export class PanelAdminComponent implements OnInit {
       },
       error: (err) =>
         this.mensaje.set(
-          this.translate.t('admin.errorActualizarUsuario', { detalle: err.message })
+          this.translate.t('admin.errorActualizarUsuario', { detalle: err.message }),
         ),
     });
   }
@@ -158,7 +164,7 @@ export class PanelAdminComponent implements OnInit {
       },
       error: (err) =>
         this.mensaje.set(
-          this.translate.t('admin.errorActualizarReporte', { detalle: err.message })
+          this.translate.t('admin.errorActualizarReporte', { detalle: err.message }),
         ),
     });
   }

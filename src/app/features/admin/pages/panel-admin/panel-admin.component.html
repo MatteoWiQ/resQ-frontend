@@ -14,124 +14,165 @@
       <div class="mensaje">{{ mensaje() }}</div>
     }
 
-    <h2 class="seccion">{{ 'admin.usuarios' | translate }}</h2>
-    <div class="tabla-wrapper">
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>{{ 'admin.id' | translate }}</th>
-            <th>{{ 'admin.nombre' | translate }}</th>
-            <th>{{ 'admin.email' | translate }}</th>
-            <th>{{ 'admin.telefono' | translate }}</th>
-            <th>{{ 'admin.rol' | translate }}</th>
-            <th>{{ 'admin.acciones' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (u of usuarios(); track u.idUsuario) {
-            <tr>
-              @if (editandoUsuarioId() === u.idUsuario) {
-                <td>{{ u.idUsuario }}</td>
-                <td><input [(ngModel)]="usuarioEdit.nombre" /></td>
-                <td><input [(ngModel)]="usuarioEdit.email" /></td>
-                <td><input [(ngModel)]="usuarioEdit.telefono" /></td>
-                <td>
-                  <select [(ngModel)]="usuarioEdit.rol">
-                    @for (rol of roles; track rol) {
-                      <option [value]="rol">{{ rol }}</option>
-                    }
-                  </select>
-                </td>
-                <td>
-                  <button class="btn guardar" (click)="guardarUsuario(u.idUsuario)">{{ 'admin.guardar' | translate }}</button>
-                  <button class="btn cancelar" (click)="cancelarEdicion()">{{ 'admin.cancelar' | translate }}</button>
-                </td>
-              } @else {
-                <td>{{ u.idUsuario }}</td>
-                <td>{{ u.nombre }}</td>
-                <td>{{ u.email }}</td>
-                <td>{{ u.telefono }}</td>
-                <td>{{ u.rol }}</td>
-                <td>
-                  <button class="btn editar" (click)="editarUsuario(u)">{{ 'admin.editar' | translate }}</button>
-                  @if (!esLaPropiaCuenta(u)) {
-                    <button class="btn eliminar" (click)="eliminarUsuario(u)">{{ 'admin.eliminar' | translate }}</button>
-                  }
-                </td>
-              }
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="pestanas" role="tablist">
+      <button
+        type="button"
+        class="pestana"
+        role="tab"
+        [class.activa]="pestana() === 'usuarios'"
+        [attr.aria-selected]="pestana() === 'usuarios'"
+        (click)="pestana.set('usuarios')"
+      >
+        {{ 'admin.usuarios' | translate }}
+      </button>
+      <button
+        type="button"
+        class="pestana"
+        role="tab"
+        [class.activa]="pestana() === 'reportes'"
+        [attr.aria-selected]="pestana() === 'reportes'"
+        (click)="pestana.set('reportes')"
+      >
+        {{ 'admin.reportes' | translate }}
+      </button>
     </div>
 
-    <h2 class="seccion">{{ 'admin.reportes' | translate }}</h2>
-    <div class="filtro-reportes">
-      <label class="filtro-reportes__label" for="filtro-estado">
-        {{ 'admin.filtrarPor' | translate }}
-      </label>
-      <select
-        id="filtro-estado"
-        class="filtro-reportes__select"
-        [value]="filtroReporte()"
-        (change)="filtrarReportes($any($event.target).value)"
-      >
-        @for (filtro of filtros; track filtro.clave) {
-          <option [value]="filtro.clave">
-            {{ etiquetaFiltro(filtro.clave) }}
-          </option>
-        }
-      </select>
-      <span class="filtro-reportes__conteo">
-        {{ 'admin.casosMostrados' | translate }}: {{ reportes().length }}
-      </span>
-    </div>
-    <div class="tabla-wrapper">
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>{{ 'admin.id' | translate }}</th>
-            <th>{{ 'admin.idUsuario' | translate }}</th>
-            <th>{{ 'admin.tipoCaso' | translate }}</th>
-            <th>{{ 'admin.descripcion' | translate }}</th>
-            <th>{{ 'admin.estado' | translate }}</th>
-            <th>{{ 'admin.acciones' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (r of reportes(); track r.idReporte) {
+    <section id="seccion-usuarios" [hidden]="pestana() !== 'usuarios'">
+      <h2 class="seccion">{{ 'admin.usuarios' | translate }}</h2>
+      <div class="tabla-wrapper">
+        <table class="tabla">
+          <thead>
             <tr>
-              @if (editandoReporteId() === r.idReporte) {
-                <td>{{ r.idReporte }}</td>
-                <td>{{ r.idUsuario }}</td>
-                <td><input [(ngModel)]="reporteEdit.tipoCaso" /></td>
-                <td><input [(ngModel)]="reporteEdit.descripcion" /></td>
-                <td>
-                  <select [(ngModel)]="reporteEdit.estado">
-                    <option value="PENDIENTE">PENDIENTE</option>
-                    <option value="EN_PROCESO">EN_PROCESO</option>
-                    <option value="RESUELTO">RESUELTO</option>
-                    <option value="CANCELADO">CANCELADO</option>
-                  </select>
-                </td>
-                <td>
-                  <button class="btn guardar" (click)="guardarReporte(r.idReporte)">{{ 'admin.guardar' | translate }}</button>
-                  <button class="btn cancelar" (click)="cancelarEdicion()">{{ 'admin.cancelar' | translate }}</button>
-                </td>
-              } @else {
-                <td>{{ r.idReporte }}</td>
-                <td>{{ r.idUsuario }}</td>
-                <td>{{ r.tipoCaso }}</td>
-                <td>{{ r.descripcion }}</td>
-                <td>{{ r.estado }}</td>
-                <td>
-                  <button class="btn editar" (click)="editarReporte(r)">{{ 'admin.editar' | translate }}</button>
-                </td>
-              }
+              <th>{{ 'admin.id' | translate }}</th>
+              <th>{{ 'admin.nombre' | translate }}</th>
+              <th>{{ 'admin.email' | translate }}</th>
+              <th>{{ 'admin.telefono' | translate }}</th>
+              <th>{{ 'admin.rol' | translate }}</th>
+              <th>{{ 'admin.acciones' | translate }}</th>
             </tr>
+          </thead>
+          <tbody>
+            @for (u of usuarios(); track u.idUsuario) {
+              <tr>
+                @if (editandoUsuarioId() === u.idUsuario) {
+                  <td>{{ u.idUsuario }}</td>
+                  <td><input [(ngModel)]="usuarioEdit.nombre" /></td>
+                  <td><input [(ngModel)]="usuarioEdit.email" /></td>
+                  <td><input [(ngModel)]="usuarioEdit.telefono" /></td>
+                  <td>
+                    <select [(ngModel)]="usuarioEdit.rol">
+                      @for (rol of roles; track rol) {
+                        <option [value]="rol">{{ rol }}</option>
+                      }
+                    </select>
+                  </td>
+                  <td>
+                    <button class="btn guardar" (click)="guardarUsuario(u.idUsuario)">
+                      {{ 'admin.guardar' | translate }}
+                    </button>
+                    <button class="btn cancelar" (click)="cancelarEdicion()">
+                      {{ 'admin.cancelar' | translate }}
+                    </button>
+                  </td>
+                } @else {
+                  <td>{{ u.idUsuario }}</td>
+                  <td>{{ u.nombre }}</td>
+                  <td>{{ u.email }}</td>
+                  <td>{{ u.telefono }}</td>
+                  <td>{{ u.rol }}</td>
+                  <td>
+                    <button class="btn editar" (click)="editarUsuario(u)">
+                      {{ 'admin.editar' | translate }}
+                    </button>
+                    @if (!esLaPropiaCuenta(u)) {
+                      <button class="btn eliminar" (click)="eliminarUsuario(u)">
+                        {{ 'admin.eliminar' | translate }}
+                      </button>
+                    }
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="seccion-reportes" [hidden]="pestana() !== 'reportes'">
+      <h2 class="seccion">{{ 'admin.reportes' | translate }}</h2>
+      <div class="filtro-reportes">
+        <label class="filtro-reportes__label" for="filtro-estado">
+          {{ 'admin.filtrarPor' | translate }}
+        </label>
+        <select
+          id="filtro-estado"
+          class="filtro-reportes__select"
+          [value]="filtroReporte()"
+          (change)="filtrarReportes($any($event.target).value)"
+        >
+          @for (filtro of filtros; track filtro.clave) {
+            <option [value]="filtro.clave">
+              {{ etiquetaFiltro(filtro.clave) }}
+            </option>
           }
-        </tbody>
-      </table>
-    </div>
+        </select>
+        <span class="filtro-reportes__conteo">
+          {{ 'admin.casosMostrados' | translate }}: {{ reportes().length }}
+        </span>
+      </div>
+      <div class="tabla-wrapper">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>{{ 'admin.id' | translate }}</th>
+              <th>{{ 'admin.idUsuario' | translate }}</th>
+              <th>{{ 'admin.tipoCaso' | translate }}</th>
+              <th>{{ 'admin.descripcion' | translate }}</th>
+              <th>{{ 'admin.estado' | translate }}</th>
+              <th>{{ 'admin.acciones' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of reportes(); track r.idReporte) {
+              <tr>
+                @if (editandoReporteId() === r.idReporte) {
+                  <td>{{ r.idReporte }}</td>
+                  <td>{{ r.idUsuario }}</td>
+                  <td><input [(ngModel)]="reporteEdit.tipoCaso" /></td>
+                  <td><input [(ngModel)]="reporteEdit.descripcion" /></td>
+                  <td>
+                    <select [(ngModel)]="reporteEdit.estado">
+                      <option value="PENDIENTE">PENDIENTE</option>
+                      <option value="EN_PROCESO">EN_PROCESO</option>
+                      <option value="RESUELTO">RESUELTO</option>
+                      <option value="CANCELADO">CANCELADO</option>
+                    </select>
+                  </td>
+                  <td>
+                    <button class="btn guardar" (click)="guardarReporte(r.idReporte)">
+                      {{ 'admin.guardar' | translate }}
+                    </button>
+                    <button class="btn cancelar" (click)="cancelarEdicion()">
+                      {{ 'admin.cancelar' | translate }}
+                    </button>
+                  </td>
+                } @else {
+                  <td>{{ r.idReporte }}</td>
+                  <td>{{ r.idUsuario }}</td>
+                  <td>{{ r.tipoCaso }}</td>
+                  <td>{{ r.descripcion }}</td>
+                  <td>{{ r.estado }}</td>
+                  <td>
+                    <button class="btn editar" (click)="editarReporte(r)">
+                      {{ 'admin.editar' | translate }}
+                    </button>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 </section>
