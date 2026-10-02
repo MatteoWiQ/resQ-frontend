@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
@@ -11,6 +12,7 @@ import {
   FILTROS_REPORTE,
   filtroPorClave,
 } from '../../../../shared/constants/filtros-reporte';
+import { ROLES_VALIDOS } from '../../../../shared/constants/roles';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
 
@@ -22,6 +24,7 @@ import { Reporte } from '../../../../shared/models/reporte.model';
   styleUrl: './panel-admin.component.css',
 })
 export class PanelAdminComponent implements OnInit {
+  private readonly authService = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly reporteService = inject(ReporteService);
   private readonly translate = inject(TranslateService);
@@ -29,6 +32,9 @@ export class PanelAdminComponent implements OnInit {
   usuarios = signal<Usuario[]>([]);
   reportes = signal<Reporte[]>([]);
   mensaje = signal('');
+
+  // HU-23: roles que el panel ofrece al cambiar el de una cuenta.
+  readonly roles = ROLES_VALIDOS;
 
   // ============ HU15: filtrar reportes por estado ============
   readonly filtros = FILTROS_REPORTE;
@@ -104,6 +110,28 @@ export class PanelAdminComponent implements OnInit {
         this.mensaje.set(
           this.translate.t('admin.errorActualizarUsuario', { detalle: err.message })
         ),
+    });
+  }
+
+  // ============ HU-23: eliminar una cuenta ============
+  /** La cuenta con la que entraste no se puede borrar: el panel se quedaria sin acceso. */
+  esLaPropiaCuenta(u: Usuario): boolean {
+    return u.idUsuario === this.authService.obtenerIdUsuarioActual();
+  }
+
+  eliminarUsuario(u: Usuario): void {
+    if (!confirm(this.translate.t('admin.confirmarEliminar'))) {
+      return;
+    }
+
+    this.usuarioService.eliminar(u.idUsuario).subscribe({
+      next: () => {
+        this.mensaje.set(this.translate.t('admin.usuarioEliminado'));
+        this.cancelarEdicion();
+        this.cargarUsuarios();
+      },
+      error: (err) =>
+        this.mensaje.set(this.translate.t('admin.errorEliminarUsuario', { detalle: err.message })),
     });
   }
 

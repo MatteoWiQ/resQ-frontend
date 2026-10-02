@@ -180,6 +180,7 @@ export const es = {
     cargandoReportes: 'Cargando reportes...',
     sinReportes: 'Todavía no has hecho ningún reporte.',
     ver: 'Ver',
+    panelAdmin: 'Panel administrativo',
     modal: {
       cerrarAria: 'Cerrar',
       id: 'ID',
@@ -286,6 +287,10 @@ export const es = {
     guardar: 'Guardar',
     cancelar: 'Cancelar',
     editar: 'Editar',
+    eliminar: 'Eliminar',
+    confirmarEliminar: '¿Eliminar esta cuenta? Esta acción no se puede deshacer.',
+    usuarioEliminado: 'Usuario eliminado correctamente',
+    errorEliminarUsuario: 'Error al eliminar usuario: {{detalle}}',
     errorCargarUsuarios: 'Error al cargar usuarios: {{detalle}}',
     errorCargarReportes: 'Error al cargar reportes: {{detalle}}',
     usuarioActualizado: 'Usuario actualizado correctamente',

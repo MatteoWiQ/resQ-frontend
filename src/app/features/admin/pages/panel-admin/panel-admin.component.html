@@ -37,9 +37,9 @@
                 <td><input [(ngModel)]="usuarioEdit.telefono" /></td>
                 <td>
                   <select [(ngModel)]="usuarioEdit.rol">
-                    <option value="USUARIO">USUARIO</option>
-                    <option value="VOLUNTARIO">VOLUNTARIO</option>
-                    <option value="ADMIN">ADMIN</option>
+                    @for (rol of roles; track rol) {
+                      <option [value]="rol">{{ rol }}</option>
+                    }
                   </select>
                 </td>
                 <td>
@@ -54,6 +54,9 @@
                 <td>{{ u.rol }}</td>
                 <td>
                   <button class="btn editar" (click)="editarUsuario(u)">{{ 'admin.editar' | translate }}</button>
+                  @if (!esLaPropiaCuenta(u)) {
+                    <button class="btn eliminar" (click)="eliminarUsuario(u)">{{ 'admin.eliminar' | translate }}</button>
+                  }
                 </td>
               }
             </tr>

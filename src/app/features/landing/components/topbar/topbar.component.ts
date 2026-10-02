@@ -13,7 +13,8 @@ import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 export class LandingTopbar {
   protected readonly authService = inject(AuthService);
 
+  // HU-23: delega en AuthService, que compara contra el rol canonico "ADMIN".
   esAdmin(): boolean {
-    return this.authService.usuarioActual()?.rol === 'ADMINISTRADOR';
+    return this.authService.esAdmin();
   }
 }
