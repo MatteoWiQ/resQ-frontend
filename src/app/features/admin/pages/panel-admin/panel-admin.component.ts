@@ -125,12 +125,29 @@ export class PanelAdminComponent implements OnInit {
     return u.idUsuario === this.authService.obtenerIdUsuarioActual();
   }
 
-  eliminarUsuario(u: Usuario): void {
-    if (!confirm(this.translate.t('admin.confirmarEliminar'))) {
+  /**
+   * El borrado se confirma en un modal propio y no con confirm() del navegador:
+   * ese aviso no se puede estilar, no acepta acentos de la app y lo inyecta el
+   * navegador encima de la pantalla.
+   */
+  readonly usuarioAEliminar = signal<Usuario | null>(null);
+
+  abrirConfirmacionEliminar(u: Usuario): void {
+    this.usuarioAEliminar.set(u);
+  }
+
+  cerrarConfirmacionEliminar(): void {
+    this.usuarioAEliminar.set(null);
+  }
+
+  confirmarEliminarUsuario(): void {
+    const usuario = this.usuarioAEliminar();
+    if (!usuario) {
       return;
     }
 
-    this.usuarioService.eliminar(u.idUsuario).subscribe({
+    this.usuarioAEliminar.set(null);
+    this.usuarioService.eliminar(usuario.idUsuario).subscribe({
       next: () => {
         this.mensaje.set(this.translate.t('admin.usuarioEliminado'));
         this.cancelarEdicion();

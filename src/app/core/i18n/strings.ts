@@ -232,8 +232,7 @@ export const es = {
           'Este dispositivo no permite obtener la ubicación. Marca el punto en el mapa.',
         CONTEXTO_SEGURO:
           'Para obtener tu ubicación hace falta una conexión segura (https). Marca el punto en el mapa.',
-        PERMISO_DENEGADO:
-          'No diste permiso para usar tu ubicación. Marca el punto en el mapa.',
+        PERMISO_DENEGADO: 'No diste permiso para usar tu ubicación. Marca el punto en el mapa.',
         POSICION_NO_DISPONIBLE:
           'No se pudo determinar tu ubicación. Inténtalo de nuevo o marca el punto en el mapa.',
         TIEMPO_AGOTADO:
@@ -288,7 +287,9 @@ export const es = {
     cancelar: 'Cancelar',
     editar: 'Editar',
     eliminar: 'Eliminar',
-    confirmarEliminar: '¿Eliminar esta cuenta? Esta acción no se puede deshacer.',
+    tituloModalEliminar: 'Eliminar usuario',
+    confirmarEliminarDetalle: 'Vas a eliminar la cuenta de:',
+    confirmarEliminarAviso: 'Esta acción no se puede deshacer.',
     usuarioEliminado: 'Usuario eliminado correctamente',
     errorEliminarUsuario: 'Error al eliminar usuario: {{detalle}}',
     errorCargarUsuarios: 'Error al cargar usuarios: {{detalle}}',
@@ -303,9 +304,7 @@ export const es = {
 export type StringCatalog = typeof es;
 
 type ExtractPaths<T> = {
-  [K in keyof T]: T[K] extends string
-    ? K & string
-    : `${K & string}.${ExtractPaths<T[K]>}`;
+  [K in keyof T]: T[K] extends string ? K & string : `${K & string}.${ExtractPaths<T[K]>}`;
 }[keyof T];
 
 export type TranslationKey = ExtractPaths<StringCatalog>;
@@ -321,22 +320,19 @@ function lookup(catalog: StringCatalog, key: string): string {
   return typeof value === 'string' ? value : key;
 }
 
-export function interpolate(
-  template: string,
-  params?: Record<string, string | number>
-): string {
+export function interpolate(template: string, params?: Record<string, string | number>): string {
   if (!params) {
     return template;
   }
   return template.replace(/\{\{(\w+)\}\}/g, (match, name: string) =>
-    name in params ? String(params[name]) : match
+    name in params ? String(params[name]) : match,
   );
 }
 
 export function getTranslation(
   key: TranslationKey,
   catalog: StringCatalog,
-  params?: Record<string, string | number>
+  params?: Record<string, string | number>,
 ): string {
   return interpolate(lookup(catalog, key), params);
 }

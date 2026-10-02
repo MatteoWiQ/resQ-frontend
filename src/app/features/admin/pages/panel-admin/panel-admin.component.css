@@ -107,6 +107,9 @@
 
 .tabla {
   width: 100%;
+  /* Sin ancho minimo la columna de acciones se estira y los botones se parten
+     en dos lineas desalineados; con el, la tabla hace scroll horizontal. */
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 0.9rem;
 }
@@ -202,11 +205,96 @@
 .btn.cancelar {
   background: #999;
   color: #fff;
-  margin-left: 6px;
 }
 
 .btn.eliminar {
   background: #c62828;
   color: #fff;
-  margin-left: 6px;
+}
+
+/* ---------- Botones de una celda de acciones ---------- */
+
+/* Flex y no margenes: los botones quedan en la misma linea con la misma
+   separacion, y si no entran siguen alineados al envolverse. */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.acciones .btn {
+  margin-left: 0;
+  white-space: nowrap;
+}
+
+/* ---------- Modal de confirmacion de borrado (HU-23) ---------- */
+
+.modal-capa {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.modal {
+  width: min(420px, 100%);
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  animation: modal-aparece 140ms ease-out;
+}
+
+@keyframes modal-aparece {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal__titulo {
+  margin: 0 0 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.modal__texto {
+  margin: 0 0 10px;
+  color: var(--muted);
+}
+
+.modal__cuenta {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text);
+  word-break: break-word;
+}
+
+.modal__cuenta span {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.modal__aviso {
+  margin: 0 0 20px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.modal__acciones {
+  justify-content: flex-end;
 }

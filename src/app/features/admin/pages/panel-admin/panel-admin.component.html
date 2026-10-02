@@ -67,12 +67,18 @@
                     </select>
                   </td>
                   <td>
-                    <button class="btn guardar" (click)="guardarUsuario(u.idUsuario)">
-                      {{ 'admin.guardar' | translate }}
-                    </button>
-                    <button class="btn cancelar" (click)="cancelarEdicion()">
-                      {{ 'admin.cancelar' | translate }}
-                    </button>
+                    <div class="acciones">
+                      <button
+                        class="btn guardar"
+                        type="button"
+                        (click)="guardarUsuario(u.idUsuario)"
+                      >
+                        {{ 'admin.guardar' | translate }}
+                      </button>
+                      <button class="btn cancelar" type="button" (click)="cancelarEdicion()">
+                        {{ 'admin.cancelar' | translate }}
+                      </button>
+                    </div>
                   </td>
                 } @else {
                   <td>{{ u.idUsuario }}</td>
@@ -81,14 +87,20 @@
                   <td>{{ u.telefono }}</td>
                   <td>{{ u.rol }}</td>
                   <td>
-                    <button class="btn editar" (click)="editarUsuario(u)">
-                      {{ 'admin.editar' | translate }}
-                    </button>
-                    @if (!esLaPropiaCuenta(u)) {
-                      <button class="btn eliminar" (click)="eliminarUsuario(u)">
-                        {{ 'admin.eliminar' | translate }}
+                    <div class="acciones">
+                      <button class="btn editar" type="button" (click)="editarUsuario(u)">
+                        {{ 'admin.editar' | translate }}
                       </button>
-                    }
+                      @if (!esLaPropiaCuenta(u)) {
+                        <button
+                          class="btn eliminar"
+                          type="button"
+                          (click)="abrirConfirmacionEliminar(u)"
+                        >
+                          {{ 'admin.eliminar' | translate }}
+                        </button>
+                      }
+                    </div>
                   </td>
                 }
               </tr>
@@ -174,5 +186,33 @@
         </table>
       </div>
     </section>
+
+    @if (usuarioAEliminar(); as u) {
+      <div class="modal-capa" (click)="cerrarConfirmacionEliminar()">
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          [attr.aria-label]="'admin.tituloModalEliminar' | translate"
+          (click)="$event.stopPropagation()"
+        >
+          <h3 class="modal__titulo">{{ 'admin.tituloModalEliminar' | translate }}</h3>
+          <p class="modal__texto">{{ 'admin.confirmarEliminarDetalle' | translate }}</p>
+          <p class="modal__cuenta">
+            <strong>{{ u.nombre }}</strong>
+            <span>{{ u.email }}</span>
+          </p>
+          <p class="modal__aviso">{{ 'admin.confirmarEliminarAviso' | translate }}</p>
+          <div class="acciones modal__acciones">
+            <button class="btn cancelar" type="button" (click)="cerrarConfirmacionEliminar()">
+              {{ 'admin.cancelar' | translate }}
+            </button>
+            <button class="btn eliminar" type="button" (click)="confirmarEliminarUsuario()">
+              {{ 'admin.eliminar' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   </div>
 </section>
