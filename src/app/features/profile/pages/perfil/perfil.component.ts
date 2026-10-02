@@ -12,6 +12,7 @@ import { BackButtonComponent } from '../../../../shared/components/back-button/b
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
+import { esAdmin as comprobarAdmin, esVoluntario as comprobarVoluntario } from '../../../../shared/constants/roles';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
 import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model';
@@ -161,10 +162,15 @@ export class PerfilComponent implements OnInit {
       });
   }
 
+  // ============ HU-23: el administrador accede al panel desde su perfil ============
+  esAdmin(): boolean {
+    return comprobarAdmin(this.usuario()?.rol);
+  }
+
   // ============ HU-17 ============
 
   esVoluntario(usuario: Usuario): boolean {
-    return usuario.rol?.toUpperCase() === 'VOLUNTARIO';
+    return comprobarVoluntario(usuario.rol);
   }
 
   etiquetaTipoAyuda(valor: string): string {

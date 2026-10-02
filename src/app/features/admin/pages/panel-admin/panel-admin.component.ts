@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
@@ -11,6 +12,7 @@ import {
   FILTROS_REPORTE,
   filtroPorClave,
 } from '../../../../shared/constants/filtros-reporte';
+import { ROLES_VALIDOS } from '../../../../shared/constants/roles';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
 
@@ -22,6 +24,7 @@ import { Reporte } from '../../../../shared/models/reporte.model';
   styleUrl: './panel-admin.component.css',
 })
 export class PanelAdminComponent implements OnInit {
+  private readonly authService = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly reporteService = inject(ReporteService);
   private readonly translate = inject(TranslateService);
@@ -29,6 +32,15 @@ export class PanelAdminComponent implements OnInit {
   usuarios = signal<Usuario[]>([]);
   reportes = signal<Reporte[]>([]);
   mensaje = signal('');
+
+  // HU-23: roles que el panel ofrece al cambiar el de una cuenta.
+  readonly roles = ROLES_VALIDOS;
+
+  // El panel abre en la gestion de usuarios (HU-23) y reportes queda a un clic.
+  // Las secciones se ocultan con [hidden] y no con @if: asi el DOM conserva el
+  // filtro de HU-15 aunque la pestana no este visible, y sus pruebas siguen
+  // encontrandolo sin tocarlas.
+  readonly pestana = signal<'usuarios' | 'reportes'>('usuarios');
 
   // ============ HU15: filtrar reportes por estado ============
   readonly filtros = FILTROS_REPORTE;
@@ -102,8 +114,47 @@ export class PanelAdminComponent implements OnInit {
       },
       error: (err) =>
         this.mensaje.set(
-          this.translate.t('admin.errorActualizarUsuario', { detalle: err.message })
+          this.translate.t('admin.errorActualizarUsuario', { detalle: err.message }),
         ),
+    });
+  }
+
+  // ============ HU-23: eliminar una cuenta ============
+  /** La cuenta con la que entraste no se puede borrar: el panel se quedaria sin acceso. */
+  esLaPropiaCuenta(u: Usuario): boolean {
+    return u.idUsuario === this.authService.obtenerIdUsuarioActual();
+  }
+
+  /**
+   * El borrado se confirma en un modal propio y no con confirm() del navegador:
+   * ese aviso no se puede estilar, no acepta acentos de la app y lo inyecta el
+   * navegador encima de la pantalla.
+   */
+  readonly usuarioAEliminar = signal<Usuario | null>(null);
+
+  abrirConfirmacionEliminar(u: Usuario): void {
+    this.usuarioAEliminar.set(u);
+  }
+
+  cerrarConfirmacionEliminar(): void {
+    this.usuarioAEliminar.set(null);
+  }
+
+  confirmarEliminarUsuario(): void {
+    const usuario = this.usuarioAEliminar();
+    if (!usuario) {
+      return;
+    }
+
+    this.usuarioAEliminar.set(null);
+    this.usuarioService.eliminar(usuario.idUsuario).subscribe({
+      next: () => {
+        this.mensaje.set(this.translate.t('admin.usuarioEliminado'));
+        this.cancelarEdicion();
+        this.cargarUsuarios();
+      },
+      error: (err) =>
+        this.mensaje.set(this.translate.t('admin.errorEliminarUsuario', { detalle: err.message })),
     });
   }
 
@@ -130,7 +181,7 @@ export class PanelAdminComponent implements OnInit {
       },
       error: (err) =>
         this.mensaje.set(
-          this.translate.t('admin.errorActualizarReporte', { detalle: err.message })
+          this.translate.t('admin.errorActualizarReporte', { detalle: err.message }),
         ),
     });
   }
