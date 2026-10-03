@@ -59,14 +59,39 @@
           required
         ></textarea>
 
-        <label for="fotoUrl">{{ 'reportes.nuevo.fotoUrl' | translate }}</label>
-        <input
-          id="fotoUrl"
-          type="url"
-          name="fotoUrl"
-          [(ngModel)]="form.fotoUrl"
-          [placeholder]="'reportes.nuevo.fotoUrlPlaceholder' | translate"
-        />
+        <span class="etiqueta-campo">{{ 'reportes.nuevo.foto' | translate }}</span>
+        <div class="foto-campo">
+          <input
+            #fotoInput
+            id="foto"
+            type="file"
+            name="foto"
+            class="foto-input"
+            [attr.accept]="fotoAccept"
+            (change)="seleccionarFoto($event)"
+          />
+
+          @if (vistaPrevia(); as src) {
+            <img class="foto-preview" [src]="src" [alt]="'reportes.nuevo.fotoVistaPreviaAlt' | translate" />
+            <p class="foto-nombre">{{ foto()?.name }}</p>
+          }
+
+          <div class="foto-acciones">
+            <button type="button" class="btn-volver" (click)="fotoInput.click()">
+              {{ (foto() ? 'reportes.nuevo.fotoCambiar' : 'reportes.nuevo.fotoSeleccionar') | translate }}
+            </button>
+            @if (foto()) {
+              <button type="button" class="btn-volver" (click)="quitarFoto()">
+                {{ 'reportes.nuevo.fotoQuitar' | translate }}
+              </button>
+            }
+          </div>
+
+          <p class="foto-ayuda">{{ 'reportes.nuevo.fotoAyuda' | translate }}</p>
+          @if (errorFoto()) {
+            <p class="foto-error" role="alert">{{ errorFoto() }}</p>
+          }
+        </div>
 
         <span class="etiqueta-campo">{{ 'reportes.nuevo.ubicacion' | translate }}</span>
         <app-selector-ubicacion
