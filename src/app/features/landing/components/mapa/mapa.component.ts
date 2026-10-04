@@ -120,7 +120,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   etiquetaEstado(estado: EstadoReporte): string {
-    return this.translate.t(`landing.mapa.estados.${estado}`);
+    return this.translate.t(`shared.estados.${estado}`);
   }
 
   etiquetaFiltro(clave: ClaveFiltro): string {
