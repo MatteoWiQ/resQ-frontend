@@ -17,6 +17,11 @@ export const es = {
       VOLUNTARIO: 'Voluntario',
       ADMIN: 'Administrador',
     },
+    tiposCaso: {
+      PERDIDA: 'Perdida',
+      ENCONTRADA: 'Encontrada',
+      ABANDONADA: 'Abandonada',
+    },
   },
   landing: {
     topbar: {
