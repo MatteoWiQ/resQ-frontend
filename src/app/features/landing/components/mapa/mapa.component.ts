@@ -130,11 +130,6 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.translate.t(`shared.tiposCaso.${canonico}` as TranslationKey);
   }
 
-  etiquetaTipoCaso(tipo: string): string {
-    const canonico = normalizarTipoCaso(tipo);
-    return this.translate.t(`shared.tiposCaso.${canonico}` as TranslationKey);
-  }
-
   etiquetaFiltro(clave: ClaveFiltro): string {
     return this.translate.t(`reportes.filtros.${clave}`);
   }
