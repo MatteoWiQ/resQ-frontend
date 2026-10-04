@@ -24,6 +24,8 @@ import {
   filtroPorClave,
 } from '../../../../shared/constants/filtros-reporte';
 import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model';
+import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
+import { TranslationKey } from '../../../../core/i18n/strings';
 
 @Component({
   selector: 'app-mapa',
@@ -120,7 +122,12 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   etiquetaEstado(estado: EstadoReporte): string {
-    return this.translate.t(`landing.mapa.estados.${estado}`);
+    return this.translate.t(`shared.estados.${estado}`);
+  }
+
+  etiquetaTipoCaso(tipo: string): string {
+    const canonico = normalizarTipoCaso(tipo);
+    return this.translate.t(`shared.tiposCaso.${canonico}` as TranslationKey);
   }
 
   etiquetaFiltro(clave: ClaveFiltro): string {

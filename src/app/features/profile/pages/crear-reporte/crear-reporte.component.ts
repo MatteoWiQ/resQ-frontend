@@ -6,8 +6,10 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
+import { TranslationKey } from '../../../../core/i18n/strings';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { SelectorUbicacionComponent } from '../../../../shared/components/selector-ubicacion/selector-ubicacion.component';
+import { TIPOS_CASO } from '../../../../shared/constants/tipos-caso';
 
 @Component({
   selector: 'app-crear-reporte',
@@ -17,7 +19,9 @@ import { SelectorUbicacionComponent } from '../../../../shared/components/select
   styleUrl: './crear-reporte.component.css',
 })
 export class CrearReporteComponent {
-  readonly tiposCaso = ['PERDIDA', 'ENCONTRADA', 'ABANDONADA'];
+  // El catalogo canonico vive en shared/constants/tipos-caso.ts; el valor
+  // interno va al backend y la etiqueta visible sale de shared.tiposCaso.
+  readonly tiposCaso = TIPOS_CASO;
 
   readonly form = {
     tipoCaso: '',
@@ -43,6 +47,10 @@ export class CrearReporteComponent {
   seleccionarTipo(tipo: string): void {
     this.form.tipoCaso = tipo;
     this.message.set('');
+  }
+
+  etiquetaTipoCaso(tipo: string): string {
+    return this.translate.t(`shared.tiposCaso.${tipo}` as TranslationKey);
   }
 
   continuar(): void {

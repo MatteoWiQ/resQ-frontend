@@ -6,6 +6,22 @@ export const es = {
     },
     volverAtras: 'Volver atrás',
     ubicacionSeleccionada: 'Ubicación seleccionada',
+    estados: {
+      PENDIENTE: 'Pendiente',
+      EN_PROCESO: 'En proceso',
+      RESUELTO: 'Resuelto',
+      CANCELADO: 'Cancelado',
+    },
+    roles: {
+      USUARIO: 'Usuario',
+      VOLUNTARIO: 'Voluntario',
+      ADMIN: 'Administrador',
+    },
+    tiposCaso: {
+      PERDIDA: 'Perdida',
+      ENCONTRADA: 'Encontrada',
+      ABANDONADA: 'Abandonada',
+    },
   },
   landing: {
     topbar: {
@@ -42,12 +58,6 @@ export const es = {
       marcadorTexto: 'Reporte {{id}}, {{estado}}',
       cerrar: 'Cerrar',
       cerrarDetalle: 'Cerrar detalle del caso',
-      estados: {
-        PENDIENTE: 'Pendiente',
-        EN_PROCESO: 'En proceso',
-        RESUELTO: 'Resuelto',
-        CANCELADO: 'Cancelado',
-      },
     },
     hero: {
       eyebrow: 'Red de rescate animal',
@@ -125,6 +135,9 @@ export const es = {
         descripcion:
           'Comprueba que la información sea correcta y envía el reporte. Necesitas iniciar sesión para registrar el caso en tu perfil.',
       },
+      paso4: {
+        titulo: 'Publicar',
+      },
       accion: {
         kicker: '¿Listo para ayudar?',
         titulo: 'Comienza tu reporte',
@@ -180,6 +193,7 @@ export const es = {
     cargandoReportes: 'Cargando reportes...',
     sinReportes: 'Todavía no has hecho ningún reporte.',
     ver: 'Ver',
+    panelAdmin: 'Panel administrativo',
     modal: {
       cerrarAria: 'Cerrar',
       id: 'ID',
@@ -231,8 +245,7 @@ export const es = {
           'Este dispositivo no permite obtener la ubicación. Marca el punto en el mapa.',
         CONTEXTO_SEGURO:
           'Para obtener tu ubicación hace falta una conexión segura (https). Marca el punto en el mapa.',
-        PERMISO_DENEGADO:
-          'No diste permiso para usar tu ubicación. Marca el punto en el mapa.',
+        PERMISO_DENEGADO: 'No diste permiso para usar tu ubicación. Marca el punto en el mapa.',
         POSICION_NO_DISPONIBLE:
           'No se pudo determinar tu ubicación. Inténtalo de nuevo o marca el punto en el mapa.',
         TIEMPO_AGOTADO:
@@ -286,6 +299,12 @@ export const es = {
     guardar: 'Guardar',
     cancelar: 'Cancelar',
     editar: 'Editar',
+    eliminar: 'Eliminar',
+    tituloModalEliminar: 'Eliminar usuario',
+    confirmarEliminarDetalle: 'Vas a eliminar la cuenta de:',
+    confirmarEliminarAviso: 'Esta acción no se puede deshacer.',
+    usuarioEliminado: 'Usuario eliminado correctamente',
+    errorEliminarUsuario: 'Error al eliminar usuario: {{detalle}}',
     errorCargarUsuarios: 'Error al cargar usuarios: {{detalle}}',
     errorCargarReportes: 'Error al cargar reportes: {{detalle}}',
     usuarioActualizado: 'Usuario actualizado correctamente',
@@ -298,9 +317,7 @@ export const es = {
 export type StringCatalog = typeof es;
 
 type ExtractPaths<T> = {
-  [K in keyof T]: T[K] extends string
-    ? K & string
-    : `${K & string}.${ExtractPaths<T[K]>}`;
+  [K in keyof T]: T[K] extends string ? K & string : `${K & string}.${ExtractPaths<T[K]>}`;
 }[keyof T];
 
 export type TranslationKey = ExtractPaths<StringCatalog>;
@@ -316,22 +333,19 @@ function lookup(catalog: StringCatalog, key: string): string {
   return typeof value === 'string' ? value : key;
 }
 
-export function interpolate(
-  template: string,
-  params?: Record<string, string | number>
-): string {
+export function interpolate(template: string, params?: Record<string, string | number>): string {
   if (!params) {
     return template;
   }
   return template.replace(/\{\{(\w+)\}\}/g, (match, name: string) =>
-    name in params ? String(params[name]) : match
+    name in params ? String(params[name]) : match,
   );
 }
 
 export function getTranslation(
   key: TranslationKey,
   catalog: StringCatalog,
-  params?: Record<string, string | number>
+  params?: Record<string, string | number>,
 ): string {
   return interpolate(lookup(catalog, key), params);
 }
