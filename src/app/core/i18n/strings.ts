@@ -6,6 +6,17 @@ export const es = {
     },
     volverAtras: 'Volver atrás',
     ubicacionSeleccionada: 'Ubicación seleccionada',
+    estados: {
+      PENDIENTE: 'Pendiente',
+      EN_PROCESO: 'En proceso',
+      RESUELTO: 'Resuelto',
+      CANCELADO: 'Cancelado',
+    },
+    roles: {
+      USUARIO: 'Usuario',
+      VOLUNTARIO: 'Voluntario',
+      ADMIN: 'Administrador',
+    },
   },
   landing: {
     topbar: {
@@ -42,12 +53,6 @@ export const es = {
       marcadorTexto: 'Reporte {{id}}, {{estado}}',
       cerrar: 'Cerrar',
       cerrarDetalle: 'Cerrar detalle del caso',
-      estados: {
-        PENDIENTE: 'Pendiente',
-        EN_PROCESO: 'En proceso',
-        RESUELTO: 'Resuelto',
-        CANCELADO: 'Cancelado',
-      },
     },
     hero: {
       eyebrow: 'Red de rescate animal',
@@ -124,6 +129,9 @@ export const es = {
         titulo: 'Revisa y envía',
         descripcion:
           'Comprueba que la información sea correcta y envía el reporte. Necesitas iniciar sesión para registrar el caso en tu perfil.',
+      },
+      paso4: {
+        titulo: 'Publicar',
       },
       accion: {
         kicker: '¿Listo para ayudar?',
