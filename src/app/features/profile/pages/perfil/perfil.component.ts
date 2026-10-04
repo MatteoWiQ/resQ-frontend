@@ -91,6 +91,16 @@ export class PerfilComponent implements OnInit {
     return `estado estado-${estado.toLowerCase()}`;
   }
 
+  // El valor interno (PENDIENTE, ADMIN, ...) va al backend; la etiqueta
+  // visible sale del catalogo de strings.
+  etiquetaEstado(estado: string): string {
+    return this.translate.t(`shared.estados.${estado}` as TranslationKey);
+  }
+
+  etiquetaRol(rol: string): string {
+    return this.translate.t(`shared.roles.${rol}` as TranslationKey);
+  }
+
   verDetalle(reporte: Reporte): void {
     this.reporteSeleccionado.set(reporte);
     this.nuevoEstado.set(reporte.estado);

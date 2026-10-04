@@ -13,7 +13,7 @@
 
       <div class="perfil-info">
         <h1>{{ u.nombre }}</h1>
-        <span class="badge">{{ u.rol }}</span>
+        <span class="badge">{{ etiquetaRol(u.rol) }}</span>
 
         <dl>
           <dt>{{ 'perfil.correo' | translate }}</dt>
@@ -65,7 +65,7 @@
               <p>{{ reporte.descripcion }}</p>
             </div>
             <div class="reporte-acciones">
-              <span [class]="claseEstado(reporte.estado)">{{ reporte.estado }}</span>
+              <span [class]="claseEstado(reporte.estado)">{{ etiquetaEstado(reporte.estado) }}</span>
               <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">{{ 'perfil.ver' | translate }}</button>
             </div>
           </li>
@@ -95,7 +95,7 @@
           <dd>#{{ r.idReporte }}</dd>
 
           <dt>{{ 'perfil.modal.estado' | translate }}</dt>
-          <dd><span [class]="claseEstado(r.estado)">{{ r.estado }}</span></dd>
+          <dd><span [class]="claseEstado(r.estado)">{{ etiquetaEstado(r.estado) }}</span></dd>
 
           <dt>{{ 'perfil.modal.descripcion' | translate }}</dt>
           <dd class="modal-descripcion">{{ r.descripcion }}</dd>
@@ -118,7 +118,7 @@
               (ngModelChange)="nuevoEstado.set($event)"
             >
               @for (estado of estadosValidos; track estado) {
-                <option [value]="estado">{{ estado }}</option>
+                <option [value]="estado">{{ etiquetaEstado(estado) }}</option>
               }
             </select>
 
