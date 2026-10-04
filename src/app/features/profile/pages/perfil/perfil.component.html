@@ -37,9 +37,19 @@
             {{ 'voluntario.boton' | translate }}
           </button>
         }
+
+        <!-- ============ HU-19: voluntarios y admins revisan solicitudes ============ -->
+        @if (puedeCambiarEstado()) {
+          <a class="primary-btn btn-revisar" routerLink="/voluntario/solicitudes">
+            {{ 'perfil.revisarSolicitudes' | translate }}
+          </a>
+        }
       </div>
     </div>
   }
+
+  <!-- ============ HU-19: notificaciones ============ -->
+  <app-notificaciones />
 
   <div class="reportes-section">
     <div class="reportes-head">
@@ -60,6 +70,9 @@
               <p>{{ reporte.descripcion }}</p>
             </div>
             <div class="reporte-acciones">
+              @if (reporte.estadoRevision) {
+                <span [class]="claseRevision(reporte.estadoRevision)">{{ etiquetaRevision(reporte.estadoRevision) }}</span>
+              }
               <span [class]="claseEstado(reporte.estado)">{{ reporte.estado }}</span>
               <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">{{ 'perfil.ver' | translate }}</button>
             </div>
@@ -91,6 +104,16 @@
 
           <dt>{{ 'perfil.modal.estado' | translate }}</dt>
           <dd><span [class]="claseEstado(r.estado)">{{ r.estado }}</span></dd>
+
+          @if (r.estadoRevision) {
+            <dt>{{ 'perfil.revision.titulo' | translate }}</dt>
+            <dd><span [class]="claseRevision(r.estadoRevision)">{{ etiquetaRevision(r.estadoRevision) }}</span></dd>
+          }
+
+          @if (r.notaRevision) {
+            <dt>{{ 'perfil.revision.nota' | translate }}</dt>
+            <dd class="modal-descripcion">{{ r.notaRevision }}</dd>
+          }
 
           <dt>{{ 'perfil.modal.descripcion' | translate }}</dt>
           <dd class="modal-descripcion">{{ r.descripcion }}</dd>

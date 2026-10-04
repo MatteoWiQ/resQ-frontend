@@ -9,6 +9,7 @@ import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { NotificacionesComponent } from '../../../../shared/components/notificaciones/notificaciones.component';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
@@ -19,7 +20,7 @@ import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model'
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, NotificacionesComponent, TranslatePipe],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })
@@ -88,6 +89,15 @@ export class PerfilComponent implements OnInit {
 
   claseEstado(estado: string): string {
     return `estado estado-${estado.toLowerCase()}`;
+  }
+
+  // ============ HU-19: estado de la revisión del caso ============
+  claseRevision(estado: string): string {
+    return `estado estado-revision-${estado.toLowerCase()}`;
+  }
+
+  etiquetaRevision(estado: string): string {
+    return this.translate.t(('perfil.revision.' + estado) as TranslationKey);
   }
 
   verDetalle(reporte: Reporte): void {

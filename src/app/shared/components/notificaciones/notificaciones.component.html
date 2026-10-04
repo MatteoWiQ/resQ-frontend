@@ -1,0 +1,32 @@
+<div class="notificaciones-section">
+  <div class="notificaciones-head">
+    <h2>{{ 'notificaciones.titulo' | translate }}</h2>
+    @if (sinLeer() > 0) {
+      <span class="notif-contador">{{ 'notificaciones.sinLeer' | translate: { n: sinLeer() } }}</span>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="hint">{{ 'notificaciones.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="message">{{ error() }}</p>
+  } @else if (notificaciones().length === 0) {
+    <p class="hint">{{ 'notificaciones.vacio' | translate }}</p>
+  } @else {
+    <ul class="notificaciones-lista">
+      @for (n of notificaciones(); track n.idNotificacion) {
+        <li class="notif-item" [class]="'notif-item ' + claseTipo(n)" [class.notif-sin-leer]="!n.leida">
+          <div class="notif-texto">
+            <p>{{ n.mensaje }}</p>
+            <small>{{ n.fechaCreacion | date: 'dd/MM/yyyy HH:mm' }}</small>
+          </div>
+          @if (!n.leida) {
+            <button type="button" class="btn-leida" (click)="marcarComoLeida(n)">
+              {{ 'notificaciones.marcarLeida' | translate }}
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>
