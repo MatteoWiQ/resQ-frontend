@@ -14,6 +14,7 @@ import {
   filtroPorClave,
 } from '../../../../shared/constants/filtros-reporte';
 import { ROLES_VALIDOS } from '../../../../shared/constants/roles';
+import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model';
 
@@ -103,6 +104,11 @@ export class PanelAdminComponent implements OnInit {
 
   etiquetaRol(rol: string): string {
     return this.translate.t(`shared.roles.${rol}` as TranslationKey);
+  }
+
+  etiquetaTipoCaso(tipo: string): string {
+    const canonico = normalizarTipoCaso(tipo);
+    return this.translate.t(`shared.tiposCaso.${canonico}` as TranslationKey);
   }
 
   editarUsuario(u: Usuario): void {

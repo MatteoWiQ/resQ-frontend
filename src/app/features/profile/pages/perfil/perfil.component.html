@@ -61,7 +61,7 @@
         @for (reporte of reportes(); track reporte.idReporte) {
           <li class="reporte-item">
             <div class="reporte-info">
-              <strong>{{ reporte.tipoCaso }}</strong>
+              <strong>{{ etiquetaTipoCaso(reporte.tipoCaso) }}</strong>
               <p>{{ reporte.descripcion }}</p>
             </div>
             <div class="reporte-acciones">
@@ -84,7 +84,7 @@
         (click)="$event.stopPropagation()"
       >
         <div class="modal-head">
-          <h3 id="reporte-titulo">{{ r.tipoCaso }}</h3>
+          <h3 id="reporte-titulo">{{ etiquetaTipoCaso(r.tipoCaso) }}</h3>
           <button type="button" class="btn-cerrar" [attr.aria-label]="'perfil.modal.cerrarAria' | translate" (click)="cerrarDetalle()">
             &times;
           </button>

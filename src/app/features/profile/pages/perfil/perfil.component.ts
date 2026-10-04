@@ -13,6 +13,7 @@ import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
 import { esAdmin as comprobarAdmin, esVoluntario as comprobarVoluntario } from '../../../../shared/constants/roles';
+import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
 import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model';
@@ -99,6 +100,13 @@ export class PerfilComponent implements OnInit {
 
   etiquetaRol(rol: string): string {
     return this.translate.t(`shared.roles.${rol}` as TranslationKey);
+  }
+
+  // Normaliza lo que llega del backend (minusculas, espacios) y traduce si
+  // existe en el catalogo; si no, muestra el valor original.
+  etiquetaTipoCaso(tipo: string): string {
+    const canonico = normalizarTipoCaso(tipo);
+    return this.translate.t(`shared.tiposCaso.${canonico}` as TranslationKey);
   }
 
   verDetalle(reporte: Reporte): void {
