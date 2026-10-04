@@ -1,0 +1,151 @@
+<section class="detalle-page">
+  <app-back-button ruta="/admin" />
+
+  <div class="detalle-card">
+    <div class="brand">
+      <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+      <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
+    </div>
+
+    <h1>{{ 'admin.detalle.titulo' | translate }}</h1>
+
+    @if (cargando()) {
+      <p class="detalle-cargando">{{ 'admin.detalle.cargando' | translate }}</p>
+    } @else if (noEncontrado()) {
+      <p class="detalle-vacio">{{ 'admin.detalle.noEncontrado' | translate }}</p>
+      <a class="btn volver" routerLink="/admin">{{ 'admin.detalle.volver' | translate }}</a>
+    } @else if (reporte(); as r) {
+      @if (mensaje()) {
+        <div class="mensaje">{{ mensaje() }}</div>
+      }
+      @if (error()) {
+        <div class="error">{{ error() }}</div>
+      }
+
+      <div class="cabecera">
+        <span class="id">#{{ r.idReporte }}</span>
+        <span [class]="claseEstado(r.estado)">{{ etiquetaEstado(r.estado) }}</span>
+      </div>
+
+      <dl class="datos">
+        <div class="dato">
+          <dt>{{ 'admin.tipoCaso' | translate }}</dt>
+          <dd>{{ etiquetaTipoCaso(r.tipoCaso) }}</dd>
+        </div>
+        <div class="dato">
+          <dt>{{ 'admin.detalle.fecha' | translate }}</dt>
+          <dd>{{ formatearFecha(r.fechaCreacion) }}</dd>
+        </div>
+        <div class="dato">
+          <dt>{{ 'admin.detalle.autor' | translate }}</dt>
+          <dd>
+            @if (autor(); as a) {
+              <span class="autor__nombre">{{ a.nombre }}</span>
+              <span class="autor__contacto">{{ a.email }}</span>
+              @if (a.telefono) {
+                <span class="autor__contacto">{{ a.telefono }}</span>
+              }
+            } @else {
+              <span class="autor__desconocido">
+                {{ 'admin.detalle.autorDesconocido' | translate }}
+              </span>
+            }
+          </dd>
+        </div>
+        <div class="dato">
+          <dt>{{ 'admin.detalle.ubicacion' | translate }}</dt>
+          <dd>
+            @if (coordenadas(r)) {
+              {{ coordenadas(r) }}
+            } @else {
+              <span class="autor__desconocido">{{ 'admin.detalle.sinUbicacion' | translate }}</span>
+            }
+          </dd>
+        </div>
+        <div class="dato dato--ancho">
+          <dt>{{ 'admin.descripcion' | translate }}</dt>
+          <dd>{{ r.descripcion }}</dd>
+        </div>
+      </dl>
+
+      @if (r.fotoUrl) {
+        <div class="dato dato--ancho">
+          <dt>{{ 'landing.mapa.fotoAlt' | translate }}</dt>
+          <dd><img class="foto" [src]="r.fotoUrl" [alt]="'landing.mapa.fotoAlt' | translate" /></dd>
+        </div>
+      }
+
+      <section class="acciones-admin">
+        <h2 class="acciones-admin__titulo">{{ 'admin.detalle.cambiarEstado' | translate }}</h2>
+
+        @if (estadosDisponibles().length > 0) {
+          <div class="acciones-admin__fila">
+            <label class="acciones-admin__label" for="nuevo-estado">
+              {{ 'admin.detalle.nuevoEstado' | translate }}
+            </label>
+            <select
+              id="nuevo-estado"
+              class="acciones-admin__select"
+              [ngModel]="nuevoEstado()"
+              (ngModelChange)="nuevoEstado.set($event)"
+            >
+              <option value="">--</option>
+              @for (estado of estadosDisponibles(); track estado) {
+                <option [value]="estado">{{ etiquetaEstado(estado) }}</option>
+              }
+            </select>
+            <button
+              class="btn guardar"
+              type="button"
+              [disabled]="!puedeConfirmarEstado() || guardandoEstado()"
+              (click)="confirmarCambioEstado()"
+            >
+              {{ 'admin.guardar' | translate }}
+            </button>
+          </div>
+        } @else {
+          <p class="acciones-admin__aviso">{{ 'admin.detalle.estadoSinSalida' | translate }}</p>
+        }
+
+        <div class="acciones">
+          <a class="btn editar" routerLink="/admin">{{ 'admin.detalle.volver' | translate }}</a>
+          <button
+            class="btn eliminar"
+            type="button"
+            (click)="confirmandoEliminar.set(true)"
+          >
+            {{ 'admin.eliminar' | translate }}
+          </button>
+        </div>
+      </section>
+    }
+  </div>
+
+  @if (confirmandoEliminar()) {
+    <div class="modal-capa" (click)="confirmandoEliminar.set(false)">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-label]="'admin.tituloModalEliminarReporte' | translate"
+        (click)="$event.stopPropagation()"
+      >
+        <h3 class="modal__titulo">{{ 'admin.tituloModalEliminarReporte' | translate }}</h3>
+        <p class="modal__texto">{{ 'admin.confirmarEliminarReporte' | translate }}</p>
+        <p class="modal__cuenta">
+          <strong>#{{ reporte()?.idReporte }}</strong>
+          <span>{{ reporte()?.descripcion }}</span>
+        </p>
+        <p class="modal__aviso">{{ 'admin.confirmarEliminarReporteAviso' | translate }}</p>
+        <div class="acciones modal__acciones">
+          <button class="btn cancelar" type="button" (click)="confirmandoEliminar.set(false)">
+            {{ 'admin.cancelar' | translate }}
+          </button>
+          <button class="btn eliminar" type="button" (click)="confirmarEliminar()">
+            {{ 'admin.eliminar' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</section>
