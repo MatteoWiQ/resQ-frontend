@@ -323,6 +323,9 @@ export const es = {
     verDetalle: 'Ver detalle',
     detalle: {
       titulo: 'Detalle del reporte',
+      cargando: 'Cargando el reporte...',
+      noEncontrado: 'Ese reporte ya no existe.',
+      errorCargar: 'No se pudo cargar el reporte: {{detalle}}',
       autor: 'Reportado por',
       autorDesconocido: 'Usuario no registrado',
       fecha: 'Fecha de creación',
