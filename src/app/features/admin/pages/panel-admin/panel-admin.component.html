@@ -62,7 +62,7 @@
                   <td>
                     <select [(ngModel)]="usuarioEdit.rol">
                       @for (rol of roles; track rol) {
-                        <option [value]="rol">{{ rol }}</option>
+                        <option [value]="rol">{{ etiquetaRol(rol) }}</option>
                       }
                     </select>
                   </td>
@@ -85,7 +85,7 @@
                   <td>{{ u.nombre }}</td>
                   <td>{{ u.email }}</td>
                   <td>{{ u.telefono }}</td>
-                  <td>{{ u.rol }}</td>
+                   <td>{{ etiquetaRol(u.rol) }}</td>
                   <td>
                     <div class="acciones">
                       <button class="btn editar" type="button" (click)="editarUsuario(u)">
@@ -154,10 +154,10 @@
                   <td><input [(ngModel)]="reporteEdit.descripcion" /></td>
                   <td>
                     <select [(ngModel)]="reporteEdit.estado">
-                      <option value="PENDIENTE">PENDIENTE</option>
-                      <option value="EN_PROCESO">EN_PROCESO</option>
-                      <option value="RESUELTO">RESUELTO</option>
-                      <option value="CANCELADO">CANCELADO</option>
+                      <option value="PENDIENTE">{{ 'shared.estados.PENDIENTE' | translate }}</option>
+                      <option value="EN_PROCESO">{{ 'shared.estados.EN_PROCESO' | translate }}</option>
+                      <option value="RESUELTO">{{ 'shared.estados.RESUELTO' | translate }}</option>
+                      <option value="CANCELADO">{{ 'shared.estados.CANCELADO' | translate }}</option>
                     </select>
                   </td>
                   <td>
@@ -173,7 +173,7 @@
                   <td>{{ r.idUsuario }}</td>
                   <td>{{ r.tipoCaso }}</td>
                   <td>{{ r.descripcion }}</td>
-                  <td>{{ r.estado }}</td>
+                   <td>{{ etiquetaEstado(r.estado) }}</td>
                   <td>
                     <button class="btn editar" (click)="editarReporte(r)">
                       {{ 'admin.editar' | translate }}

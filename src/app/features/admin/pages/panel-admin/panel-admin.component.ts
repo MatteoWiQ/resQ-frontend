@@ -7,6 +7,7 @@ import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
+import { TranslationKey } from '../../../../core/i18n/strings';
 import {
   ClaveFiltro,
   FILTROS_REPORTE,
@@ -14,7 +15,7 @@ import {
 } from '../../../../shared/constants/filtros-reporte';
 import { ROLES_VALIDOS } from '../../../../shared/constants/roles';
 import { Usuario } from '../../../../shared/models/usuario.model';
-import { Reporte } from '../../../../shared/models/reporte.model';
+import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model';
 
 @Component({
   selector: 'app-panel-admin',
@@ -92,6 +93,16 @@ export class PanelAdminComponent implements OnInit {
 
   etiquetaFiltro(clave: ClaveFiltro): string {
     return this.translate.t(`reportes.filtros.${clave}`);
+  }
+
+  // El valor interno (PENDIENTE, ADMIN, ...) se envia al backend; la etiqueta
+  // visible sale del catalogo de strings.
+  etiquetaEstado(estado: EstadoReporte): string {
+    return this.translate.t(`shared.estados.${estado}`);
+  }
+
+  etiquetaRol(rol: string): string {
+    return this.translate.t(`shared.roles.${rol}` as TranslationKey);
   }
 
   editarUsuario(u: Usuario): void {
