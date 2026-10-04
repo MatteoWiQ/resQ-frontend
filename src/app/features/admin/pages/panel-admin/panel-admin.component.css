@@ -170,6 +170,45 @@
   color: var(--muted);
 }
 
+/* ---------- HU-24: buscar y ordenar ---------- */
+
+.busqueda-reportes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.busqueda-reportes__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.busqueda-reportes__input {
+  flex: 1 1 220px;
+  min-width: 180px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.busqueda-reportes__input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.tabla__vacia {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
 .tabla input,
 .tabla select {
   width: 100%;

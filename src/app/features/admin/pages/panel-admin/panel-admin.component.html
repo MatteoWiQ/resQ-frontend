@@ -132,6 +132,41 @@
           {{ 'admin.casosMostrados' | translate }}: {{ reportes().length }}
         </span>
       </div>
+
+      <div class="busqueda-reportes">
+        <label class="busqueda-reportes__label" for="busqueda-reporte">
+          {{ 'admin.buscar' | translate }}
+        </label>
+        <input
+          id="busqueda-reporte"
+          class="busqueda-reportes__input"
+          type="search"
+          [value]="busqueda()"
+          [placeholder]="'admin.buscarPlaceholder' | translate"
+          (keyup.enter)="buscar($any($event.target).value)"
+        />
+        <button class="btn editar" type="button" (click)="buscar(busqueda())">
+          {{ 'admin.buscar' | translate }}
+        </button>
+        @if (hayBusqueda()) {
+          <button class="btn cancelar" type="button" (click)="limpiarBusqueda()">
+            {{ 'admin.limpiarBusqueda' | translate }}
+          </button>
+        }
+        <label class="busqueda-reportes__label" for="orden-reportes">
+          {{ 'admin.ordenarPor' | translate }}
+        </label>
+        <select
+          id="orden-reportes"
+          class="filtro-reportes__select"
+          [value]="orden()"
+          (change)="cambiarOrden($any($event.target).value)"
+        >
+          @for (opcion of ordenes; track opcion.clave) {
+            <option [value]="opcion.clave">{{ etiquetaOrden(opcion.clave) }}</option>
+          }
+        </select>
+      </div>
       <div class="tabla-wrapper">
         <table class="tabla">
           <thead>
@@ -175,11 +210,25 @@
                   <td>{{ r.descripcion }}</td>
                    <td>{{ etiquetaEstado(r.estado) }}</td>
                   <td>
-                    <button class="btn editar" (click)="editarReporte(r)">
-                      {{ 'admin.editar' | translate }}
-                    </button>
+                    <div class="acciones">
+                      <button class="btn editar" (click)="verDetalle(r)">
+                        {{ 'admin.verDetalle' | translate }}
+                      </button>
+                      <button class="btn editar" (click)="editarReporte(r)">
+                        {{ 'admin.editar' | translate }}
+                      </button>
+                      <button class="btn eliminar" (click)="abrirConfirmacionEliminarReporte(r)">
+                        {{ 'admin.eliminar' | translate }}
+                      </button>
+                    </div>
                   </td>
                 }
+              </tr>
+            } @empty {
+              <tr>
+                <td class="tabla__vacia" colspan="6">
+                  {{ 'admin.sinResultados' | translate }}
+                </td>
               </tr>
             }
           </tbody>
@@ -208,6 +257,34 @@
               {{ 'admin.cancelar' | translate }}
             </button>
             <button class="btn eliminar" type="button" (click)="confirmarEliminarUsuario()">
+              {{ 'admin.eliminar' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (reporteAEliminar(); as r) {
+      <div class="modal-capa" (click)="cerrarConfirmacionEliminarReporte()">
+        <div
+          class="modal modal--reporte"
+          role="dialog"
+          aria-modal="true"
+          [attr.aria-label]="'admin.tituloModalEliminarReporte' | translate"
+          (click)="$event.stopPropagation()"
+        >
+          <h3 class="modal__titulo">{{ 'admin.tituloModalEliminarReporte' | translate }}</h3>
+          <p class="modal__texto">{{ 'admin.confirmarEliminarReporte' | translate }}</p>
+          <p class="modal__cuenta">
+            <strong>#{{ r.idReporte }} — {{ etiquetaTipoCaso(r.tipoCaso) }}</strong>
+            <span>{{ r.descripcion }}</span>
+          </p>
+          <p class="modal__aviso">{{ 'admin.confirmarEliminarReporteAviso' | translate }}</p>
+          <div class="acciones modal__acciones">
+            <button class="btn cancelar" type="button" (click)="cerrarConfirmacionEliminarReporte()">
+              {{ 'admin.cancelar' | translate }}
+            </button>
+            <button class="btn eliminar" type="button" (click)="confirmarEliminarReporte()">
               {{ 'admin.eliminar' | translate }}
             </button>
           </div>

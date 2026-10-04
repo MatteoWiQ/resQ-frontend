@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -13,6 +14,11 @@ import {
   FILTROS_REPORTE,
   filtroPorClave,
 } from '../../../../shared/constants/filtros-reporte';
+import {
+  ORDENES_REPORTE,
+  ORDEN_POR_DEFECTO,
+  OrdenReporte,
+} from '../../../../shared/constants/gestion-reportes';
 import { ROLES_VALIDOS } from '../../../../shared/constants/roles';
 import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Usuario } from '../../../../shared/models/usuario.model';
@@ -30,6 +36,7 @@ export class PanelAdminComponent implements OnInit {
   private readonly usuarioService = inject(UsuarioService);
   private readonly reporteService = inject(ReporteService);
   private readonly translate = inject(TranslateService);
+  private readonly router = inject(Router);
 
   usuarios = signal<Usuario[]>([]);
   reportes = signal<Reporte[]>([]);
@@ -47,6 +54,11 @@ export class PanelAdminComponent implements OnInit {
   // ============ HU15: filtrar reportes por estado ============
   readonly filtros = FILTROS_REPORTE;
   readonly filtroReporte = signal<ClaveFiltro>('TODOS');
+
+  // ============ HU-24: buscar y ordenar los casos ============
+  readonly ordenes = ORDENES_REPORTE;
+  readonly busqueda = signal('');
+  readonly orden = signal<OrdenReporte>(ORDEN_POR_DEFECTO);
 
   editandoUsuarioId = signal<number | null>(null);
   editandoReporteId = signal<number | null>(null);
@@ -78,11 +90,13 @@ export class PanelAdminComponent implements OnInit {
   cargarReportes(): void {
     const { estados } = filtroPorClave(this.filtroReporte());
 
-    this.reporteService.obtenerTodos(estados).subscribe({
-      next: (data) => this.reportes.set(data),
-      error: (err) =>
-        this.mensaje.set(this.translate.t('admin.errorCargarReportes', { detalle: err.message })),
-    });
+    this.reporteService
+      .obtenerTodos(estados, { busqueda: this.busqueda(), orden: this.orden() })
+      .subscribe({
+        next: (data) => this.reportes.set(data),
+        error: (err) =>
+          this.mensaje.set(this.translate.t('admin.errorCargarReportes', { detalle: err.message })),
+      });
   }
 
   // ============ HU15: cambiar el filtro recarga la tabla ============
@@ -90,6 +104,73 @@ export class PanelAdminComponent implements OnInit {
     this.filtroReporte.set(clave);
     this.cancelarEdicion();
     this.cargarReportes();
+  }
+
+  // ============ HU-24: buscar y ordenar ============
+  /**
+   * La consulta se dispara al pulsar Enter o el boton, no en cada tecla: con el
+   * panel abierto eso son peticiones por pulsacion y la tabla va y viene.
+   */
+  buscar(texto: string): void {
+    this.busqueda.set(texto);
+    this.cancelarEdicion();
+    this.cargarReportes();
+  }
+
+  limpiarBusqueda(): void {
+    this.buscar('');
+  }
+
+  cambiarOrden(clave: OrdenReporte): void {
+    this.orden.set(clave);
+    this.cancelarEdicion();
+    this.cargarReportes();
+  }
+
+  etiquetaOrden(clave: OrdenReporte): string {
+    const opcion = this.ordenes.find((o) => o.clave === clave);
+    return this.translate.t((opcion?.etiqueta ?? 'admin.orden.recientes') as TranslationKey);
+  }
+
+  hayBusqueda(): boolean {
+    return this.busqueda().trim().length > 0;
+  }
+
+  /**
+   * El detalle es una pantalla aparte: desde ahi el caso se edita con calma y se
+   * cambia el estado con las transiciones que valida el backend.
+   */
+  verDetalle(r: Reporte): void {
+    void this.router.navigate(['/admin/reportes', r.idReporte]);
+  }
+
+  /** ============ HU-24: eliminar un reporte ============ */
+  readonly reporteAEliminar = signal<Reporte | null>(null);
+
+  abrirConfirmacionEliminarReporte(r: Reporte): void {
+    this.reporteAEliminar.set(r);
+  }
+
+  cerrarConfirmacionEliminarReporte(): void {
+    this.reporteAEliminar.set(null);
+  }
+
+  confirmarEliminarReporte(): void {
+    const reporte = this.reporteAEliminar();
+    if (!reporte) {
+      return;
+    }
+
+    this.reporteAEliminar.set(null);
+    this.reporteService.eliminar(reporte.idReporte).subscribe({
+      next: () => {
+        this.mensaje.set(this.translate.t('admin.reporteEliminado'));
+        this.cancelarEdicion();
+        this.cargarReportes();
+      },
+      error: (err) =>
+        this.mensaje.set(this.translate.t('admin.errorEliminarReporte', { detalle: err.message })),
+    });
   }
 
   etiquetaFiltro(clave: ClaveFiltro): string {

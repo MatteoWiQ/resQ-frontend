@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/services/auth.service';
@@ -34,6 +35,8 @@ describe('PanelAdminComponent: eliminar usuarios (HU-23)', () => {
     await TestBed.configureTestingModule({
       imports: [PanelAdminComponent],
       providers: [
+        // El panel navega al detalle del reporte (HU-24), asi que necesita el Router.
+        provideRouter([]),
         { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => idActual } },
         {
           provide: UsuarioService,
@@ -63,6 +66,8 @@ describe('PanelAdminComponent: eliminar usuarios (HU-23)', () => {
     await TestBed.configureTestingModule({
       imports: [PanelAdminComponent],
       providers: [
+        // El panel navega al detalle del reporte (HU-24), asi que necesita el Router.
+        provideRouter([]),
         { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 1 } },
         {
           provide: UsuarioService,
@@ -115,7 +120,9 @@ describe('PanelAdminComponent: eliminar usuarios (HU-23)', () => {
   it('no muestra el boton eliminar en la propia cuenta', async () => {
     const fixture = await crearPanel([ADMIN, CIUDADANO], ADMIN.idUsuario);
 
-    const filas = root(fixture).querySelectorAll('.tabla tbody tr');
+    // El selector se acota a la tabla de usuarios: la de reportes suma una fila
+    // de "sin resultados" cuando no hay casos, y no es lo que se prueba aqui.
+    const filas = root(fixture).querySelectorAll('#seccion-usuarios .tabla tbody tr');
     expect(filas.length).toBe(2);
     expect(filas[0].querySelector('.btn.eliminar')).toBeNull();
     expect(filas[1].querySelector('.btn.eliminar')).not.toBeNull();
