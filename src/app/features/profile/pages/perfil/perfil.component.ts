@@ -13,6 +13,8 @@ import { NotificacionesComponent } from '../../../../shared/components/notificac
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
+import { esAdmin as comprobarAdmin, esVoluntario as comprobarVoluntario } from '../../../../shared/constants/roles';
+import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
 import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model';
@@ -91,13 +93,30 @@ export class PerfilComponent implements OnInit {
     return `estado estado-${estado.toLowerCase()}`;
   }
 
+// El valor interno (PENDIENTE, ADMIN, ...) va al backend; la etiqueta
+  // visible sale del catalogo de strings.
+  etiquetaEstado(estado: string): string {
+    return this.translate.t(`shared.estados.${estado}` as TranslationKey);
+  }
+
+  etiquetaRol(rol: string): string {
+    return this.translate.t(`shared.roles.${rol}` as TranslationKey);
+  }
+
+  // Normaliza lo que llega del backend (minusculas, espacios) y traduce si
+  // existe en el catalogo; si no, muestra el valor original.
+  etiquetaTipoCaso(tipo: string): string {
+    const canonico = normalizarTipoCaso(tipo);
+    return this.translate.t(`shared.tiposCaso.${canonico}` as TranslationKey);
+  }
+
   // ============ HU-19: estado de la revisión del caso ============
   claseRevision(estado: string): string {
     return `estado estado-revision-${estado.toLowerCase()}`;
   }
 
   etiquetaRevision(estado: string): string {
-    return this.translate.t(('perfil.revision.' + estado) as TranslationKey);
+    return this.translate.t(`shared.estadosRevision.${estado}` as TranslationKey);
   }
 
   verDetalle(reporte: Reporte): void {
@@ -171,10 +190,15 @@ export class PerfilComponent implements OnInit {
       });
   }
 
+  // ============ HU-23: el administrador accede al panel desde su perfil ============
+  esAdmin(): boolean {
+    return comprobarAdmin(this.usuario()?.rol);
+  }
+
   // ============ HU-17 ============
 
   esVoluntario(usuario: Usuario): boolean {
-    return usuario.rol?.toUpperCase() === 'VOLUNTARIO';
+    return comprobarVoluntario(usuario.rol);
   }
 
   etiquetaTipoAyuda(valor: string): string {

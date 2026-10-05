@@ -13,7 +13,7 @@
 
       <div class="perfil-info">
         <h1>{{ u.nombre }}</h1>
-        <span class="badge">{{ u.rol }}</span>
+        <span class="badge">{{ etiquetaRol(u.rol) }}</span>
 
         <dl>
           <dt>{{ 'perfil.correo' | translate }}</dt>
@@ -22,6 +22,11 @@
           <dt>{{ 'perfil.telefono' | translate }}</dt>
           <dd>{{ u.telefono || ('perfil.noRegistrado' | translate) }}</dd>
         </dl>
+
+        <!-- ============ HU23: acceso al panel de usuarios, solo para administradores ============ -->
+        @if (esAdmin()) {
+          <a class="btn-editar-voluntario btn-panel-admin" routerLink="/admin">{{ 'perfil.panelAdmin' | translate }}</a>
+        }
 
         @if (esVoluntario(u)) {
           <div class="tipos-ayuda-badges">
@@ -66,14 +71,14 @@
         @for (reporte of reportes(); track reporte.idReporte) {
           <li class="reporte-item">
             <div class="reporte-info">
-              <strong>{{ reporte.tipoCaso }}</strong>
+              <strong>{{ etiquetaTipoCaso(reporte.tipoCaso) }}</strong>
               <p>{{ reporte.descripcion }}</p>
             </div>
             <div class="reporte-acciones">
-              @if (reporte.estadoRevision) {
+@if (reporte.estadoRevision) {
                 <span [class]="claseRevision(reporte.estadoRevision)">{{ etiquetaRevision(reporte.estadoRevision) }}</span>
               }
-              <span [class]="claseEstado(reporte.estado)">{{ reporte.estado }}</span>
+              <span [class]="claseEstado(reporte.estado)">{{ etiquetaEstado(reporte.estado) }}</span>
               <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">{{ 'perfil.ver' | translate }}</button>
             </div>
           </li>
@@ -92,7 +97,7 @@
         (click)="$event.stopPropagation()"
       >
         <div class="modal-head">
-          <h3 id="reporte-titulo">{{ r.tipoCaso }}</h3>
+          <h3 id="reporte-titulo">{{ etiquetaTipoCaso(r.tipoCaso) }}</h3>
           <button type="button" class="btn-cerrar" [attr.aria-label]="'perfil.modal.cerrarAria' | translate" (click)="cerrarDetalle()">
             &times;
           </button>
@@ -103,7 +108,7 @@
           <dd>#{{ r.idReporte }}</dd>
 
           <dt>{{ 'perfil.modal.estado' | translate }}</dt>
-          <dd><span [class]="claseEstado(r.estado)">{{ r.estado }}</span></dd>
+          <dd><span [class]="claseEstado(r.estado)">{{ etiquetaEstado(r.estado) }}</span></dd>
 
           @if (r.estadoRevision) {
             <dt>{{ 'perfil.revision.titulo' | translate }}</dt>
@@ -136,7 +141,7 @@
               (ngModelChange)="nuevoEstado.set($event)"
             >
               @for (estado of estadosValidos; track estado) {
-                <option [value]="estado">{{ estado }}</option>
+                <option [value]="estado">{{ etiquetaEstado(estado) }}</option>
               }
             </select>
 
