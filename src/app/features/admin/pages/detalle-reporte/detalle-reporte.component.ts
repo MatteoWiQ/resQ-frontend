@@ -11,7 +11,7 @@ import { TranslationKey } from '../../../../core/i18n/strings';
 import { estadosSiguientes } from '../../../../shared/constants/gestion-reportes';
 import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Usuario } from '../../../../shared/models/usuario.model';
-import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model';
+import { EstadoReporte, EstadoRevision, Reporte } from '../../../../shared/models/reporte.model';
 
 /**
  * HU-24: detalle de un reporte para el administrador.
@@ -103,6 +103,19 @@ export class DetalleReporteComponent implements OnInit {
 
   claseEstado(estado: EstadoReporte): string {
     return `estado estado-${estado.toLowerCase()}`;
+  }
+
+  /**
+   * HU-19: el administrador ve en que quedo la revision del caso. Las etiquetas
+   * salen del catalogo compartido (shared.estadosRevision) porque el mismo
+   * estado_revision lo muestra tambien el perfil del ciudadano.
+   */
+  etiquetaRevision(estado: EstadoRevision): string {
+    return this.translate.t(`shared.estadosRevision.${estado}` as TranslationKey);
+  }
+
+  claseRevision(estado: EstadoRevision): string {
+    return `estado estado-revision-${estado.toLowerCase()}`;
   }
 
   formatearFecha(fecha: string): string {
