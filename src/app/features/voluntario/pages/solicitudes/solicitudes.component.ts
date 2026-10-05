@@ -5,9 +5,12 @@ import { FormsModule } from '@angular/forms';
 
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
+import { TranslationKey } from '../../../../core/i18n/strings';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DecisionSolicitud, SolicitudService } from '../../../../core/services/solicitud.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { esAdmin, esVoluntario } from '../../../../shared/constants/roles';
+import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Reporte } from '../../../../shared/models/reporte.model';
 
 /**
@@ -45,9 +48,17 @@ export class SolicitudesComponent implements OnInit {
     this.cargarPendientes();
   }
 
+  // La misma regla que aplica el perfil (puedeRevisar) y el guard de la ruta,
+  // resuelta con los helpers de shared/constants/roles (HU-23) para no comparar
+  // el rol a mano.
   esRevisor(): boolean {
     const rol = this.authService.usuarioActual()?.rol;
-    return rol === 'VOLUNTARIO' || rol === 'ADMIN';
+    return esAdmin(rol) || esVoluntario(rol);
+  }
+
+  etiquetaTipoCaso(tipo: string): string {
+    const canonico = normalizarTipoCaso(tipo);
+    return this.translate.t(`shared.tiposCaso.${canonico}` as TranslationKey);
   }
 
   cargarPendientes(): void {

@@ -25,7 +25,7 @@
         @for (s of solicitudes(); track s.idReporte) {
           <li class="solicitud-item">
             <div class="solicitud-info">
-              <strong>{{ s.tipoCaso }}</strong>
+              <strong>{{ etiquetaTipoCaso(s.tipoCaso) }}</strong>
               <p>{{ s.descripcion }}</p>
               <small>
                 {{ 'solicitudes.reporteNumero' | translate: { id: s.idReporte } }} ·
@@ -59,7 +59,7 @@
 
         <dl class="modal-datos">
           <dt>{{ 'solicitudes.tipoCaso' | translate }}</dt>
-          <dd>{{ r.tipoCaso }}</dd>
+          <dd>{{ etiquetaTipoCaso(r.tipoCaso) }}</dd>
 
           <dt>{{ 'solicitudes.descripcion' | translate }}</dt>
           <dd class="modal-descripcion">{{ r.descripcion }}</dd>
