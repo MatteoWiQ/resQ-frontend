@@ -2,11 +2,11 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
 import { AuthService } from '../services/auth.service';
-import { esAdmin, esVoluntario } from '../../shared/constants/roles';
+import { esGestorDeReportes } from '../../shared/constants/roles';
 
 /**
  * HU-19: /voluntario/solicitudes solo se abre para cuentas con rol VOLUNTARIO o
- * ADMIN. Usa los mismos helpers que el perfil (puedeRevisar) y la pantalla de
+ * ADMIN. Usa el predicado compartido del perfil (puedeRevisar) y de la pantalla de
  * solicitudes (esRevisor), para que la regla este escrita en un solo sitio.
  *
  * El backend igual rechaza esas peticiones (esta no es una barrera de seguridad,
@@ -23,5 +23,5 @@ export const revisorGuard: CanActivateFn = () => {
     return router.createUrlTree(['/login']);
   }
 
-  return esAdmin(usuario.rol) || esVoluntario(usuario.rol) ? true : router.createUrlTree(['/perfil']);
+  return esGestorDeReportes(usuario.rol) ? true : router.createUrlTree(['/perfil']);
 };

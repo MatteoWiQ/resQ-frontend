@@ -133,6 +133,32 @@ describe('PerfilComponent (HU-19: revision del caso)', () => {
     });
   });
 
+  describe('permiso para marcar un caso como resuelto (HU-13)', () => {
+    it('un administrador puede marcar un caso como resuelto', async () => {
+      await crear('ADMIN');
+
+      expect(componente.puedeCambiarEstado()).toBe(true);
+    });
+
+    it('un voluntario puede marcar un caso como resuelto', async () => {
+      await crear('VOLUNTARIO');
+
+      expect(componente.puedeCambiarEstado()).toBe(true);
+    });
+
+    it('un ciudadano comun no puede marcar un caso como resuelto', async () => {
+      await crear('USUARIO');
+
+      expect(componente.puedeCambiarEstado()).toBe(false);
+    });
+
+    it('comparte la misma regla que revisar solicitudes', async () => {
+      await crear('VOLUNTARIO');
+
+      expect(componente.puedeCambiarEstado()).toBe(componente.puedeRevisar());
+    });
+  });
+
   describe('bandeja de notificaciones', () => {
     it('se monta cuando hay sesion', async () => {
       await crear('USUARIO');

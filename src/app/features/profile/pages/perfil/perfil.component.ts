@@ -13,7 +13,7 @@ import { NotificacionesComponent } from '../../../../shared/components/notificac
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
-import { esAdmin as comprobarAdmin, esVoluntario as comprobarVoluntario } from '../../../../shared/constants/roles';
+import { esAdmin as comprobarAdmin, esGestorDeReportes, esVoluntario as comprobarVoluntario } from '../../../../shared/constants/roles';
 import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { Reporte } from '../../../../shared/models/reporte.model';
@@ -141,17 +141,17 @@ export class PerfilComponent implements OnInit {
   }
 
   // ============ HU-13: solo voluntarios y admins pueden cambiar el estado ============
+  // La regla vive en shared/constants/roles: aca no se compara el rol a mano, que
+  // es lo que hacia que un ADMIN en minusculas no le vieran las acciones.
   puedeCambiarEstado(): boolean {
-    const rol = this.usuario()?.rol;
-    return rol === 'VOLUNTARIO' || rol === 'ADMIN';
+    return esGestorDeReportes(this.usuario()?.rol);
   }
 
   // ============ HU-19: mismos roles que pueden cambiar el estado (HU-13) ============
-  // Vive en shared/constants/roles (HU-23) para que el perfil, la pantalla de
-  // solicitudes y el guard de la ruta apliquen la misma regla.
+  // Nombre propio para que el template diga que es lo que habilita esta vista,
+  // aunque la regla underneath sea la misma.
   puedeRevisar(): boolean {
-    const rol = this.usuario()?.rol;
-    return comprobarAdmin(rol) || comprobarVoluntario(rol);
+    return esGestorDeReportes(this.usuario()?.rol);
   }
 
   actualizarEstado(): void {
