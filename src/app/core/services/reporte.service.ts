@@ -65,6 +65,13 @@ export class ReporteService {
       .pipe(catchError(() => of([])));
   }
 
+  /** HU-10: sube la fotografía y devuelve la fotoUrl con la que se crea el reporte. */
+  subirFoto(archivo: File): Observable<{ fotoUrl: string }> {
+    const datos = new FormData();
+    datos.append('foto', archivo);
+    return this.http.post<{ fotoUrl: string }>(`${this.baseUrl}/fotos`, datos);
+  }
+
   crearReporte(reporte: {
     idUsuario: number;
     tipoCaso: string;
