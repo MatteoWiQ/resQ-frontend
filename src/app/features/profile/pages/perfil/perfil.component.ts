@@ -146,6 +146,14 @@ export class PerfilComponent implements OnInit {
     return rol === 'VOLUNTARIO' || rol === 'ADMIN';
   }
 
+  // ============ HU-19: mismos roles que pueden cambiar el estado (HU-13) ============
+  // Vive en shared/constants/roles (HU-23) para que el perfil, la pantalla de
+  // solicitudes y el guard de la ruta apliquen la misma regla.
+  puedeRevisar(): boolean {
+    const rol = this.usuario()?.rol;
+    return comprobarAdmin(rol) || comprobarVoluntario(rol);
+  }
+
   actualizarEstado(): void {
     const reporte = this.reporteSeleccionado();
     if (!reporte) return;

@@ -44,7 +44,7 @@
         }
 
         <!-- ============ HU-19: voluntarios y admins revisan solicitudes ============ -->
-        @if (puedeCambiarEstado()) {
+        @if (puedeRevisar()) {
           <a class="primary-btn btn-revisar" routerLink="/voluntario/solicitudes">
             {{ 'perfil.revisarSolicitudes' | translate }}
           </a>
