@@ -12,6 +12,14 @@ export const es = {
       RESUELTO: 'Resuelto',
       CANCELADO: 'Cancelado',
     },
+    // HU-19: resultado de la revisión del caso por un voluntario. Vive en el
+    // catalogo compartido (y no en perfil) porque tambien lo muestra el detalle
+    // del caso en el panel administrativo.
+    estadosRevision: {
+      PENDIENTE_REVISION: 'En revisión',
+      APROBADO: 'Aprobado',
+      RECHAZADO: 'Rechazado',
+    },
     roles: {
       USUARIO: 'Usuario',
       VOLUNTARIO: 'Voluntario',
@@ -198,9 +206,6 @@ export const es = {
     revision: {
       titulo: 'Revisión',
       nota: 'Nota del voluntario',
-      PENDIENTE_REVISION: 'En revisión',
-      APROBADO: 'Aprobado',
-      RECHAZADO: 'Rechazado',
     },
     modal: {
       cerrarAria: 'Cerrar',
