@@ -54,7 +54,9 @@
   }
 
   <!-- ============ HU-19: notificaciones ============ -->
-  <app-notificaciones />
+  @if (usuario()) {
+    <app-notificaciones />
+  }
 
   <div class="reportes-section">
     <div class="reportes-head">
