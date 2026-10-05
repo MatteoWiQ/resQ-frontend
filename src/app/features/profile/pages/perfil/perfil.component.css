@@ -322,6 +322,12 @@ dd {
   margin-top: 12px;
 }
 
+/* HU-23: el enlace al panel se muestra como bloque para que se lea como boton. */
+.btn-panel-admin {
+  display: inline-block;
+  text-decoration: none;
+}
+
 .tipos-ayuda-badges {
   display: flex;
   flex-wrap: wrap;

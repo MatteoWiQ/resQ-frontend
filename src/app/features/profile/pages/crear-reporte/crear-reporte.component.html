@@ -35,7 +35,7 @@
             [class.seleccionado]="form.tipoCaso === tipo"
             (click)="seleccionarTipo(tipo)"
           >
-            <strong>{{ tipo }}</strong>
+            <strong>{{ etiquetaTipoCaso(tipo) }}</strong>
           </button>
         }
       </div>
@@ -46,7 +46,7 @@
     @if (paso() === 2) {
       <form (ngSubmit)="crearReporte()">
         <p class="tipo-elegido">
-          {{ 'reportes.nuevo.tipoElegido' | translate }}<strong>{{ form.tipoCaso }}</strong>
+          {{ 'reportes.nuevo.tipoElegido' | translate }}<strong>{{ etiquetaTipoCaso(form.tipoCaso) }}</strong>
         </p>
 
         <label for="descripcion">{{ 'reportes.nuevo.descripcion' | translate }}</label>
