@@ -1,0 +1,111 @@
+<section class="solicitudes-page">
+  <app-back-button ruta="/perfil" />
+
+  <div class="solicitudes-card">
+    <div class="brand">
+      <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+      <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
+    </div>
+
+    <h1>{{ 'solicitudes.titulo' | translate }}</h1>
+    <p class="subtitle">{{ 'solicitudes.subtitulo' | translate }}</p>
+
+    @if (mensaje()) {
+      <p class="mensaje" [class.mensaje-error]="mensajeEsError()" role="status">{{ mensaje() }}</p>
+    }
+
+    @if (!esRevisor()) {
+      <p class="message">{{ 'solicitudes.sinPermisos' | translate }}</p>
+    } @else if (cargando()) {
+      <p class="hint">{{ 'solicitudes.cargando' | translate }}</p>
+    } @else if (solicitudes().length === 0) {
+      <p class="hint">{{ 'solicitudes.vacio' | translate }}</p>
+    } @else {
+      <ul class="solicitudes-lista">
+        @for (s of solicitudes(); track s.idReporte) {
+          <li class="solicitud-item">
+            <div class="solicitud-info">
+              <strong>{{ etiquetaTipoCaso(s.tipoCaso) }}</strong>
+              <p>{{ s.descripcion }}</p>
+              <small>
+                {{ 'solicitudes.reporteNumero' | translate: { id: s.idReporte } }} ·
+                {{ s.fechaCreacion | date: 'dd/MM/yyyy HH:mm' }}
+              </small>
+            </div>
+            <button type="button" class="btn-detalle" (click)="revisar(s)">
+              {{ 'solicitudes.revisar' | translate }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  @if (seleccionada(); as r) {
+    <div class="modal-overlay" (click)="cerrar()">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="solicitud-titulo"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="modal-head">
+          <h3 id="solicitud-titulo">{{ 'solicitudes.modalTitulo' | translate: { id: r.idReporte } }}</h3>
+          <button type="button" class="btn-cerrar" [attr.aria-label]="'solicitudes.cerrarAria' | translate" (click)="cerrar()">
+            &times;
+          </button>
+        </div>
+
+        <dl class="modal-datos">
+          <dt>{{ 'solicitudes.tipoCaso' | translate }}</dt>
+          <dd>{{ etiquetaTipoCaso(r.tipoCaso) }}</dd>
+
+          <dt>{{ 'solicitudes.descripcion' | translate }}</dt>
+          <dd class="modal-descripcion">{{ r.descripcion }}</dd>
+
+          <dt>{{ 'solicitudes.fecha' | translate }}</dt>
+          <dd>{{ r.fechaCreacion | date: 'dd/MM/yyyy HH:mm' }}</dd>
+
+          <dt>{{ 'solicitudes.ubicacion' | translate }}</dt>
+          <dd>
+            @if (r.latitud != null && r.longitud != null) {
+              {{ r.latitud }}, {{ r.longitud }}
+            } @else {
+              {{ 'solicitudes.sinUbicacion' | translate }}
+            }
+          </dd>
+        </dl>
+
+        @if (r.fotoUrl) {
+          <img class="modal-foto" [src]="r.fotoUrl" [attr.alt]="'solicitudes.fotoAlt' | translate" />
+        }
+
+        <div class="nota-editor">
+          <label for="nota-revision">{{ 'solicitudes.nota' | translate }}</label>
+          <textarea
+            id="nota-revision"
+            rows="3"
+            maxlength="500"
+            [ngModel]="nota()"
+            (ngModelChange)="nota.set($event)"
+            [placeholder]="'solicitudes.notaPlaceholder' | translate"
+          ></textarea>
+          <p class="nota-ayuda">{{ 'solicitudes.notaAyuda' | translate }}</p>
+          @if (errorNota()) {
+            <p class="message" role="alert">{{ errorNota() }}</p>
+          }
+        </div>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn-rechazar" [disabled]="enviando()" (click)="decidir('RECHAZAR')">
+            {{ enviando() ? ('solicitudes.enviando' | translate) : ('solicitudes.rechazar' | translate) }}
+          </button>
+          <button type="button" class="primary-btn" [disabled]="enviando()" (click)="decidir('APROBAR')">
+            {{ enviando() ? ('solicitudes.enviando' | translate) : ('solicitudes.aprobar' | translate) }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</section>

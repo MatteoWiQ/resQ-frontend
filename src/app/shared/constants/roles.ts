@@ -26,3 +26,17 @@ export function esAdmin(rol: string | null | undefined): boolean {
 export function esVoluntario(rol: string | null | undefined): boolean {
   return normalizarRol(rol) === ROL_VOLUNTARIO;
 }
+
+/**
+ * Roles con permiso para intervenir un caso: cambiar su estado (HU-13), marcarlo
+ * como resuelto o aprobarlo/rechazarlo como revision (HU-19).
+ *
+ * Es el unico lugar donde se responde eso, para que el perfil, la pantalla de
+ * solicitudes y el guard de la ruta no puedan divergir entre si. Si mas adelante
+ * el negocio separa las dos capacidades (por ejemplo, que un administrador pueda
+ * gestionar el estado pero no aprobar una revision), aqui se parte en dos
+ * predicados y no en los componentes.
+ */
+export function esGestorDeReportes(rol: string | null | undefined): boolean {
+  return esAdmin(rol) || esVoluntario(rol);
+}

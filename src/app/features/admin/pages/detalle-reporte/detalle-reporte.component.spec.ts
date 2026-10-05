@@ -168,4 +168,34 @@ describe('DetalleReporteComponent: detalle administrativo (HU-24)', () => {
       'Ese reporte ya no existe',
     );
   });
+
+  describe('revision del caso (HU-19)', () => {
+    it('muestra el estado de la revision y la nota del voluntario', async () => {
+      reporteService.obtenerPorId.mockReturnValue(
+        of({
+          ...REPORTE,
+          estadoRevision: 'RECHAZADO',
+          notaRevision: 'La foto no corresponde al animal',
+        }),
+      );
+
+      const fixture = await crearDetalle();
+      const texto = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+      expect(texto).toContain('Rechazado');
+      expect(texto).toContain('Nota del voluntario');
+      expect(texto).toContain('La foto no corresponde al animal');
+    });
+
+    it('no muestra el bloque de revision cuando el caso todavia no fue revisado', async () => {
+      reporteService.obtenerPorId.mockReturnValue(of({ ...REPORTE, estadoRevision: null }));
+
+      const fixture = await crearDetalle();
+      const elemento = fixture.nativeElement as HTMLElement;
+
+      expect(elemento.textContent).toContain('Pendiente');
+      expect(elemento.textContent).not.toContain('Nota del voluntario');
+      expect(elemento.querySelector('.estado-revision-aprobado')).toBeNull();
+    });
+  });
 });

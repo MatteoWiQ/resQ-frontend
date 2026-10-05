@@ -5,7 +5,7 @@ import {
   ORDEN_POR_DEFECTO,
   TRANSICIONES_ESTADO,
   estadosSiguientes,
-  puedeCambiarEstado,
+  tieneTransiciones,
 } from './gestion-reportes';
 import { EstadoReporte } from '../models/reporte.model';
 
@@ -51,13 +51,13 @@ describe('Constantes de gestion de reportes (HU-24)', () => {
     const desconocido = 'PERDIDO' as EstadoReporte;
 
     expect(estadosSiguientes(desconocido)).toEqual([]);
-    expect(puedeCambiarEstado(desconocido)).toBe(false);
+    expect(tieneTransiciones(desconocido)).toBe(false);
   });
 
   it('debe permitir el cambio en todos los estados conocidos', () => {
-    expect(puedeCambiarEstado('PENDIENTE')).toBe(true);
-    expect(puedeCambiarEstado('EN_PROCESO')).toBe(true);
-    expect(puedeCambiarEstado('RESUELTO')).toBe(true);
-    expect(puedeCambiarEstado('CANCELADO')).toBe(true);
+    expect(tieneTransiciones('PENDIENTE')).toBe(true);
+    expect(tieneTransiciones('EN_PROCESO')).toBe(true);
+    expect(tieneTransiciones('RESUELTO')).toBe(true);
+    expect(tieneTransiciones('CANCELADO')).toBe(true);
   });
 });

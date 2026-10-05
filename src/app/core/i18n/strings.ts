@@ -12,6 +12,14 @@ export const es = {
       RESUELTO: 'Resuelto',
       CANCELADO: 'Cancelado',
     },
+    // HU-19: resultado de la revisión del caso por un voluntario. Vive en el
+    // catalogo compartido (y no en perfil) porque tambien lo muestra el detalle
+    // del caso en el panel administrativo.
+    estadosRevision: {
+      PENDIENTE_REVISION: 'En revisión',
+      APROBADO: 'Aprobado',
+      RECHAZADO: 'Rechazado',
+    },
     roles: {
       USUARIO: 'Usuario',
       VOLUNTARIO: 'Voluntario',
@@ -194,6 +202,11 @@ export const es = {
     sinReportes: 'Todavía no has hecho ningún reporte.',
     ver: 'Ver',
     panelAdmin: 'Panel administrativo',
+    revisarSolicitudes: 'Revisar solicitudes',
+    revision: {
+      titulo: 'Revisión',
+      nota: 'Nota del voluntario',
+    },
     modal: {
       cerrarAria: 'Cerrar',
       id: 'ID',
@@ -285,6 +298,45 @@ export const es = {
       ALIMENTO: 'Alimento',
       RESCATE: 'Rescate',
     },
+  },
+  // ============ HU-19: aceptar o rechazar solicitudes ============
+  solicitudes: {
+    titulo: 'Solicitudes pendientes',
+    subtitulo: 'Valida la información de los casos reportados por los usuarios.',
+    sinPermisos: 'No tienes permisos para ver esta sección.',
+    cargando: 'Cargando solicitudes...',
+    vacio: 'No hay solicitudes pendientes por revisar.',
+    errorCargar: '❌ No se pudieron cargar las solicitudes.',
+    reporteNumero: 'Reporte #{{id}}',
+    revisar: 'Revisar',
+    modalTitulo: 'Revisar solicitud #{{id}}',
+    cerrarAria: 'Cerrar',
+    tipoCaso: 'Tipo de caso',
+    descripcion: 'Descripción',
+    fecha: 'Fecha del reporte',
+    ubicacion: 'Ubicación',
+    sinUbicacion: 'Sin ubicación',
+    fotoAlt: 'Foto del reporte',
+    nota: 'Nota para el usuario',
+    notaAyuda: 'Obligatoria al rechazar, opcional al aprobar.',
+    notaPlaceholder: 'Explica brevemente tu decisión...',
+    aprobar: 'Aprobar',
+    rechazar: 'Rechazar',
+    enviando: 'Enviando...',
+    notaObligatoria: 'Debes indicar el motivo del rechazo.',
+    aprobada: '✅ Solicitud #{{id}} aprobada. Se notificó al usuario.',
+    rechazada: '✅ Solicitud #{{id}} rechazada. Se notificó al usuario.',
+    errorDecidir: '❌ No se pudo registrar la decisión. Inténtalo de nuevo.',
+    errorSinPermiso: '❌ No tienes permisos para revisar solicitudes.',
+    errorYaRevisada: '❌ Esta solicitud ya fue revisada. Se actualizó la lista.',
+  },
+  notificaciones: {
+    titulo: 'Notificaciones',
+    cargando: 'Cargando notificaciones...',
+    vacio: 'No tienes notificaciones.',
+    errorCargar: 'No se pudieron cargar tus notificaciones.',
+    sinLeer: '{{n}} sin leer',
+    marcarLeida: 'Marcar como leída',
   },
   admin: {
     titulo: 'Panel administrativo',

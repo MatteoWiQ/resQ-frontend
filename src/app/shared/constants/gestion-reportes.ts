@@ -41,7 +41,12 @@ export function estadosSiguientes(estado: EstadoReporte): EstadoReporte[] {
  * Un caso en un estado que el backend todavia no conoce (datos viejos, por
  * ejemplo) no tiene salida: antes que ofrecer un select vacio, la interfaz pide
  * revisar el caso antes de tocarlo.
+ *
+ * OJO con el nombre: esto responde si el ESTADO tiene destinos, no si el USUARIO
+ * tiene permiso. Ese otro, para cambiar el estado o revisar una solicitud, es
+ * esGestorDeReportes() en shared/constants/roles. Antes esta funcion se llamaba
+ * igual que el permiso del perfil y las dos se confundian al leerlas.
  */
-export function puedeCambiarEstado(estado: EstadoReporte): boolean {
+export function tieneTransiciones(estado: EstadoReporte): boolean {
   return estadosSiguientes(estado).length > 0;
 }

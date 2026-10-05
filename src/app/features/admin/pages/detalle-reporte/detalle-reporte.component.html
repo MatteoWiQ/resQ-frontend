@@ -25,6 +25,9 @@
       <div class="cabecera">
         <span class="id">#{{ r.idReporte }}</span>
         <span [class]="claseEstado(r.estado)">{{ etiquetaEstado(r.estado) }}</span>
+        @if (r.estadoRevision) {
+          <span [class]="claseRevision(r.estadoRevision)">{{ etiquetaRevision(r.estadoRevision) }}</span>
+        }
       </div>
 
       <dl class="datos">
@@ -66,6 +69,12 @@
           <dt>{{ 'admin.descripcion' | translate }}</dt>
           <dd>{{ r.descripcion }}</dd>
         </div>
+        @if (r.notaRevision) {
+          <div class="dato dato--ancho">
+            <dt>{{ 'perfil.revision.nota' | translate }}</dt>
+            <dd>{{ r.notaRevision }}</dd>
+          </div>
+        }
       </dl>
 
       @if (r.fotoUrl) {
