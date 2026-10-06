@@ -1,4 +1,8 @@
+import { organizacionesEs } from './strings-organizaciones';
+
 export const es = {
+  // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
+  organizaciones: organizacionesEs,
   shared: {
     brand: {
       marca: 'R',
