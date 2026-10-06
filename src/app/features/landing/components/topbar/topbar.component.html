@@ -10,6 +10,7 @@
     <a href="#casos">{{ 'landing.topbar.casos' | translate }}</a>
     <a href="#ayudar">{{ 'landing.topbar.ayudar' | translate }}</a>
     <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
+    <a routerLink="/organizaciones/registro">{{ 'organizaciones.enlaceTopbar' | translate }}</a>
     @if (authService.usuarioActual()) {
       <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
     }
