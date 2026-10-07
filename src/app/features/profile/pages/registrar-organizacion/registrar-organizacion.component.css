@@ -1,0 +1,248 @@
+.organizacion-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.organizacion-card {
+  width: min(520px, 100%);
+  padding: 40px 36px;
+  border-radius: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.brand .brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+h1 {
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+  font-size: 2.2rem;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.98rem;
+  margin: 0 0 24px;
+}
+
+.message {
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #b00020;
+  word-break: break-word;
+}
+
+.confirmacion {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: #1f8a4a;
+}
+
+form {
+  display: grid;
+  gap: 14px;
+}
+
+label,
+.etiqueta-campo {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #bbb;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #999;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 1px solid #333;
+  outline-offset: 1px;
+}
+
+.field-error {
+  margin: -6px 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #b00020;
+}
+
+.ayuda {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+  word-break: break-word;
+}
+
+.contador {
+  margin-top: -8px;
+  text-align: right;
+}
+
+/* ============ Logo ============ */
+.logo-campo {
+  display: grid;
+  gap: 10px;
+}
+
+.logo-input {
+  display: none;
+}
+
+.logo-preview,
+.logo-final {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid #bbb;
+}
+
+.logo-final {
+  margin: 0 0 18px;
+}
+
+.logo-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.logo-acciones .btn-volver {
+  padding: 0.6rem 1.1rem;
+  font-size: 0.9rem;
+}
+
+/* ============ Botones ============ */
+.btn-accion,
+.btn-volver {
+  padding: 0.9rem 1.4rem;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-accion {
+  border: 1px solid #333;
+  background: #333;
+  color: #fff;
+}
+
+.btn-accion:hover:not(:disabled) {
+  background: #555;
+}
+
+.btn-accion:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-volver {
+  border: 1px solid #bbb;
+  background: transparent;
+  color: #333;
+}
+
+.btn-volver:hover {
+  border-color: #555;
+}
+
+.enlace {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* ============ Estado de la organización ============ */
+.estado-bloque {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.badge {
+  justify-self: start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.estado-pendiente_verificacion {
+  background: #fdf1d0;
+  color: #8a6d1f;
+}
+
+.estado-verificada {
+  background: #d7f5df;
+  color: #1f8a4a;
+}
+
+.estado-rechazada {
+  background: #fbdada;
+  color: #8a1f1f;
+}
+
+.aviso {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #444;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 16px;
+  margin: 0 0 24px;
+}
+
+.datos dt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.datos dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+.descripcion {
+  white-space: pre-line;
+}
+
+@media (max-width: 640px) {
+  .organizacion-card {
+    padding: 32px 24px;
+  }
+}

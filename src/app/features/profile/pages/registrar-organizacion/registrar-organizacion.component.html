@@ -1,0 +1,194 @@
+<main class="organizacion-page">
+  <app-back-button />
+
+  <section class="organizacion-card">
+    <div class="brand">
+      <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+      <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
+    </div>
+
+    @if (!hayUsuario()) {
+      <h1>{{ 'organizaciones.titulo' | translate }}</h1>
+      <p class="message">{{ 'organizaciones.sinSesion' | translate }}</p>
+      <a class="btn-accion enlace" routerLink="/login">{{ 'organizaciones.iniciarSesion' | translate }}</a>
+    } @else if (cargando()) {
+      <h1>{{ 'organizaciones.titulo' | translate }}</h1>
+      <p class="subtitle">{{ 'organizaciones.cargando' | translate }}</p>
+    } @else if (organizacion(); as org) {
+      <!-- ============ Estado de la organización ============ -->
+      <h1>{{ 'organizaciones.estado.titulo' | translate }}</h1>
+
+      @if (confirmacionEnviada() !== null) {
+        <p class="confirmacion">{{ 'organizaciones.confirmacion.registrada' | translate }}</p>
+        <p class="subtitle" role="status">
+          @if (confirmacionEnviada()) {
+            {{ 'organizaciones.confirmacion.correoEnviado' | translate: { email: org.email } }}
+          } @else {
+            {{ 'organizaciones.confirmacion.correoNoEnviado' | translate }}
+          }
+        </p>
+      }
+
+      <div class="estado-bloque">
+        <span class="badge" [class]="'badge estado-' + org.estadoVerificacion.toLowerCase()">
+          {{ etiquetaEstado(org.estadoVerificacion) }}
+        </span>
+        <p class="aviso">{{ avisoEstado(org.estadoVerificacion) }}</p>
+      </div>
+
+      @if (org.logoUrl) {
+        <img class="logo-final" [src]="org.logoUrl" [alt]="'organizaciones.detalle.logoAlt' | translate" />
+      }
+
+      <dl class="datos">
+        <dt>{{ 'organizaciones.campos.nombre' | translate }}</dt>
+        <dd>{{ org.nombre }}</dd>
+
+        <dt>{{ 'organizaciones.detalle.tipo' | translate }}</dt>
+        <dd>{{ etiquetaTipo(org.tipo) }}</dd>
+
+        <dt>{{ 'organizaciones.detalle.direccion' | translate }}</dt>
+        <dd>{{ org.direccion }}</dd>
+
+        <dt>{{ 'organizaciones.detalle.telefono' | translate }}</dt>
+        <dd>{{ org.telefono }}</dd>
+
+        <dt>{{ 'organizaciones.detalle.email' | translate }}</dt>
+        <dd>{{ org.email }}</dd>
+
+        @if (org.descripcion) {
+          <dt>{{ 'organizaciones.detalle.descripcion' | translate }}</dt>
+          <dd class="descripcion">{{ org.descripcion }}</dd>
+        }
+      </dl>
+
+      <a class="btn-volver enlace" routerLink="/perfil">{{ 'organizaciones.detalle.volver' | translate }}</a>
+    } @else {
+      <!-- ============ Formulario de registro ============ -->
+      <h1>{{ 'organizaciones.titulo' | translate }}</h1>
+      <p class="subtitle">{{ 'organizaciones.subtitle' | translate }}</p>
+
+      @if (mensaje()) {
+        <p class="message" role="alert">{{ mensaje() }}</p>
+      }
+
+      <form (ngSubmit)="registrar()" novalidate>
+        <label for="nombre">{{ 'organizaciones.campos.nombre' | translate }}</label>
+        <input
+          id="nombre"
+          name="nombre"
+          type="text"
+          maxlength="150"
+          [(ngModel)]="form.nombre"
+          [placeholder]="'organizaciones.campos.nombrePlaceholder' | translate"
+        />
+        @if (errores()['nombre']) {
+          <p class="field-error">{{ errores()['nombre'] }}</p>
+        }
+
+        <label for="tipo">{{ 'organizaciones.campos.tipo' | translate }}</label>
+        <select id="tipo" name="tipo" [(ngModel)]="form.tipo">
+          <option value="">{{ 'organizaciones.campos.tipoPlaceholder' | translate }}</option>
+          @for (tipo of tipos; track tipo) {
+            <option [value]="tipo">{{ etiquetaTipo(tipo) }}</option>
+          }
+        </select>
+        @if (errores()['tipo']) {
+          <p class="field-error">{{ errores()['tipo'] }}</p>
+        }
+
+        <label for="direccion">{{ 'organizaciones.campos.direccion' | translate }}</label>
+        <input
+          id="direccion"
+          name="direccion"
+          type="text"
+          maxlength="255"
+          [(ngModel)]="form.direccion"
+          [placeholder]="'organizaciones.campos.direccionPlaceholder' | translate"
+        />
+        @if (errores()['direccion']) {
+          <p class="field-error">{{ errores()['direccion'] }}</p>
+        }
+
+        <label for="telefono">{{ 'organizaciones.campos.telefono' | translate }}</label>
+        <input
+          id="telefono"
+          name="telefono"
+          type="tel"
+          maxlength="30"
+          [(ngModel)]="form.telefono"
+          [placeholder]="'organizaciones.campos.telefonoPlaceholder' | translate"
+        />
+        @if (errores()['telefono']) {
+          <p class="field-error">{{ errores()['telefono'] }}</p>
+        }
+
+        <label for="email">{{ 'organizaciones.campos.email' | translate }}</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          maxlength="150"
+          [(ngModel)]="form.email"
+          [placeholder]="'organizaciones.campos.emailPlaceholder' | translate"
+        />
+        @if (errores()['email']) {
+          <p class="field-error">{{ errores()['email'] }}</p>
+        }
+
+        <label for="descripcion">{{ 'organizaciones.campos.descripcion' | translate }}</label>
+        <textarea
+          id="descripcion"
+          name="descripcion"
+          rows="4"
+          [(ngModel)]="form.descripcion"
+          [placeholder]="'organizaciones.campos.descripcionPlaceholder' | translate"
+        ></textarea>
+        <p class="ayuda contador">
+          {{ 'organizaciones.campos.descripcionContador' | translate: { n: form.descripcion.length } }}
+        </p>
+        @if (errores()['descripcion']) {
+          <p class="field-error">{{ errores()['descripcion'] }}</p>
+        }
+
+        <span class="etiqueta-campo">{{ 'organizaciones.logo.etiqueta' | translate }}</span>
+        <div class="logo-campo">
+          <input
+            #logoInput
+            id="logo"
+            type="file"
+            name="logo"
+            class="logo-input"
+            [attr.accept]="logoAccept"
+            (change)="seleccionarLogo($event)"
+          />
+
+          @if (vistaPrevia(); as src) {
+            <img class="logo-preview" [src]="src" [alt]="'organizaciones.logo.vistaPreviaAlt' | translate" />
+            <p class="ayuda">{{ logo()?.name }}</p>
+          }
+
+          <div class="logo-acciones">
+            <button type="button" class="btn-volver" (click)="logoInput.click()">
+              {{ (logo() ? 'organizaciones.logo.cambiar' : 'organizaciones.logo.seleccionar') | translate }}
+            </button>
+            @if (logo()) {
+              <button type="button" class="btn-volver" (click)="quitarLogo()">
+                {{ 'organizaciones.logo.quitar' | translate }}
+              </button>
+            }
+          </div>
+
+          <p class="ayuda">{{ 'organizaciones.logo.ayuda' | translate }}</p>
+          @if (errores()['logo']) {
+            <p class="field-error" role="alert">{{ errores()['logo'] }}</p>
+          }
+        </div>
+
+        <button type="submit" class="btn-accion" [disabled]="enviando()">
+          {{ enviando() ? ('organizaciones.enviando' | translate) : ('organizaciones.enviar' | translate) }}
+        </button>
+      </form>
+    }
+  </section>
+</main>
