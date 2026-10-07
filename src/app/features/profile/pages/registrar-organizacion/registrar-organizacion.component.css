@@ -183,6 +183,27 @@ textarea:focus {
   text-decoration: none;
 }
 
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.acciones .btn-accion {
+  flex: 1;
+}
+
+.acciones .btn-volver {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .acciones {
+    flex-direction: column;
+  }
+}
+
 /* ============ Estado de la organización ============ */
 .estado-bloque {
   display: grid;
