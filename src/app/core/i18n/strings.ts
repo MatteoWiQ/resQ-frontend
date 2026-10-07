@@ -1,4 +1,8 @@
+import { organizacionesEs } from './strings-organizaciones';
+
 export const es = {
+  // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
+  organizaciones: organizacionesEs,
   shared: {
     brand: {
       marca: 'R',
@@ -6,6 +10,30 @@ export const es = {
     },
     volverAtras: 'Volver atrás',
     ubicacionSeleccionada: 'Ubicación seleccionada',
+    estados: {
+      PENDIENTE: 'Pendiente',
+      EN_PROCESO: 'En proceso',
+      RESUELTO: 'Resuelto',
+      CANCELADO: 'Cancelado',
+    },
+    // HU-19: resultado de la revisión del caso por un voluntario. Vive en el
+    // catalogo compartido (y no en perfil) porque tambien lo muestra el detalle
+    // del caso en el panel administrativo.
+    estadosRevision: {
+      PENDIENTE_REVISION: 'En revisión',
+      APROBADO: 'Aprobado',
+      RECHAZADO: 'Rechazado',
+    },
+    roles: {
+      USUARIO: 'Usuario',
+      VOLUNTARIO: 'Voluntario',
+      ADMIN: 'Administrador',
+    },
+    tiposCaso: {
+      PERDIDA: 'Perdida',
+      ENCONTRADA: 'Encontrada',
+      ABANDONADA: 'Abandonada',
+    },
   },
   landing: {
     topbar: {
@@ -42,12 +70,6 @@ export const es = {
       marcadorTexto: 'Reporte {{id}}, {{estado}}',
       cerrar: 'Cerrar',
       cerrarDetalle: 'Cerrar detalle del caso',
-      estados: {
-        PENDIENTE: 'Pendiente',
-        EN_PROCESO: 'En proceso',
-        RESUELTO: 'Resuelto',
-        CANCELADO: 'Cancelado',
-      },
     },
     hero: {
       eyebrow: 'Red de rescate animal',
@@ -125,6 +147,9 @@ export const es = {
         descripcion:
           'Comprueba que la información sea correcta y envía el reporte. Necesitas iniciar sesión para registrar el caso en tu perfil.',
       },
+      paso4: {
+        titulo: 'Publicar',
+      },
       accion: {
         kicker: '¿Listo para ayudar?',
         titulo: 'Comienza tu reporte',
@@ -180,6 +205,12 @@ export const es = {
     cargandoReportes: 'Cargando reportes...',
     sinReportes: 'Todavía no has hecho ningún reporte.',
     ver: 'Ver',
+    panelAdmin: 'Panel administrativo',
+    revisarSolicitudes: 'Revisar solicitudes',
+    revision: {
+      titulo: 'Revisión',
+      nota: 'Nota del voluntario',
+    },
     modal: {
       cerrarAria: 'Cerrar',
       id: 'ID',
@@ -219,11 +250,33 @@ export const es = {
       descripcion: 'Descripción',
       descripcionPlaceholder:
         'Describe el caso: raza, color, nombres, lugar y hora, señas particulares...',
-      fotoUrl: 'URL de foto (opcional)',
-      fotoUrlPlaceholder: 'https://...',
+      foto: 'Fotografía (opcional)',
+      fotoAyuda: 'Formatos permitidos: JPG, PNG o WEBP. Tamaño máximo: 5 MB.',
+      fotoSeleccionar: 'Seleccionar fotografía',
+      fotoCambiar: 'Cambiar fotografía',
+      fotoQuitar: 'Quitar fotografía',
+      fotoVistaPreviaAlt: 'Vista previa de la fotografía seleccionada',
+      fotoErrorFormato: 'Formato no permitido. Usa una imagen JPG, PNG o WEBP.',
+      fotoErrorTamano: 'La fotografía supera el tamaño máximo permitido de 5 MB.',
+      fotoErrorSubir: 'No se pudo subir la fotografía. Inténtalo de nuevo.',
       ubicacion: 'Ubicación (opcional)',
       ubicacionAyuda: 'Haz clic en el mapa para marcar dónde se encuentra el animal.',
+      ubicacionActual: 'Usar mi ubicación actual',
+      ubicacionObteniendo: 'Obteniendo tu ubicación...',
       ubicacionQuitar: 'Quitar ubicación',
+      ubicacionError: {
+        NO_SOPORTADA:
+          'Este dispositivo no permite obtener la ubicación. Marca el punto en el mapa.',
+        CONTEXTO_SEGURO:
+          'Para obtener tu ubicación hace falta una conexión segura (https). Marca el punto en el mapa.',
+        PERMISO_DENEGADO: 'No diste permiso para usar tu ubicación. Marca el punto en el mapa.',
+        POSICION_NO_DISPONIBLE:
+          'No se pudo determinar tu ubicación. Inténtalo de nuevo o marca el punto en el mapa.',
+        TIEMPO_AGOTADO:
+          'Tu ubicación tardó demasiado en obtenerse. Inténtalo de nuevo o marca el punto en el mapa.',
+        ERROR_DESCONOCIDO:
+          'No se pudo obtener tu ubicación. Inténtalo de nuevo o marca el punto en el mapa.',
+      },
       atras: 'Atrás',
       creando: 'Creando...',
       crear: 'Crear reporte',
@@ -250,6 +303,45 @@ export const es = {
       RESCATE: 'Rescate',
     },
   },
+  // ============ HU-19: aceptar o rechazar solicitudes ============
+  solicitudes: {
+    titulo: 'Solicitudes pendientes',
+    subtitulo: 'Valida la información de los casos reportados por los usuarios.',
+    sinPermisos: 'No tienes permisos para ver esta sección.',
+    cargando: 'Cargando solicitudes...',
+    vacio: 'No hay solicitudes pendientes por revisar.',
+    errorCargar: '❌ No se pudieron cargar las solicitudes.',
+    reporteNumero: 'Reporte #{{id}}',
+    revisar: 'Revisar',
+    modalTitulo: 'Revisar solicitud #{{id}}',
+    cerrarAria: 'Cerrar',
+    tipoCaso: 'Tipo de caso',
+    descripcion: 'Descripción',
+    fecha: 'Fecha del reporte',
+    ubicacion: 'Ubicación',
+    sinUbicacion: 'Sin ubicación',
+    fotoAlt: 'Foto del reporte',
+    nota: 'Nota para el usuario',
+    notaAyuda: 'Obligatoria al rechazar, opcional al aprobar.',
+    notaPlaceholder: 'Explica brevemente tu decisión...',
+    aprobar: 'Aprobar',
+    rechazar: 'Rechazar',
+    enviando: 'Enviando...',
+    notaObligatoria: 'Debes indicar el motivo del rechazo.',
+    aprobada: '✅ Solicitud #{{id}} aprobada. Se notificó al usuario.',
+    rechazada: '✅ Solicitud #{{id}} rechazada. Se notificó al usuario.',
+    errorDecidir: '❌ No se pudo registrar la decisión. Inténtalo de nuevo.',
+    errorSinPermiso: '❌ No tienes permisos para revisar solicitudes.',
+    errorYaRevisada: '❌ Esta solicitud ya fue revisada. Se actualizó la lista.',
+  },
+  notificaciones: {
+    titulo: 'Notificaciones',
+    cargando: 'Cargando notificaciones...',
+    vacio: 'No tienes notificaciones.',
+    errorCargar: 'No se pudieron cargar tus notificaciones.',
+    sinLeer: '{{n}} sin leer',
+    marcarLeida: 'Marcar como leída',
+  },
   admin: {
     titulo: 'Panel administrativo',
     subtitle: 'Gestiona los reportes y usuarios de ResQ.',
@@ -270,21 +362,62 @@ export const es = {
     guardar: 'Guardar',
     cancelar: 'Cancelar',
     editar: 'Editar',
+    eliminar: 'Eliminar',
+    tituloModalEliminar: 'Eliminar usuario',
+    confirmarEliminarDetalle: 'Vas a eliminar la cuenta de:',
+    confirmarEliminarAviso: 'Esta acción no se puede deshacer.',
+    usuarioEliminado: 'Usuario eliminado correctamente',
+    errorEliminarUsuario: 'Error al eliminar usuario: {{detalle}}',
     errorCargarUsuarios: 'Error al cargar usuarios: {{detalle}}',
     errorCargarReportes: 'Error al cargar reportes: {{detalle}}',
     usuarioActualizado: 'Usuario actualizado correctamente',
     errorActualizarUsuario: 'Error al actualizar usuario: {{detalle}}',
     reporteActualizado: 'Reporte actualizado correctamente',
     errorActualizarReporte: 'Error al actualizar reporte: {{detalle}}',
+    buscar: 'Buscar',
+    buscarPlaceholder: 'Descripción o tipo de caso...',
+    limpiarBusqueda: 'Limpiar búsqueda',
+    ordenarPor: 'Ordenar por:',
+    orden: {
+      recientes: 'Más recientes',
+      antiguos: 'Más antiguos',
+    },
+    sinResultados: 'Ningún reporte coincide con la búsqueda.',
+    verDetalle: 'Ver detalle',
+    detalle: {
+      titulo: 'Detalle del reporte',
+      cargando: 'Cargando el reporte...',
+      noEncontrado: 'Ese reporte ya no existe.',
+      errorCargar: 'No se pudo cargar el reporte: {{detalle}}',
+      autor: 'Reportado por',
+      autorDesconocido: 'Usuario no registrado',
+      fecha: 'Fecha de creación',
+      ubicacion: 'Ubicación',
+      sinUbicacion: 'Sin ubicación registrada',
+      sinFoto: 'Sin foto adjunta',
+      estadoActual: 'Estado actual',
+      cambiarEstado: 'Cambiar estado',
+      nuevoEstado: 'Nuevo estado',
+      estadoSinSalida: 'Este estado no admite cambios. Revisa el caso antes de modificarlo.',
+      volver: 'Volver al panel',
+    },
+    cambioEstado: {
+      ok: 'Estado actualizado correctamente',
+      error: 'No se pudo actualizar el estado: {{detalle}}',
+      sinCambio: 'Elige un estado diferente al actual.',
+    },
+    tituloModalEliminarReporte: 'Eliminar reporte',
+    confirmarEliminarReporte: 'Vas a eliminar el reporte:',
+    confirmarEliminarReporteAviso: 'Se pierde el caso y su ubicación. Esta acción no se puede deshacer.',
+    reporteEliminado: 'Reporte eliminado correctamente',
+    errorEliminarReporte: 'Error al eliminar reporte: {{detalle}}',
   },
 } as const;
 
 export type StringCatalog = typeof es;
 
 type ExtractPaths<T> = {
-  [K in keyof T]: T[K] extends string
-    ? K & string
-    : `${K & string}.${ExtractPaths<T[K]>}`;
+  [K in keyof T]: T[K] extends string ? K & string : `${K & string}.${ExtractPaths<T[K]>}`;
 }[keyof T];
 
 export type TranslationKey = ExtractPaths<StringCatalog>;
@@ -300,22 +433,19 @@ function lookup(catalog: StringCatalog, key: string): string {
   return typeof value === 'string' ? value : key;
 }
 
-export function interpolate(
-  template: string,
-  params?: Record<string, string | number>
-): string {
+export function interpolate(template: string, params?: Record<string, string | number>): string {
   if (!params) {
     return template;
   }
   return template.replace(/\{\{(\w+)\}\}/g, (match, name: string) =>
-    name in params ? String(params[name]) : match
+    name in params ? String(params[name]) : match,
   );
 }
 
 export function getTranslation(
   key: TranslationKey,
   catalog: StringCatalog,
-  params?: Record<string, string | number>
+  params?: Record<string, string | number>,
 ): string {
   return interpolate(lookup(catalog, key), params);
 }

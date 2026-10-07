@@ -322,6 +322,12 @@ dd {
   margin-top: 12px;
 }
 
+/* HU-23: el enlace al panel se muestra como bloque para que se lea como boton. */
+.btn-panel-admin {
+  display: inline-block;
+  text-decoration: none;
+}
+
 .tipos-ayuda-badges {
   display: flex;
   flex-wrap: wrap;
@@ -369,4 +375,25 @@ dd {
   width: 18px;
   height: 18px;
   accent-color: var(--primary);
+}
+
+/* ============ HU-19: estado de revisión del caso ============ */
+.estado-revision-pendiente_revision {
+  background: #fdf1d0;
+  color: #8a6d1f;
+}
+
+.estado-revision-aprobado {
+  background: #d7f5df;
+  color: #1f8a4a;
+}
+
+.estado-revision-rechazado {
+  background: #fbdada;
+  color: #8a1f1f;
+}
+
+.btn-revisar {
+  margin-top: 12px;
+  margin-left: 8px;
 }

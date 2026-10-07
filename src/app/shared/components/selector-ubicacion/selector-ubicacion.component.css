@@ -12,6 +12,46 @@
   cursor: crosshair;
 }
 
+.selector__acciones {
+  display: flex;
+  justify-content: center;
+}
+
+.selector__mi-ubicacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.selector__mi-ubicacion:hover:not(:disabled) {
+  background: var(--primary);
+  color: var(--panel);
+}
+
+.selector__mi-ubicacion:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.selector__error {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  background: var(--panel-soft);
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
 .selector__pie {
   display: flex;
   align-items: center;

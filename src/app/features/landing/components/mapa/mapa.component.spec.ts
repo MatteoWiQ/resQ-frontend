@@ -139,7 +139,8 @@ describe('MapaComponent', () => {
     const panel = compiled.querySelector('.detalle-panel') as HTMLElement;
     expect(panel).toBeTruthy();
     expect(panel.textContent).toContain('#1');
-    expect(panel.textContent).toContain('PERDIDA');
+    // Muestra la etiqueta traducida (Perdida), no el valor interno (PERDIDA).
+    expect(panel.textContent).toContain('Perdida');
     expect(panel.textContent).toContain(REPORTE_PERDIDA.descripcion);
     expect(panel.textContent).toContain('-17.3895');
   });
