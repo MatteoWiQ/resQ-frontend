@@ -1,7 +1,7 @@
 import { FormularioOrganizacion, TipoOrganizacion } from '../models/organizacion.model';
 
 /**
- * HU-20: reglas del formulario de organización. Deben coincidir con las del backend.
+ * HU-20 / HU-28: reglas del formulario de organización. Deben coincidir con las del backend.
  * El logo usa las mismas reglas de imagen que la foto del reporte (shared/constants/foto.ts).
  */
 export const TIPOS_ORGANIZACION: readonly TipoOrganizacion[] = [
@@ -20,6 +20,8 @@ export const NOMBRE_MIN = 3;
 export const NOMBRE_MAX = 150;
 export const DIRECCION_MAX = 255;
 export const DESCRIPCION_MAX = 500;
+export const HORARIOS_MAX = 500;
+export const ZONAS_COBERTURA_MAX = 500;
 
 /** Código del error; el componente lo traduce a texto con i18n. */
 export type CodigoErrorOrganizacion =
@@ -29,7 +31,9 @@ export type CodigoErrorOrganizacion =
   | 'direccionLarga'
   | 'telefono'
   | 'email'
-  | 'descripcionLarga';
+  | 'descripcionLarga'
+  | 'horariosLargo'
+  | 'zonasLargo';
 
 export type ErroresOrganizacion = Partial<Record<keyof FormularioOrganizacion, CodigoErrorOrganizacion>>;
 
@@ -73,6 +77,14 @@ export function validarFormularioOrganizacion(form: FormularioOrganizacion): Err
 
   if (form.descripcion.trim().length > DESCRIPCION_MAX) {
     errores.descripcion = 'descripcionLarga';
+  }
+
+  if (form.horarios.trim().length > HORARIOS_MAX) {
+    errores.horarios = 'horariosLargo';
+  }
+
+  if (form.zonasCobertura.trim().length > ZONAS_COBERTURA_MAX) {
+    errores.zonasCobertura = 'zonasLargo';
   }
 
   return errores;

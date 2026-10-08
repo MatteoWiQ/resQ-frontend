@@ -10,9 +10,11 @@ const valido: FormularioOrganizacion = {
   telefono: '+591 70123456',
   email: 'contacto@patitas.org',
   descripcion: '',
+  horarios: '',
+  zonasCobertura: '',
 };
 
-describe('validación del formulario de organización (HU-20)', () => {
+describe('validación del formulario de organización (HU-20 / HU-28)', () => {
   it('un formulario completo es válido y la descripción es opcional', () => {
     expect(validarFormularioOrganizacion(valido)).toEqual({});
   });
@@ -25,6 +27,8 @@ describe('validación del formulario de organización (HU-20)', () => {
       telefono: '',
       email: '',
       descripcion: '',
+      horarios: '',
+      zonasCobertura: '',
     });
 
     expect(errores).toEqual({
@@ -42,6 +46,17 @@ describe('validación del formulario de organización (HU-20)', () => {
     expect(validarFormularioOrganizacion({ ...valido, descripcion: 'x'.repeat(501) }).descripcion).toBe(
       'descripcionLarga',
     );
+  });
+
+  it('valida el largo de horarios y zonas de cobertura', () => {
+    expect(validarFormularioOrganizacion({ ...valido, horarios: 'x'.repeat(501) }).horarios).toBe('horariosLargo');
+    expect(
+      validarFormularioOrganizacion({ ...valido, zonasCobertura: 'x'.repeat(501) }).zonasCobertura,
+    ).toBe('zonasLargo');
+    expect(validarFormularioOrganizacion({ ...valido, horarios: 'x'.repeat(500) }).horarios).toBeUndefined();
+    expect(
+      validarFormularioOrganizacion({ ...valido, zonasCobertura: 'x'.repeat(500) }).zonasCobertura,
+    ).toBeUndefined();
   });
 
   it('valida el formato del email', () => {

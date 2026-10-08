@@ -11,6 +11,8 @@ export interface Organizacion {
   telefono: string;
   email: string;
   descripcion: string | null;
+  horarios: string | null;
+  zonasCobertura: string | null;
   logoUrl: string | null;
   estadoVerificacion: EstadoVerificacion;
   fechaRegistro: string;
@@ -32,4 +34,6 @@ export interface FormularioOrganizacion {
   telefono: string;
   email: string;
   descripcion: string;
+  horarios: string;
+  zonasCobertura: string;
 }
