@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslationKey } from '../../../../core/i18n/strings';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { LoginRequest } from '../../../../shared/models/auth.models';
 
@@ -27,7 +28,13 @@ export class LoginComponent {
     this.message.set('');
     this.authService.login(this.credentials).subscribe({
       next: () => this.router.navigate(['/']),
-      error: () => this.message.set(this.translate.t('auth.login.errorDb')),
+      error: (err) => {
+        const mensaje: TranslationKey =
+          err?.status === 401
+            ? 'auth.login.errorCredenciales'
+            : 'auth.login.errorDb';
+        this.message.set(this.translate.t(mensaje));
+      },
     });
   }
 }

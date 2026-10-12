@@ -167,6 +167,7 @@ export const es = {
       boton: 'Iniciar sesión',
       noCuenta: '¿No tienes una cuenta?',
       registrate: 'Regístrate aquí',
+      errorCredenciales: 'Credenciales incorrectas. Verifica tu correo y contraseña.',
       errorDb: 'No se pudo conectar con la base de datos. Inténtalo de nuevo más tarde.',
     },
     register: {
