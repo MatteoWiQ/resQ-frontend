@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { AuthService } from '../../../../core/services/auth.service';
@@ -11,6 +12,8 @@ describe('PanelAdminComponent: pestanas (HU-23)', () => {
     await TestBed.configureTestingModule({
       imports: [PanelAdminComponent],
       providers: [
+        // El panel navega al detalle del reporte (HU-24), asi que necesita el Router.
+        provideRouter([]),
         { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 1 } },
         { provide: UsuarioService, useValue: { obtenerTodos: () => of([]) } },
         { provide: ReporteService, useValue: { obtenerTodos: () => of([]) } },

@@ -1,4 +1,8 @@
+import { organizacionesEs } from './strings-organizaciones';
+
 export const es = {
+  // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
+  organizaciones: organizacionesEs,
   shared: {
     brand: {
       marca: 'R',
@@ -11,6 +15,14 @@ export const es = {
       EN_PROCESO: 'En proceso',
       RESUELTO: 'Resuelto',
       CANCELADO: 'Cancelado',
+    },
+    // HU-19: resultado de la revisión del caso por un voluntario. Vive en el
+    // catalogo compartido (y no en perfil) porque tambien lo muestra el detalle
+    // del caso en el panel administrativo.
+    estadosRevision: {
+      PENDIENTE_REVISION: 'En revisión',
+      APROBADO: 'Aprobado',
+      RECHAZADO: 'Rechazado',
     },
     roles: {
       USUARIO: 'Usuario',
@@ -194,6 +206,11 @@ export const es = {
     sinReportes: 'Todavía no has hecho ningún reporte.',
     ver: 'Ver',
     panelAdmin: 'Panel administrativo',
+    revisarSolicitudes: 'Revisar solicitudes',
+    revision: {
+      titulo: 'Revisión',
+      nota: 'Nota del voluntario',
+    },
     modal: {
       cerrarAria: 'Cerrar',
       id: 'ID',
@@ -233,8 +250,15 @@ export const es = {
       descripcion: 'Descripción',
       descripcionPlaceholder:
         'Describe el caso: raza, color, nombres, lugar y hora, señas particulares...',
-      fotoUrl: 'URL de foto (opcional)',
-      fotoUrlPlaceholder: 'https://...',
+      foto: 'Fotografía (opcional)',
+      fotoAyuda: 'Formatos permitidos: JPG, PNG o WEBP. Tamaño máximo: 5 MB.',
+      fotoSeleccionar: 'Seleccionar fotografía',
+      fotoCambiar: 'Cambiar fotografía',
+      fotoQuitar: 'Quitar fotografía',
+      fotoVistaPreviaAlt: 'Vista previa de la fotografía seleccionada',
+      fotoErrorFormato: 'Formato no permitido. Usa una imagen JPG, PNG o WEBP.',
+      fotoErrorTamano: 'La fotografía supera el tamaño máximo permitido de 5 MB.',
+      fotoErrorSubir: 'No se pudo subir la fotografía. Inténtalo de nuevo.',
       ubicacion: 'Ubicación (opcional)',
       ubicacionAyuda: 'Haz clic en el mapa para marcar dónde se encuentra el animal.',
       ubicacionActual: 'Usar mi ubicación actual',
@@ -279,6 +303,45 @@ export const es = {
       RESCATE: 'Rescate',
     },
   },
+  // ============ HU-19: aceptar o rechazar solicitudes ============
+  solicitudes: {
+    titulo: 'Solicitudes pendientes',
+    subtitulo: 'Valida la información de los casos reportados por los usuarios.',
+    sinPermisos: 'No tienes permisos para ver esta sección.',
+    cargando: 'Cargando solicitudes...',
+    vacio: 'No hay solicitudes pendientes por revisar.',
+    errorCargar: '❌ No se pudieron cargar las solicitudes.',
+    reporteNumero: 'Reporte #{{id}}',
+    revisar: 'Revisar',
+    modalTitulo: 'Revisar solicitud #{{id}}',
+    cerrarAria: 'Cerrar',
+    tipoCaso: 'Tipo de caso',
+    descripcion: 'Descripción',
+    fecha: 'Fecha del reporte',
+    ubicacion: 'Ubicación',
+    sinUbicacion: 'Sin ubicación',
+    fotoAlt: 'Foto del reporte',
+    nota: 'Nota para el usuario',
+    notaAyuda: 'Obligatoria al rechazar, opcional al aprobar.',
+    notaPlaceholder: 'Explica brevemente tu decisión...',
+    aprobar: 'Aprobar',
+    rechazar: 'Rechazar',
+    enviando: 'Enviando...',
+    notaObligatoria: 'Debes indicar el motivo del rechazo.',
+    aprobada: '✅ Solicitud #{{id}} aprobada. Se notificó al usuario.',
+    rechazada: '✅ Solicitud #{{id}} rechazada. Se notificó al usuario.',
+    errorDecidir: '❌ No se pudo registrar la decisión. Inténtalo de nuevo.',
+    errorSinPermiso: '❌ No tienes permisos para revisar solicitudes.',
+    errorYaRevisada: '❌ Esta solicitud ya fue revisada. Se actualizó la lista.',
+  },
+  notificaciones: {
+    titulo: 'Notificaciones',
+    cargando: 'Cargando notificaciones...',
+    vacio: 'No tienes notificaciones.',
+    errorCargar: 'No se pudieron cargar tus notificaciones.',
+    sinLeer: '{{n}} sin leer',
+    marcarLeida: 'Marcar como leída',
+  },
   admin: {
     titulo: 'Panel administrativo',
     subtitle: 'Gestiona los reportes y usuarios de ResQ.',
@@ -311,6 +374,43 @@ export const es = {
     errorActualizarUsuario: 'Error al actualizar usuario: {{detalle}}',
     reporteActualizado: 'Reporte actualizado correctamente',
     errorActualizarReporte: 'Error al actualizar reporte: {{detalle}}',
+    buscar: 'Buscar',
+    buscarPlaceholder: 'Descripción o tipo de caso...',
+    limpiarBusqueda: 'Limpiar búsqueda',
+    ordenarPor: 'Ordenar por:',
+    orden: {
+      recientes: 'Más recientes',
+      antiguos: 'Más antiguos',
+    },
+    sinResultados: 'Ningún reporte coincide con la búsqueda.',
+    verDetalle: 'Ver detalle',
+    detalle: {
+      titulo: 'Detalle del reporte',
+      cargando: 'Cargando el reporte...',
+      noEncontrado: 'Ese reporte ya no existe.',
+      errorCargar: 'No se pudo cargar el reporte: {{detalle}}',
+      autor: 'Reportado por',
+      autorDesconocido: 'Usuario no registrado',
+      fecha: 'Fecha de creación',
+      ubicacion: 'Ubicación',
+      sinUbicacion: 'Sin ubicación registrada',
+      sinFoto: 'Sin foto adjunta',
+      estadoActual: 'Estado actual',
+      cambiarEstado: 'Cambiar estado',
+      nuevoEstado: 'Nuevo estado',
+      estadoSinSalida: 'Este estado no admite cambios. Revisa el caso antes de modificarlo.',
+      volver: 'Volver al panel',
+    },
+    cambioEstado: {
+      ok: 'Estado actualizado correctamente',
+      error: 'No se pudo actualizar el estado: {{detalle}}',
+      sinCambio: 'Elige un estado diferente al actual.',
+    },
+    tituloModalEliminarReporte: 'Eliminar reporte',
+    confirmarEliminarReporte: 'Vas a eliminar el reporte:',
+    confirmarEliminarReporteAviso: 'Se pierde el caso y su ubicación. Esta acción no se puede deshacer.',
+    reporteEliminado: 'Reporte eliminado correctamente',
+    errorEliminarReporte: 'Error al eliminar reporte: {{detalle}}',
   },
 } as const;
 

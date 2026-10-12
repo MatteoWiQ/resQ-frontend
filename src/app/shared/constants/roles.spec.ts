@@ -1,4 +1,4 @@
-import { ROLES_VALIDOS, esAdmin, esVoluntario, normalizarRol } from './roles';
+import { ROLES_VALIDOS, esAdmin, esGestorDeReportes, esVoluntario, normalizarRol } from './roles';
 
 describe('roles', () => {
   it('expone exactamente los tres roles del seed de la base de datos', () => {
@@ -52,6 +52,29 @@ describe('roles', () => {
       expect(esVoluntario('USUARIO')).toBe(false);
       expect(esVoluntario('ADMIN')).toBe(false);
       expect(esVoluntario(null)).toBe(false);
+    });
+  });
+
+  describe('esGestorDeReportes', () => {
+    it('deja intervenir un caso al administrador y al voluntario', () => {
+      expect(esGestorDeReportes('ADMIN')).toBe(true);
+      expect(esGestorDeReportes('VOLUNTARIO')).toBe(true);
+    });
+
+    it('tolera mayusculas y espacios, como el resto de los helpers', () => {
+      expect(esGestorDeReportes('admin')).toBe(true);
+      expect(esGestorDeReportes(' Voluntario ')).toBe(true);
+    });
+
+    it('no deja intervenir un caso a un ciudadano comun', () => {
+      expect(esGestorDeReportes('USUARIO')).toBe(false);
+      expect(esGestorDeReportes('usuario')).toBe(false);
+    });
+
+    it('no deja intervenir un caso a quien no tiene rol', () => {
+      expect(esGestorDeReportes(null)).toBe(false);
+      expect(esGestorDeReportes(undefined)).toBe(false);
+      expect(esGestorDeReportes('')).toBe(false);
     });
   });
 });
