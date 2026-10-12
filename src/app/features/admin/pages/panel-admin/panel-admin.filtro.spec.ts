@@ -45,6 +45,10 @@ describe('PanelAdminComponent: filtro por estado (HU-15)', () => {
           useValue: { obtenerIdUsuarioActual: () => 99 },
         },
         {
+          provide: AuthService,
+          useValue: { obtenerIdUsuarioActual: () => 99 },
+        },
+        {
           provide: ReporteService,
           useValue: {
             // El mock filtra igual que el backend, para comprobar que el

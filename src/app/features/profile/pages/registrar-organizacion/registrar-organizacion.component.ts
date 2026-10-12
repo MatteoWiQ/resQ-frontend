@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,19 +14,22 @@ import { FOTO_ACCEPT, validarFoto } from '../../../../shared/constants/foto';
 import {
   DESCRIPCION_MAX,
   ErroresOrganizacion,
+  HORARIOS_MAX,
   TIPOS_ORGANIZACION,
+  ZONAS_COBERTURA_MAX,
   validarFormularioOrganizacion,
 } from '../../../../shared/constants/organizacion';
 import { FormularioOrganizacion, Organizacion } from '../../../../shared/models/organizacion.model';
 
 /**
- * HU-20: el representante de un refugio, veterinaria o rescatista independiente registra
- * su organización. Si el usuario ya tiene una, se muestra su estado de verificación.
+ * HU-20 / HU-28: el representante de un refugio, veterinaria o rescatista independiente registra
+ * su organización y, una vez registrada, puede editar su ficha (datos, logo, horarios y zonas
+ * de cobertura). Si el usuario ya tiene una, se muestra su estado de verificación.
  */
 @Component({
   selector: 'app-registrar-organizacion',
   standalone: true,
-  imports: [FormsModule, RouterLink, BackButtonComponent, TranslatePipe],
+  imports: [FormsModule, RouterLink, BackButtonComponent, TranslatePipe, NgTemplateOutlet],
   templateUrl: './registrar-organizacion.component.html',
   styleUrl: './registrar-organizacion.component.css',
 })
@@ -37,6 +41,8 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
   readonly tipos = TIPOS_ORGANIZACION;
   readonly logoAccept = FOTO_ACCEPT;
   readonly descripcionMax = DESCRIPCION_MAX;
+  readonly horariosMax = HORARIOS_MAX;
+  readonly zonasCoberturaMax = ZONAS_COBERTURA_MAX;
 
   form: FormularioOrganizacion = {
     nombre: '',
@@ -45,6 +51,8 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     telefono: '',
     email: '',
     descripcion: '',
+    horarios: '',
+    zonasCobertura: '',
   };
 
   readonly hayUsuario = signal(false);
@@ -58,6 +66,11 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
 
   readonly logo = signal<File | null>(null);
   readonly vistaPrevia = signal<string | null>(null);
+
+  /** HU-28: true mientras se edita la ficha en vez de mostrar el detalle. */
+  readonly editando = signal(false);
+  /** HU-28: quitar el logo ya guardado (no el recién elegido) al guardar. */
+  readonly quitarLogoActual = signal(false);
 
   ngOnInit(): void {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
@@ -122,6 +135,7 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
 
     this.liberarVistaPrevia();
     this.quitarError('logo');
+    this.quitarLogoActual.set(false);
     this.logo.set(archivo);
     this.vistaPrevia.set(URL.createObjectURL(archivo));
   }
@@ -132,12 +146,62 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     this.quitarError('logo');
   }
 
+  /** HU-28: pide que al guardar se borre el logo ya guardado. */
+  quitarLogoExistente(): void {
+    this.quitarLogo();
+    this.quitarLogoActual.set(true);
+  }
+
   private liberarVistaPrevia(): void {
     const url = this.vistaPrevia();
     if (url) {
       URL.revokeObjectURL(url);
     }
     this.vistaPrevia.set(null);
+  }
+
+  // ============ Edición (HU-28) ============
+  iniciarEdicion(): void {
+    const org = this.organizacion();
+    if (!org) {
+      return;
+    }
+    this.form = {
+      nombre: org.nombre,
+      tipo: org.tipo,
+      direccion: org.direccion,
+      telefono: org.telefono,
+      email: org.email,
+      descripcion: org.descripcion ?? '',
+      horarios: org.horarios ?? '',
+      zonasCobertura: org.zonasCobertura ?? '',
+    };
+    this.quitarLogo();
+    this.quitarLogoActual.set(false);
+    this.errores.set({});
+    this.mensaje.set('');
+    this.editando.set(true);
+  }
+
+  cancelarEdicion(): void {
+    this.quitarLogo();
+    this.quitarLogoActual.set(false);
+    this.errores.set({});
+    this.mensaje.set('');
+    this.editando.set(false);
+  }
+
+  textoBotonLogo(): string {
+    const tieneLogo =
+      this.logo() !== null || (this.editando() && !this.quitarLogoActual() && this.organizacion()?.logoUrl != null);
+    return this.translate.t(tieneLogo ? 'organizaciones.logo.cambiar' : 'organizaciones.logo.seleccionar');
+  }
+
+  textoBotonEnvio(): string {
+    if (this.enviando()) {
+      return this.translate.t(this.editando() ? 'organizaciones.edicion.guardando' : 'organizaciones.enviando');
+    }
+    return this.translate.t(this.editando() ? 'organizaciones.edicion.guardar' : 'organizaciones.enviar');
   }
 
   // ============ Envío ============
@@ -179,6 +243,46 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** HU-28: guarda los cambios de la ficha de la organización ya registrada. */
+  guardar(): void {
+    const idUsuario = this.authService.obtenerIdUsuarioActual();
+    const org = this.organizacion();
+    if (idUsuario === null || org === null || this.enviando()) {
+      return;
+    }
+
+    const erroresCampos: ErroresOrganizacion = validarFormularioOrganizacion(this.form);
+    const traducidos: Record<string, string> = {};
+    for (const [campo, codigo] of Object.entries(erroresCampos)) {
+      traducidos[campo] = this.translate.t(('organizaciones.error.' + codigo) as TranslationKey);
+    }
+    this.errores.set(traducidos);
+
+    if (Object.keys(traducidos).length > 0) {
+      this.mensaje.set(this.translate.t('organizaciones.error.revisaFormulario'));
+      return;
+    }
+
+    this.mensaje.set('');
+    this.enviando.set(true);
+
+    this.organizacionService
+      .actualizar(org.idOrganizacion, idUsuario, this.form, this.logo(), this.quitarLogoActual())
+      .subscribe({
+        next: (actualizada) => {
+          this.enviando.set(false);
+          this.organizacion.set(actualizada);
+          this.confirmacionEnviada.set(null);
+          this.cancelarEdicion();
+          this.mensaje.set(this.translate.t('organizaciones.edicion.ok'));
+        },
+        error: (err: HttpErrorResponse) => {
+          this.enviando.set(false);
+          this.manejarError(err);
+        },
+      });
+  }
+
   private manejarError(err: HttpErrorResponse): void {
     const detalle = (err.error?.errors ?? {}) as Record<string, string>;
 
@@ -199,7 +303,9 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     } else if (err.status === 413 || err.status === 415) {
       this.mensaje.set(this.translate.t('organizaciones.error.revisaFormulario'));
     } else {
-      this.mensaje.set(this.translate.t('organizaciones.error.generico'));
+      this.mensaje.set(
+        this.translate.t(this.editando() ? 'organizaciones.edicion.errorGenerico' : 'organizaciones.error.generico'),
+      );
     }
   }
 

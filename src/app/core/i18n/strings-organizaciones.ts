@@ -1,4 +1,4 @@
-/** HU-20: textos del registro de organizaciones. Se incorpora a `es` en strings.ts. */
+/** HU-20 / HU-28: textos del registro y la edición de organizaciones. Se incorpora a `es` en strings.ts. */
 export const organizacionesEs = {
   enlaceTopbar: 'Organizaciones',
   titulo: 'Registra tu organización',
@@ -22,6 +22,12 @@ export const organizacionesEs = {
     descripcion: 'Descripción breve (opcional)',
     descripcionPlaceholder: 'Cuéntanos qué hace tu organización',
     descripcionContador: '{{n}}/500',
+    horarios: 'Horarios de atención',
+    horariosPlaceholder: 'Ej. Lun a Vie 9:00-18:00, Sáb 9:00-12:00',
+    horariosContador: '{{n}}/{{max}}',
+    zonas: 'Zonas de cobertura',
+    zonasPlaceholder: 'Ej. Cochabamba, Quillacollo, Tiquipaya',
+    zonasContador: '{{n}}/{{max}}',
   },
   tipos: {
     REFUGIO: 'Refugio',
@@ -46,6 +52,8 @@ export const organizacionesEs = {
     telefono: 'Ingresa un teléfono válido (7 a 15 dígitos, puede incluir +, espacios, paréntesis o guiones).',
     email: 'Ingresa un email válido, por ejemplo contacto@organizacion.org.',
     descripcionLarga: 'La descripción no puede superar los 500 caracteres.',
+    horariosLargo: 'Los horarios no pueden superar los 500 caracteres.',
+    zonasLargo: 'Las zonas de cobertura no pueden superar los 500 caracteres.',
     revisaFormulario: 'Revisa los campos marcados.',
     yaRegistrada: 'Ya tienes una organización registrada.',
     sinPermiso: 'No puedes registrar una organización a nombre de otro usuario.',
@@ -53,6 +61,19 @@ export const organizacionesEs = {
   },
   enviar: 'Registrar organización',
   enviando: 'Registrando...',
+  edicion: {
+    titulo: 'Editar la ficha de tu organización',
+    subtitle: 'Actualiza los datos de tu organización. Solo tú, como representante, puedes hacer estos cambios.',
+    boton: 'Editar ficha',
+    guardar: 'Guardar cambios',
+    guardando: 'Guardando...',
+    cancelar: 'Cancelar',
+    ok: '✅ Cambios guardados.',
+    errorGenerico: 'No se pudieron guardar los cambios. Inténtalo de nuevo.',
+    logoActual: 'Logo actual de tu organización. Puedes reemplazarlo o quitarlo.',
+    quitarLogoActual: 'Quitar logo actual',
+    logoQuitado: 'Se quitará el logo actual al guardar los cambios.',
+  },
   estado: {
     titulo: 'Tu organización',
     PENDIENTE_VERIFICACION: 'Pendiente de verificación',
@@ -75,6 +96,8 @@ export const organizacionesEs = {
     telefono: 'Teléfono',
     email: 'Email',
     descripcion: 'Descripción',
+    horarios: 'Horarios de atención',
+    zonas: 'Zonas de cobertura',
     logoAlt: 'Logo de la organización',
     volver: 'Volver al perfil',
   },

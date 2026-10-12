@@ -10,6 +10,7 @@ import { Organizacion } from '../../../../shared/models/organizacion.model';
 
 const URL_REPRESENTANTE = '/api/organizaciones/representante/7';
 const URL_REGISTRO = '/api/organizaciones';
+const URL_EDITAR = '/api/organizaciones/1';
 
 function organizacion(extra: Partial<Organizacion> = {}): Organizacion {
   return {
@@ -21,6 +22,8 @@ function organizacion(extra: Partial<Organizacion> = {}): Organizacion {
     telefono: '+591 70123456',
     email: 'contacto@patitas.org',
     descripcion: null,
+    horarios: null,
+    zonasCobertura: null,
     logoUrl: null,
     estadoVerificacion: 'PENDIENTE_VERIFICACION',
     fechaRegistro: '2026-10-04T10:00:00',
@@ -66,6 +69,8 @@ describe('RegistrarOrganizacionComponent (HU-20)', () => {
       telefono: '+591 70123456',
       email: 'contacto@patitas.org',
       descripcion: 'Perros y gatos',
+      horarios: 'Lun a Vie 9:00-18:00',
+      zonasCobertura: 'Cochabamba, Quillacollo',
     };
   }
 
@@ -325,6 +330,125 @@ describe('RegistrarOrganizacionComponent (HU-20)', () => {
       component.registrar();
 
       expect(httpMock.match(URL_REGISTRO).length).toBe(1);
+    });
+  });
+
+  describe('edición (HU-28)', () => {
+    /** Muestra la ficha de una organización ya registrada y entra en modo edición. */
+    async function iniciarEdicion(extra: Partial<Organizacion> = {}) {
+      await crear(7);
+      fixture.detectChanges();
+      httpMock.expectOne(URL_REPRESENTANTE).flush(organizacion(extra));
+      fixture.detectChanges();
+
+      const boton = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.acciones .btn-accion');
+      expect(boton, 'botón editar').not.toBeNull();
+      boton!.click();
+      fixture.detectChanges();
+      return fixture.nativeElement as HTMLElement;
+    }
+
+    it('la ficha muestra horarios, zonas de cobertura y el botón de editar', async () => {
+      await crear(7);
+      fixture.detectChanges();
+      httpMock
+        .expectOne(URL_REPRESENTANTE)
+        .flush(organizacion({ horarios: 'Lun a Vie 9:00-18:00', zonasCobertura: 'Cochabamba, Quillacollo' }));
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(texto()).toContain('Lun a Vie 9:00-18:00');
+      expect(texto()).toContain('Cochabamba, Quillacollo');
+      expect(el.querySelector('.acciones .btn-accion')?.textContent).toContain('Editar ficha');
+      expect(el.querySelector('form')).toBeNull();
+    });
+
+    it('al editar prellena el formulario con los datos actuales', async () => {
+      const el = await iniciarEdicion({ horarios: 'Lun a Vie 9:00-18:00', zonasCobertura: 'Cochabamba, Quillacollo' });
+
+      expect(el.querySelector('form')).not.toBeNull();
+      expect(component.form.nombre).toBe('Refugio Patitas');
+      expect(component.form.tipo).toBe('REFUGIO');
+      expect(component.form.horarios).toBe('Lun a Vie 9:00-18:00');
+      expect(component.form.zonasCobertura).toBe('Cochabamba, Quillacollo');
+    });
+
+    it('guarda los cambios con PUT y vuelve al detalle', async () => {
+      await iniciarEdicion();
+      llenarFormulario();
+
+      component.guardar();
+
+      const req = httpMock.expectOne(URL_EDITAR);
+      expect(req.request.method).toBe('PUT');
+      const datos = req.request.body as FormData;
+      expect(datos.get('horarios')).toBe('Lun a Vie 9:00-18:00');
+      expect(datos.get('zonasCobertura')).toBe('Cochabamba, Quillacollo');
+      req.flush(
+        organizacion({ horarios: 'Lun a Vie 9:00-18:00', zonasCobertura: 'Cochabamba, Quillacollo' }),
+      );
+      fixture.detectChanges();
+
+      expect(component.editando()).toBe(false);
+      expect(texto()).toContain('Cambios guardados.');
+      expect((fixture.nativeElement as HTMLElement).querySelector('form')).toBeNull();
+    });
+
+    it('puede quitar el logo actual al guardar', async () => {
+      await iniciarEdicion({ logoUrl: '/api/organizaciones/logos/actual.png' });
+      expect(texto()).toContain('Logo actual');
+
+      component.quitarLogoExistente();
+      component.guardar();
+
+      const datos = httpMock.expectOne(URL_EDITAR).request.body as FormData;
+      expect(datos.get('quitarLogo')).toBe('true');
+      expect(datos.has('logo')).toBe(false);
+    });
+
+    it('adjunta el logo nuevo para reemplazar el actual', async () => {
+      await iniciarEdicion({ logoUrl: '/api/organizaciones/logos/actual.png' });
+
+      elegir(archivo('logo.png', 'image/png'));
+      component.guardar();
+
+      const datos = httpMock.expectOne(URL_EDITAR).request.body as FormData;
+      expect(datos.has('quitarLogo')).toBe(false);
+      expect((datos.get('logo') as File).name).toBe('logo.png');
+    });
+
+    it('cancela la edición y vuelve al detalle', async () => {
+      const el = await iniciarEdicion();
+
+      component.cancelarEdicion();
+      fixture.detectChanges();
+
+      expect(component.editando()).toBe(false);
+      expect(el.querySelector('form')).toBeNull();
+    });
+
+    it('no envía cambios con datos inválidos', async () => {
+      await iniciarEdicion();
+      component.form.nombre = '';
+
+      component.guardar();
+
+      expect(component.errores()['nombre']).toBeDefined();
+      expect(component.enviando()).toBe(false);
+      expect(component.editando()).toBe(true);
+      // httpMock.verify() en afterEach comprueba que no hubo ninguna petición
+    });
+
+    it('un error inesperado al guardar muestra un mensaje de edición', async () => {
+      await iniciarEdicion();
+      llenarFormulario();
+
+      component.guardar();
+      httpMock.expectOne(URL_EDITAR).flush('boom', { status: 500, statusText: 'Server Error' });
+
+      expect(component.mensaje()).toContain('No se pudieron guardar los cambios');
+      expect(component.enviando()).toBe(false);
+      expect(component.editando()).toBe(true);
     });
   });
 });

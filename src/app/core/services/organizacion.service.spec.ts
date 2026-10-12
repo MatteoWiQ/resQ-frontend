@@ -13,6 +13,8 @@ const form: FormularioOrganizacion = {
   telefono: '+591 70123456',
   email: 'contacto@patitas.org',
   descripcion: '',
+  horarios: 'Lun a Vie 9:00-18:00',
+  zonasCobertura: 'Cochabamba, Quillacollo',
 };
 
 describe('OrganizacionService (HU-20)', () => {
@@ -49,6 +51,31 @@ describe('OrganizacionService (HU-20)', () => {
 
     const datos = httpMock.expectOne('/api/organizaciones').request.body as FormData;
     expect(datos.get('descripcion')).toBe('Perros y gatos');
+    expect((datos.get('logo') as File).name).toBe('logo.png');
+  });
+
+  it('actualiza enviando los campos, horarios, zonas y el quitarLogo (HU-28)', () => {
+    servicio.actualizar(1, 7, form, null, true).subscribe();
+
+    const req = httpMock.expectOne('/api/organizaciones/1');
+    expect(req.request.method).toBe('PUT');
+    const datos = req.request.body as FormData;
+    expect(datos.get('idRepresentante')).toBe('7');
+    expect(datos.get('nombre')).toBe('Refugio Patitas');
+    expect(datos.get('horarios')).toBe('Lun a Vie 9:00-18:00');
+    expect(datos.get('zonasCobertura')).toBe('Cochabamba, Quillacollo');
+    expect(datos.get('quitarLogo')).toBe('true');
+    expect(datos.has('logo')).toBe(false);
+    req.flush({ idOrganizacion: 1 });
+  });
+
+  it('adjunta el logo en la actualización para reemplazarlo (HU-28)', () => {
+    const logo = new File([new Uint8Array(4)], 'logo.png', { type: 'image/png' });
+
+    servicio.actualizar(1, 7, form, logo, false).subscribe();
+
+    const datos = httpMock.expectOne('/api/organizaciones/1').request.body as FormData;
+    expect(datos.has('quitarLogo')).toBe(false);
     expect((datos.get('logo') as File).name).toBe('logo.png');
   });
 
