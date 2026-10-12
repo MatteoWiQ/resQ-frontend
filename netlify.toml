@@ -1,4 +1,4 @@
-﻿# Config de Netlify para el frontend de resq.
+# Config de Netlify para el frontend de resq.
 # Deploy: New site -> Import from Git -> elegir repo de tu cuenta (MatteoWiQ/resQ-frontend)
 # y Netlify toma esta config automaticamente.
 # El proxy evita tocar CORS en el backend: el navegador solo ve mismo-origen.
