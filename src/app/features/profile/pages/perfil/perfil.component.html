@@ -41,6 +41,14 @@
           <button type="button" class="primary-btn btn-voluntario" (click)="abrirModalVoluntario()">
             {{ 'voluntario.boton' | translate }}
           </button>
+          @if (solicitudEnviada()) {
+            <p class="mensaje-solicitud" role="status">
+              Tu solicitud fue enviada y está pendiente de revisión por el administrador.
+            </p>
+          }
+          @if (!mostrarModalVoluntario() && errorVoluntario()) {
+            <p class="error" role="alert">{{ errorVoluntario() }}</p>
+          }
         }
 
         <!-- ============ HU-19: voluntarios y admins revisan solicitudes ============ -->

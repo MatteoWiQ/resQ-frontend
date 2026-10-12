@@ -31,6 +31,11 @@ export class SolicitudVoluntarioService {
 
   constructor(private readonly http: HttpClient) {}
 
+  /** El usuario autenticado solicita ser voluntario (sujeto a reglas HU-35). */
+  crear(tipoAyuda: string, mensaje?: string): Observable<SolicitudVoluntarioDetalle> {
+    return this.http.post<SolicitudVoluntarioDetalle>(this.baseUrl, { tipoAyuda, mensaje });
+  }
+
   listarPendientes(): Observable<SolicitudVoluntarioResumen[]> {
     return this.http.get<SolicitudVoluntarioResumen[]>(`${this.baseUrl}/pendientes`);
   }

@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
+import { SolicitudVoluntarioService } from '../../../../core/services/solicitud-voluntario.service';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { NotificacionesComponent } from '../../../../shared/components/notificaciones/notificaciones.component';
@@ -30,6 +31,7 @@ export class PerfilComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly reporteService = inject(ReporteService);
+  private readonly solicitudVoluntarioService = inject(SolicitudVoluntarioService);
   private readonly translate = inject(TranslateService);
 
   readonly usuario = signal<Usuario | null>(null);
@@ -51,6 +53,8 @@ export class PerfilComponent implements OnInit {
   readonly tiposSeleccionados = signal<string[]>([]);
   readonly enviandoVoluntario = signal(false);
   readonly errorVoluntario = signal('');
+  // HU-35: la solicitud queda pendiente de revision por el administrador.
+  readonly solicitudEnviada = signal(false);
 
   ngOnInit(): void {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
@@ -256,22 +260,48 @@ export class PerfilComponent implements OnInit {
     this.enviandoVoluntario.set(true);
     this.errorVoluntario.set('');
 
-    const peticion = this.esVoluntario(usuario)
-      ? this.usuarioService.actualizarTiposAyuda(usuario.idUsuario, this.tiposSeleccionados())
-      : this.usuarioService.registrarComoVoluntario(usuario.idUsuario, this.tiposSeleccionados());
+    if (this.esVoluntario(usuario)) {
+      // Quien ya es voluntario solo edita sus tipos de ayuda (HU-17).
+      this.usuarioService
+        .actualizarTiposAyuda(usuario.idUsuario, this.tiposSeleccionados())
+        .subscribe({
+          next: (usuarioActualizado) => {
+            this.usuario.set(usuarioActualizado);
+            this.enviandoVoluntario.set(false);
+            this.cerrarModalVoluntario();
+          },
+          error: (error: HttpErrorResponse) => {
+            this.enviandoVoluntario.set(false);
+            this.errorVoluntario.set(
+              error.error?.message ?? this.translate.t('voluntario.errorGenerico')
+            );
+          },
+        });
+      return;
+    }
 
-    peticion.subscribe({
-      next: (usuarioActualizado) => {
-        this.usuario.set(usuarioActualizado);
-        this.enviandoVoluntario.set(false);
-        this.cerrarModalVoluntario();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.enviandoVoluntario.set(false);
-        this.errorVoluntario.set(
-          error.error?.message ?? this.translate.t('voluntario.errorGenerico')
-        );
-      },
-    });
+    // HU-35: el usuario envía una solicitud que el administrador aprueba o rechaza.
+    this.solicitudVoluntarioService
+      .crear(this.tiposSeleccionados().join(','))
+      .subscribe({
+        next: () => {
+          this.enviandoVoluntario.set(false);
+          this.cerrarModalVoluntario();
+          this.solicitudEnviada.set(true);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.enviandoVoluntario.set(false);
+          if (error.status === 409) {
+            this.errorVoluntario.set(
+              error.error?.message ?? 'No puedes enviar una nueva solicitud todavía'
+            );
+            this.cerrarModalVoluntario();
+          } else {
+            this.errorVoluntario.set(
+              error.error?.message ?? this.translate.t('voluntario.errorGenerico')
+            );
+          }
+        },
+      });
   }
 }
