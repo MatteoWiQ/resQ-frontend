@@ -77,7 +77,7 @@
               <p>{{ reporte.descripcion }}</p>
             </div>
             <div class="reporte-acciones">
-@if (reporte.estadoRevision) {
+              @if (reporte.estadoRevision) {
                 <span [class]="claseRevision(reporte.estadoRevision)">{{ etiquetaRevision(reporte.estadoRevision) }}</span>
               }
               <span [class]="claseEstado(reporte.estado)">{{ etiquetaEstado(reporte.estado) }}</span>
