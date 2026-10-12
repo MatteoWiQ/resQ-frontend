@@ -15,8 +15,8 @@
   force = true
 
 # SPA fallback: rutas de Angular (ej: /login) sirven index.html.
+# Sin force=true para que los assets (.js/.css) existentes se sirvan como archivos.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
