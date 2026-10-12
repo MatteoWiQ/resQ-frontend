@@ -1,0 +1,84 @@
+<section class="sv-contenedor">
+  <header class="sv-cabecera">
+    <h1>Solicitudes de voluntarios</h1>
+    <a routerLink="/admin" class="sv-volver">Volver al panel</a>
+  </header>
+
+  @if (toast()) {
+    <p class="sv-toast" role="status">{{ toast() }}</p>
+  }
+  @if (error()) {
+    <p class="sv-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="sv-estado">Cargando solicitudes...</p>
+  } @else if (sinSolicitudes()) {
+    <p class="sv-estado">No hay solicitudes pendientes.</p>
+  } @else {
+    <ul class="sv-lista">
+      @for (s of solicitudes(); track s.idSolicitud) {
+        <li class="sv-item">
+          <button class="sv-item-boton" (click)="verDetalle(s.idSolicitud)">
+            <span class="sv-nombre">{{ s.nombreUsuario }}</span>
+            <span class="sv-ayuda">{{ s.tipoAyuda || 'Sin tipo de ayuda' }}</span>
+            <span class="sv-fecha">{{ s.fechaSolicitud | date: 'dd/MM/yyyy' }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (seleccionada(); as d) {
+    <div class="sv-overlay" (click)="cerrarDetalle()">
+      <article class="sv-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <h2>{{ d.nombreUsuario }}</h2>
+        <dl class="sv-datos">
+          <div><dt>Email</dt><dd>{{ d.emailUsuario }}</dd></div>
+          <div><dt>Teléfono</dt><dd>{{ d.telefonoUsuario || '—' }}</dd></div>
+          <div><dt>Tipo de ayuda</dt><dd>{{ d.tipoAyuda || '—' }}</dd></div>
+          <div><dt>Mensaje</dt><dd>{{ d.mensaje || '—' }}</dd></div>
+          <div><dt>Solicitada</dt><dd>{{ d.fechaSolicitud | date: 'dd/MM/yyyy HH:mm' }}</dd></div>
+        </dl>
+        <footer class="sv-acciones">
+          <button class="sv-btn sv-btn-aprobar" [disabled]="procesando()" (click)="aprobar()">
+            Aprobar
+          </button>
+          <button class="sv-btn sv-btn-rechazar" [disabled]="procesando()" (click)="abrirRechazo()">
+            Rechazar
+          </button>
+          <button class="sv-btn sv-btn-cerrar" (click)="cerrarDetalle()">Cerrar</button>
+        </footer>
+      </article>
+    </div>
+  }
+
+  @if (modalRechazoAbierto()) {
+    <div class="sv-overlay" (click)="cancelarRechazo()">
+      <article class="sv-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <h2>Motivo del rechazo</h2>
+        <textarea
+          rows="4"
+          maxlength="500"
+          [ngModel]="motivoRechazo()"
+          (ngModelChange)="motivoRechazo.set($event)"
+          placeholder="Indica el motivo (obligatorio)"
+        ></textarea>
+        <p class="sv-contador">{{ motivoRechazo().length }}/500</p>
+        @if (motivoRechazo().length > 0 && motivoInvalido()) {
+          <p class="sv-error">El motivo debe tener entre 1 y 500 caracteres.</p>
+        }
+        <footer class="sv-acciones">
+          <button
+            class="sv-btn sv-btn-rechazar"
+            [disabled]="procesando() || motivoInvalido()"
+            (click)="confirmarRechazo()"
+          >
+            Confirmar rechazo
+          </button>
+          <button class="sv-btn sv-btn-cerrar" (click)="cancelarRechazo()">Cancelar</button>
+        </footer>
+      </article>
+    </div>
+  }
+</section>
