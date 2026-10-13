@@ -1,0 +1,153 @@
+.sv-contenedor {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.sv-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.sv-volver {
+  font-size: 0.9rem;
+}
+
+.sv-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.sv-item-boton {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sv-item-boton:hover {
+  background: #f5f5f5;
+}
+
+.sv-nombre {
+  font-weight: 600;
+}
+
+.sv-ayuda,
+.sv-fecha {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.sv-estado {
+  color: #666;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.sv-toast {
+  background: #e6f4ea;
+  border: 1px solid #34a853;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.sv-error {
+  background: #fce8e6;
+  border: 1px solid #d93025;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.sv-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.sv-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: min(480px, 92vw);
+}
+
+.sv-modal textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.sv-contador {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0.25rem 0 0;
+}
+
+.sv-datos div {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.sv-datos dt {
+  font-weight: 600;
+  min-width: 110px;
+}
+
+.sv-datos dd {
+  margin: 0;
+}
+
+.sv-acciones {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.sv-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sv-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sv-btn-aprobar {
+  background: #34a853;
+  color: #fff;
+}
+
+.sv-btn-rechazar {
+  background: #d93025;
+  color: #fff;
+}
+
+.sv-btn-cerrar {
+  background: #eee;
+}

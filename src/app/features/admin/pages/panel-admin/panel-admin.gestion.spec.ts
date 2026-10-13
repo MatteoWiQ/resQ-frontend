@@ -34,13 +34,11 @@ describe('PanelAdminComponent: gestion de reportes (HU-24)', () => {
   async function crearPanel(respuesta: Reporte[] = [PENDIENTE, EN_PROCESO]) {
     consultas = [];
     eliminados = [];
-    navegar = vi.fn(() => Promise.resolve(true));
 
     await TestBed.configureTestingModule({
       imports: [PanelAdminComponent],
       providers: [
         provideRouter([]),
-        { provide: Router, useValue: { navigate: navegar } },
         { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 99 } },
         {
           provide: ReporteService,
@@ -63,6 +61,10 @@ describe('PanelAdminComponent: gestion de reportes (HU-24)', () => {
       ],
     }).compileComponents();
 
+    navegar = vi
+      .spyOn(TestBed.inject(Router), 'navigate')
+      .mockResolvedValue(true);
+
     const fixture = TestBed.createComponent(PanelAdminComponent);
     await fixture.whenStable();
     fixture.detectChanges();
@@ -74,7 +76,6 @@ describe('PanelAdminComponent: gestion de reportes (HU-24)', () => {
       imports: [PanelAdminComponent],
       providers: [
         provideRouter([]),
-        { provide: Router, useValue: { navigate: navegar } },
         { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 99 } },
         {
           provide: ReporteService,

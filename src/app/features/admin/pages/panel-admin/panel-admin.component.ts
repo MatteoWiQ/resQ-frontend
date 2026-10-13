@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -27,7 +27,7 @@ import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model'
 @Component({
   selector: 'app-panel-admin',
   standalone: true,
-  imports: [BackButtonComponent, FormsModule, TranslatePipe],
+  imports: [BackButtonComponent, FormsModule, TranslatePipe, RouterLink],
   templateUrl: './panel-admin.component.html',
   styleUrl: './panel-admin.component.css',
 })
