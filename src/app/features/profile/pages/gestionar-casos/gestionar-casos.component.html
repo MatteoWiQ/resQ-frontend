@@ -1,0 +1,257 @@
+<main class="casos-page">
+  <app-back-button />
+
+  <section class="casos-card">
+    <div class="brand">
+      <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+      <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
+    </div>
+
+    @if (!hayUsuario()) {
+      <h1>{{ 'gestionCasos.titulo' | translate }}</h1>
+      <p class="message">{{ 'gestionCasos.sinSesion' | translate }}</p>
+      <a class="btn-accion enlace" routerLink="/login">{{ 'gestionCasos.iniciarSesion' | translate }}</a>
+    } @else if (cargando()) {
+      <h1>{{ 'gestionCasos.titulo' | translate }}</h1>
+      <p class="subtitle">{{ 'gestionCasos.cargando' | translate }}</p>
+    } @else if (!organizacion()) {
+      <h1>{{ 'gestionCasos.titulo' | translate }}</h1>
+      <p class="message">{{ 'gestionCasos.sinOrganizacion' | translate }}</p>
+      <a class="btn-accion enlace" routerLink="/organizaciones/registro">
+        {{ 'gestionCasos.registrarOrganizacion' | translate }}
+      </a>
+    } @else if (!organizacion()!.puedeGestionarCasos) {
+      <h1>{{ 'gestionCasos.titulo' | translate }}</h1>
+      <p class="message">{{ 'gestionCasos.noVerificada' | translate }}</p>
+      <a class="btn-volver enlace" routerLink="/organizaciones/registro">
+        {{ 'gestionCasos.volverOrganizacion' | translate }}
+      </a>
+    } @else {
+      <h1>{{ 'gestionCasos.titulo' | translate }}</h1>
+      <p class="subtitle">{{ 'gestionCasos.subtitle' | translate }}</p>
+
+      @if (mensaje()) {
+        <p class="confirmacion" role="status">{{ mensaje() }}</p>
+      }
+
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" [class.activo]="vista() === 'mis-casos'" (click)="mostrarMisCasos()">
+          {{ 'gestionCasos.tabs.misCasos' | translate }}
+        </button>
+        <button type="button" class="tab" [class.activo]="vista() === 'disponibles'" (click)="mostrarDisponibles()">
+          {{ 'gestionCasos.tabs.disponibles' | translate }}
+        </button>
+      </div>
+
+      @if (vista() === 'mis-casos') {
+        <!-- ============ Mis casos ============ -->
+        <div class="filtros">
+          <label for="filtroEstado">{{ 'gestionCasos.filtro.estado' | translate }}</label>
+          <select
+            id="filtroEstado"
+            [ngModel]="filtroEstado()"
+            (ngModelChange)="cambiarFiltroEstado($event)"
+          >
+            <option value="">{{ 'gestionCasos.filtro.todos' | translate }}</option>
+            @for (estado of estadosPosibles; track estado) {
+              <option [value]="estado">{{ etiquetaEstado(estado) }}</option>
+            }
+          </select>
+
+          <label for="filtroDesde">{{ 'gestionCasos.filtro.desde' | translate }}</label>
+          <input id="filtroDesde" type="date" [ngModel]="filtroDesde()" (ngModelChange)="filtroDesde.set($event)" />
+
+          <label for="filtroHasta">{{ 'gestionCasos.filtro.hasta' | translate }}</label>
+          <input id="filtroHasta" type="date" [ngModel]="filtroHasta()" (ngModelChange)="filtroHasta.set($event)" />
+        </div>
+
+        @if (cargandoCasos()) {
+          <p class="subtitle">{{ 'gestionCasos.cargando' | translate }}</p>
+        } @else if (casosFiltrados().length === 0) {
+          <p class="subtitle">{{ 'gestionCasos.vacioMisCasos' | translate }}</p>
+        } @else {
+          <ul class="lista-casos">
+            @for (caso of casosFiltrados(); track caso.idReporte) {
+              <li class="caso">
+                <div class="caso-cabecera">
+                  <span class="badge" [class]="'badge estado-' + caso.estado.toLowerCase()">
+                    {{ etiquetaEstado(caso.estado) }}
+                  </span>
+                  <span class="caso-fecha">{{ caso.fechaCreacion | slice: 0 : 10 }}</span>
+                </div>
+
+                <p class="caso-tipo">{{ caso.tipoCaso }}</p>
+                <p class="caso-descripcion">{{ caso.descripcion }}</p>
+
+                @if (opcionesEstado(caso).length > 0) {
+                  <div class="caso-estado-form">
+                    <label [attr.for]="'estado-' + caso.idReporte">
+                      {{ 'gestionCasos.cambiarEstado.etiqueta' | translate }}
+                    </label>
+                    <select
+                      [id]="'estado-' + caso.idReporte"
+                      [ngModel]="estadoSeleccionado()[caso.idReporte] ?? ''"
+                      (ngModelChange)="seleccionarEstado(caso.idReporte, $event)"
+                    >
+                      <option value="">{{ 'gestionCasos.filtro.todos' | translate }}</option>
+                      @for (opcion of opcionesEstado(caso); track opcion) {
+                        <option [value]="opcion">{{ etiquetaEstado(opcion) }}</option>
+                      }
+                    </select>
+                    <button
+                      type="button"
+                      class="btn-accion"
+                      [disabled]="!estadoSeleccionado()[caso.idReporte] || guardandoEstado() === caso.idReporte"
+                      (click)="guardarEstado(caso)"
+                    >
+                      {{
+                        guardandoEstado() === caso.idReporte
+                          ? ('gestionCasos.cambiarEstado.guardando' | translate)
+                          : ('gestionCasos.cambiarEstado.boton' | translate)
+                      }}
+                    </button>
+                  </div>
+                } @else {
+                  <p class="ayuda">{{ 'gestionCasos.cambiarEstado.sinTransiciones' | translate }}</p>
+                }
+
+                <button type="button" class="btn-volver" (click)="toggleSeguimiento(caso)">
+                  {{
+                    casoExpandido() === caso.idReporte
+                      ? ('gestionCasos.seguimiento.ocultar' | translate)
+                      : ('gestionCasos.seguimiento.ver' | translate)
+                  }}
+                </button>
+
+                @if (casoExpandido() === caso.idReporte) {
+                  <div class="seguimiento">
+                    @if (cargandoSeguimientos()) {
+                      <p class="ayuda">{{ 'gestionCasos.seguimiento.cargando' | translate }}</p>
+                    } @else if (seguimientos().length === 0) {
+                      <p class="ayuda">{{ 'gestionCasos.seguimiento.vacio' | translate }}</p>
+                    } @else {
+                      <ul class="historial">
+                        @for (entrada of seguimientos(); track entrada.idSeguimiento) {
+                          <li class="entrada-historial">
+                            <span class="entrada-fecha">{{ entrada.fechaCreacion | slice: 0 : 10 }}</span>
+                            @if (entrada.nota) {
+                              <p class="entrada-nota">{{ entrada.nota }}</p>
+                            }
+                            @if (entrada.fotoUrl) {
+                              <img
+                                class="entrada-foto"
+                                [src]="entrada.fotoUrl"
+                                [alt]="'gestionCasos.seguimiento.fotoAlt' | translate"
+                              />
+                            }
+                          </li>
+                        }
+                      </ul>
+                    }
+
+                    <form class="form-seguimiento" (ngSubmit)="enviarSeguimiento(caso.idReporte)" novalidate>
+                      <label [attr.for]="'nota-' + caso.idReporte">{{ 'gestionCasos.seguimiento.nota' | translate }}</label>
+                      <textarea
+                        [id]="'nota-' + caso.idReporte"
+                        rows="3"
+                        [ngModel]="notaNueva()"
+                        (ngModelChange)="notaNueva.set($event)"
+                        name="nota"
+                        [placeholder]="'gestionCasos.seguimiento.notaPlaceholder' | translate"
+                      ></textarea>
+                      @if (erroresSeguimiento()['nota']) {
+                        <p class="field-error">{{ erroresSeguimiento()['nota'] }}</p>
+                      }
+
+                      <span class="etiqueta-campo">{{ 'gestionCasos.seguimiento.foto' | translate }}</span>
+                      <div class="logo-campo">
+                        <input
+                          #fotoInput
+                          type="file"
+                          class="logo-input"
+                          [attr.accept]="logoAccept"
+                          (change)="seleccionarFotoSeguimiento($event)"
+                        />
+
+                        @if (vistaPreviaSeguimiento(); as src) {
+                          <img
+                            class="logo-preview"
+                            [src]="src"
+                            [alt]="'gestionCasos.seguimiento.fotoVistaPreviaAlt' | translate"
+                          />
+                        }
+
+                        <div class="logo-acciones">
+                          <button type="button" class="btn-volver" (click)="fotoInput.click()">
+                            {{ textoBotonFoto() }}
+                          </button>
+                          @if (fotoSeguimiento()) {
+                            <button type="button" class="btn-volver" (click)="quitarFotoSeguimiento()">
+                              {{ 'gestionCasos.seguimiento.fotoQuitar' | translate }}
+                            </button>
+                          }
+                        </div>
+                        <p class="ayuda">{{ 'gestionCasos.seguimiento.fotoAyuda' | translate }}</p>
+                        @if (erroresSeguimiento()['foto']) {
+                          <p class="field-error">{{ erroresSeguimiento()['foto'] }}</p>
+                        }
+                      </div>
+
+                      @if (erroresSeguimiento()['general']) {
+                        <p class="field-error">{{ erroresSeguimiento()['general'] }}</p>
+                      }
+
+                      <button type="submit" class="btn-accion" [disabled]="enviandoSeguimiento()">
+                        {{
+                          enviandoSeguimiento()
+                            ? ('gestionCasos.seguimiento.enviando' | translate)
+                            : ('gestionCasos.seguimiento.enviar' | translate)
+                        }}
+                      </button>
+                    </form>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        }
+      } @else {
+        <!-- ============ Casos disponibles ============ -->
+        @if (cargandoDisponibles()) {
+          <p class="subtitle">{{ 'gestionCasos.cargando' | translate }}</p>
+        } @else if (disponibles().length === 0) {
+          <p class="subtitle">{{ 'gestionCasos.vacioDisponibles' | translate }}</p>
+        } @else {
+          <ul class="lista-casos">
+            @for (caso of disponibles(); track caso.idReporte) {
+              <li class="caso">
+                <div class="caso-cabecera">
+                  <span class="badge" [class]="'badge estado-' + caso.estado.toLowerCase()">
+                    {{ etiquetaEstado(caso.estado) }}
+                  </span>
+                  <span class="caso-fecha">{{ caso.fechaCreacion | slice: 0 : 10 }}</span>
+                </div>
+
+                <p class="caso-tipo">{{ caso.tipoCaso }}</p>
+                <p class="caso-descripcion">{{ caso.descripcion }}</p>
+
+                <button
+                  type="button"
+                  class="btn-accion"
+                  [disabled]="aceptando() === caso.idReporte"
+                  (click)="aceptar(caso.idReporte)"
+                >
+                  {{
+                    aceptando() === caso.idReporte
+                      ? ('gestionCasos.aceptar.aceptando' | translate)
+                      : ('gestionCasos.aceptar.boton' | translate)
+                  }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      }
+    }
+  </section>
+</main>

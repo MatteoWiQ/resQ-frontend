@@ -82,6 +82,13 @@
           }
         </dl>
 
+        <!-- HU-21: solo una organización verificada puede gestionar casos -->
+        @if (org.puedeGestionarCasos) {
+          <a class="btn-accion enlace" routerLink="/organizaciones/panel">
+            {{ 'gestionCasos.titulo' | translate }}
+          </a>
+        }
+
         <div class="acciones">
           <button type="button" class="btn-accion" (click)="iniciarEdicion()">
             {{ 'organizaciones.edicion.boton' | translate }}

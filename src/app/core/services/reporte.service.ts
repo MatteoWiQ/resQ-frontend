@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of } from 'rxjs';
 
-import { EstadoReporte, Reporte } from '../../shared/models/reporte.model';
+import { EstadoReporte, Reporte, SeguimientoCaso } from '../../shared/models/reporte.model';
 import { OrdenReporte } from '../../shared/constants/gestion-reportes';
 
 export interface ConsultaReportes {
@@ -108,5 +108,47 @@ export class ReporteService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  // ============ HU-21: gestión de casos por una organización ============
+
+  /** Casos que ninguna organización ha tomado todavía. */
+  obtenerDisponibles(): Observable<Reporte[]> {
+    return this.http.get<Reporte[]>(`${this.baseUrl}/disponibles`);
+  }
+
+  /** Panel de "mis casos" de una organización, opcionalmente filtrado por estado. */
+  obtenerCasosOrganizacion(
+    idOrganizacion: number,
+    estados?: EstadoReporte | EstadoReporte[] | null,
+    orden?: OrdenReporte | null,
+  ): Observable<Reporte[]> {
+    const lista = estados == null ? [] : Array.isArray(estados) ? estados : [estados];
+    const validos = [...new Set(lista)].filter(Boolean);
+
+    let params = validos.length > 0 ? new HttpParams().set('estados', validos.join(',')) : new HttpParams();
+    if (orden) {
+      params = params.set('orden', orden);
+    }
+
+    return this.http.get<Reporte[]>(`${this.baseUrl}/organizacion/${idOrganizacion}`, { params });
+  }
+
+  /** Una organización verificada toma un caso disponible. */
+  aceptarCaso(id: number): Observable<Reporte> {
+    return this.http.patch<Reporte>(`${this.baseUrl}/${id}/aceptar`, {});
+  }
+
+  /** Historial de seguimiento de un caso, más reciente primero. */
+  obtenerSeguimientos(id: number): Observable<SeguimientoCaso[]> {
+    return this.http.get<SeguimientoCaso[]>(`${this.baseUrl}/${id}/seguimientos`);
+  }
+
+  /** Agrega una entrada de seguimiento (nota + foto opcional) a un caso. */
+  agregarSeguimiento(
+    id: number,
+    datos: { nota: string; fotoUrl: string | null },
+  ): Observable<SeguimientoCaso> {
+    return this.http.post<SeguimientoCaso>(`${this.baseUrl}/${id}/seguimientos`, datos);
   }
 }

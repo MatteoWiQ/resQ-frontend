@@ -1,8 +1,10 @@
 import { organizacionesEs } from './strings-organizaciones';
+import { gestionCasosEs } from './strings-gestionar-casos';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
   organizaciones: organizacionesEs,
+  gestionCasos: gestionCasosEs,
   shared: {
     brand: {
       marca: 'R',
