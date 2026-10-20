@@ -1,0 +1,123 @@
+<h3 class="grafico-titulo">{{ titulo() }}</h3>
+
+<ul class="leyenda">
+  @for (serie of series(); track serie.nombre; let s = $index) {
+    <li><span class="muestra" [style.background]="colores[s]"></span>{{ serie.nombre }}</li>
+  }
+</ul>
+
+<svg
+  [attr.viewBox]="'0 0 ' + ancho() + ' ' + alto"
+  [attr.height]="alto"
+  role="img"
+  [attr.aria-label]="titulo()"
+  (mouseleave)="hover.set(null)"
+>
+  @for (marca of marcas(); track marca) {
+    <line
+      class="rejilla"
+      [attr.x1]="margen.izquierda"
+      [attr.x2]="ancho() - margen.derecha"
+      [attr.y1]="y(marca)"
+      [attr.y2]="y(marca)"
+    />
+    <text class="eje-texto" [attr.x]="margen.izquierda - 8" [attr.y]="y(marca) + 4" text-anchor="end">
+      {{ marca }}
+    </text>
+  }
+
+  @for (i of etiquetasVisibles(); track i) {
+    <text class="eje-texto" [attr.x]="x(i)" [attr.y]="alto - 8" text-anchor="middle">
+      {{ etiquetas()[i] }}
+    </text>
+  }
+
+  @if (hover(); as detalle) {
+    <line
+      class="rejilla"
+      [attr.x1]="x(detalle.indice)"
+      [attr.x2]="x(detalle.indice)"
+      [attr.y1]="margen.arriba"
+      [attr.y2]="alto - margen.abajo"
+    />
+  }
+
+  @for (ruta of rutas(); track $index; let s = $index) {
+    <path
+      [attr.d]="ruta"
+      fill="none"
+      [attr.stroke]="colores[s]"
+      stroke-width="2"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+  }
+
+  <!-- Con un solo tramo no hay linea: el punto es la marca. Al pasar el mouse, se
+       resalta el punto de cada serie con un anillo del color de fondo. -->
+  @for (serie of series(); track serie.nombre; let s = $index) {
+    @for (valor of serie.valores; track $index; let i = $index) {
+      @if (etiquetas().length === 1 || hover()?.indice === i) {
+        <circle
+          [attr.cx]="x(i)"
+          [attr.cy]="y(valor)"
+          r="4"
+          [attr.fill]="colores[s]"
+          stroke="#fff"
+          stroke-width="2"
+        />
+      }
+    }
+  }
+
+  @for (etiqueta of etiquetas(); track $index; let i = $index) {
+    <rect
+      class="objetivo"
+      [attr.x]="inicioObjetivo(i)"
+      [attr.y]="margen.arriba"
+      [attr.width]="anchoObjetivo()"
+      [attr.height]="alto - margen.arriba - margen.abajo"
+      (mouseenter)="mostrar(i)"
+    />
+  }
+</svg>
+
+@if (hover(); as detalle) {
+  <div class="tooltip" [style.left.%]="detalle.izquierda" aria-hidden="true">
+    <strong>{{ etiquetas()[detalle.indice] }}</strong>
+    @for (serie of series(); track serie.nombre; let s = $index) {
+      <div class="tooltip-fila">
+        <span class="muestra" [style.background]="colores[s]"></span>
+        {{ serie.nombreCorto ?? serie.nombre }}
+        @if (serie.etiquetas?.[detalle.indice]; as fecha) {
+          ({{ fecha }})
+        }
+        <span class="valor">{{ valorEn(serie, detalle.indice) }}</span>
+      </div>
+    }
+  </div>
+}
+
+<details>
+  <summary>{{ 'metricas.graficos.verTabla' | translate }}</summary>
+  <table>
+    <thead>
+      <tr>
+        <th>{{ 'metricas.graficos.tramo' | translate }}</th>
+        @for (serie of series(); track serie.nombre) {
+          <th>{{ serie.nombre }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (etiqueta of etiquetas(); track $index; let i = $index) {
+        <tr>
+          <td>{{ etiqueta }}</td>
+          @for (serie of series(); track serie.nombre) {
+            <td>{{ valorEn(serie, i) }}</td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</details>

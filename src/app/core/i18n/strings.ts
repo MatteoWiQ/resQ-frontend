@@ -1,10 +1,13 @@
 import { organizacionesEs } from './strings-organizaciones';
 import { gestionCasosEs } from './strings-gestionar-casos';
+import { metricasEs } from './strings-metricas';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
   organizaciones: organizacionesEs,
   gestionCasos: gestionCasosEs,
+  // HU-34: métricas de la comunidad (textos en strings-metricas.ts)
+  metricas: metricasEs,
   shared: {
     brand: {
       marca: 'R',

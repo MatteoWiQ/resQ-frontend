@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from '../../core/guards/admin.guard';
 import { DetalleReporteComponent } from './pages/detalle-reporte/detalle-reporte.component';
+import { MetricasComponent } from './pages/metricas/metricas.component';
 import { PanelAdminComponent } from './pages/panel-admin/panel-admin.component';
 import { SolicitudesVoluntariosComponent } from './pages/solicitudes-voluntarios/solicitudes-voluntarios.component';
 
@@ -21,4 +22,6 @@ export const adminRoutes: Routes = [
     component: DetalleReporteComponent,
     canActivate: [adminGuard],
   },
+  // HU-34: metricas de la comunidad, solo para el administrador.
+  { path: 'admin/metricas', component: MetricasComponent, canActivate: [adminGuard] },
 ];
