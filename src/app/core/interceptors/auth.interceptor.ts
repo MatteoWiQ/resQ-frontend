@@ -35,11 +35,20 @@ export const authInterceptor: HttpInterceptorFn = (peticion, siguiente) => {
  * Un 401 en el login significa "credenciales invalidas", y en el alta publica de
  * cuentas el backend no exige sesion: en ninguno de los dos casos hay que cerrar
  * la sesion ni redirigir. Ojo: no alcanza con mirar la URL, porque /api/usuarios
- * tambien se usa autenticado (listar, editar, eliminar).
+ * tambien se usa autenticado (listar, ver, editar, eliminar). Por eso se exige
+ * metodo POST y coincidencia exacta de la ruta: /api/usuarios/5, /api/usuarios/5/voluntario
+ * y las lecturas siguen siendo peticiones protegidas.
  */
 function esPeticionPublica(peticion: HttpRequest<unknown>): boolean {
-  if (peticion.url === '/api/login') {
+  const ruta = sinQuery(peticion.url);
+  if (ruta === '/api/login') {
     return true;
   }
-  return peticion.method === 'POST' && peticion.url === '/api/usuarios';
+  return peticion.method === 'POST' && ruta === '/api/usuarios';
+}
+
+/** Quita la query string para que ?algo=1 no impida reconocer la ruta. */
+function sinQuery(url: string): string {
+  const corte = url.indexOf('?');
+  return corte === -1 ? url : url.slice(0, corte);
 }

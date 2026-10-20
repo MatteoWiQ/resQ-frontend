@@ -32,9 +32,26 @@ export class Register {
       next: () => {
         this.message.set(this.translate.t('auth.register.ok'));
       },
-      error: () => {
-        this.message.set(this.translate.t('auth.register.errorDb'));
+      error: (error: { status?: number }) => {
+        this.message.set(this.traducirError(error?.status));
       }
     });
+  }
+
+  /**
+   * El backend responde distinto segun el motivo: 409 si el correo ya existe,
+   * 400 si algun campo no pasa la validacion y 403 si se intenta crear un ADMIN
+   * por el alta publica. Cualquier otro caso o una caida se trata como error de
+   * conexion, para no mostrar un mensaje de "datos invalidos" que confunda.
+   */
+  private traducirError(estado?: number): string {
+    switch (estado) {
+      case 409:
+        return this.translate.t('auth.register.errorEmailRegistrado');
+      case 400:
+        return this.translate.t('auth.register.errorDatosInvalidos');
+      default:
+        return this.translate.t('auth.register.errorDb');
+    }
   }
 }

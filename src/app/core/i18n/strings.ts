@@ -197,6 +197,8 @@ export const es = {
       boton: 'Registrarse',
       ok: 'Usuario registrado correctamente',
       errorDb: 'No se pudo conectar con la base de datos. Inténtalo de nuevo más tarde.',
+      errorEmailRegistrado: 'Ese correo ya tiene una cuenta. Inicia sesión o usa otro correo.',
+      errorDatosInvalidos: 'Revisa los datos: hay campos incompletos o con formato inválido.',
       yaTienesCuenta: '¿Ya tienes una cuenta?',
       iniciaSesion: 'Inicia sesión',
     },
