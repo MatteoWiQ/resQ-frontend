@@ -1,4 +1,5 @@
-import { Component, OnDestroy, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -22,7 +23,7 @@ import { TIPOS_CASO } from '../../../../shared/constants/tipos-caso';
   templateUrl: './crear-reporte.component.html',
   styleUrl: './crear-reporte.component.css',
 })
-export class CrearReporteComponent {
+export class CrearReporteComponent implements OnDestroy {
   // El catalogo canonico vive en shared/constants/tipos-caso.ts; el valor
   // interno va al backend y la etiqueta visible sale de shared.tiposCaso.
   readonly tiposCaso = TIPOS_CASO;
@@ -48,6 +49,7 @@ export class CrearReporteComponent {
   private readonly reporteService = inject(ReporteService);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnDestroy(): void {
     this.liberarVistaPrevia();
@@ -151,7 +153,7 @@ export class CrearReporteComponent {
       ? this.reporteService.subirFoto(archivo).pipe(switchMap((r) => crear(r.fotoUrl)))
       : crear(null);
 
-    peticion.subscribe({
+    peticion.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => this.router.navigate(['/perfil']),
       error: (err: HttpErrorResponse) => {
         this.enviando.set(false);
