@@ -7,6 +7,10 @@ riesgo.
 Esta guía explica **cómo instalar el proyecto desde cero**, pensada para alguien que recién
 empieza en Angular y en el desarrollo frontend. No necesitas ser experto: ve paso a paso.
 
+> **Orden recomendado:** para usar la app con datos (login, reportes, mapa) primero levanta
+> el **backend** siguiendo su README: <https://github.com/fatolaa/resQ-backend>. Después
+> sigue esta guía. Sin backend la app abre igual, pero las pantallas con datos fallan.
+
 ---
 
 ## 1. Conceptos básicos (lee esto primero)
@@ -119,6 +123,14 @@ npm install
 Cuando termine, ya tienes todo lo necesario. **No necesitas instalar cada dependencia a mano**:
 `package.json` ya las declara todas.
 
+> **Alternativa: `npm ci`.** Instala exactamente las versiones de `package-lock.json` sin
+> modificarlo. Es útil si quieres tener lo mismo que el resto del equipo (es lo que usa Netlify
+> al desplegar).
+
+> **Es normal** que al final `npm install` diga algo como `13 vulnerabilities (...)`. Son avisos
+> de `npm audit` sobre dependencias y **no impiden trabajar**. No ejecutes `npm audit fix --force`
+> sin consultarlo con el equipo: puede actualizar Angular a otra versión y romper el proyecto.
+
 > ⚠️ **Importante:** la carpeta `node_modules/` puede pesar cientos de MB y **no se sube al
 > repositorio** (está en `.gitignore`). No la copies ni la borres a la ligera. Si algo se corrompe,
 > puedes borrarla y volver a ejecutar `npm install`.
@@ -217,6 +229,10 @@ npm run build
 
 El resultado queda en la carpeta **`dist/`**. Esa es la carpeta que se sube a un hosting. La
 compilación de producción aplica optimizaciones (minifica el código, etc.).
+
+> **Es normal** ver avisos amarillos `[WARNING]` como `bundle initial exceeded maximum budget`
+> o `Module 'leaflet' ... is not ESM`. Son advertencias de tamaño y no detienen la compilación.
+> Si al final aparece `Output location: ...dist/angular-frontend`, el build salió bien.
 
 Para compilar automáticamente cada vez que cambias algo, en modo desarrollo:
 
