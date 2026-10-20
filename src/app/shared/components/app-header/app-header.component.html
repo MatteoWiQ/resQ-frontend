@@ -1,0 +1,45 @@
+<header class="topbar">
+  <div class="brand-wrap">
+    <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
+    <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
+  </div>
+
+  <nav class="nav" [attr.aria-label]="'landing.topbar.ariaLabel' | translate">
+    @if (variante() === 'landing') {
+      <a href="#inicio">{{ 'landing.topbar.inicio' | translate }}</a>
+      <a href="#mapa">{{ 'landing.topbar.mapa' | translate }}</a>
+      <a href="#casos">{{ 'landing.topbar.casos' | translate }}</a>
+      <a href="#ayudar">{{ 'landing.topbar.ayudar' | translate }}</a>
+    }
+    <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
+    <a routerLink="/organizaciones/registro">{{ 'organizaciones.enlaceTopbar' | translate }}</a>
+    @if (haySesion()) {
+      <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
+    }
+  </nav>
+
+  <div class="acciones">
+    @if (haySesion()) {
+      <a
+        routerLink="/perfil"
+        class="notif-btn"
+        [attr.aria-label]="'landing.header.notificaciones' | translate"
+        [attr.title]="'landing.header.notificaciones' | translate"
+      >
+        <span aria-hidden="true">&#128276;</span>
+        @if (sinLeer() > 0) {
+          <span class="notif-badge" aria-hidden="true">{{ sinLeer() }}</span>
+        }
+      </a>
+
+      @if (esAdmin()) {
+        <a routerLink="/admin" class="secondary-btn">{{ 'landing.topbar.panelAdmin' | translate }}</a>
+      }
+      <button type="button" class="logout-btn" (click)="cerrarSesion()">
+        {{ 'landing.header.cerrarSesion' | translate }}
+      </button>
+    } @else {
+      <a routerLink="/login" class="primary-btn">{{ 'landing.topbar.reportar' | translate }}</a>
+    }
+  </div>
+</header>

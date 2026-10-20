@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
@@ -28,7 +29,7 @@ import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model'
 @Component({
   selector: 'app-panel-admin',
   standalone: true,
-  imports: [BackButtonComponent, FormsModule, TranslatePipe, RouterLink],
+  imports: [BackButtonComponent, AppHeaderComponent, FormsModule, TranslatePipe, RouterLink],
   templateUrl: './panel-admin.component.html',
   styleUrl: './panel-admin.component.css',
 })

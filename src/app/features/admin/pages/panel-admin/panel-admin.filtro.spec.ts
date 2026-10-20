@@ -4,10 +4,12 @@ import { of } from 'rxjs';
 
 import { PanelAdminComponent } from './panel-admin.component';
 import { AuthService } from '../../../../core/services/auth.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { Reporte } from '../../../../shared/models/reporte.model';
 import { EstadoReporte } from '../../../../shared/models/reporte.model';
+import { webSocketServiceDoble } from '../../../../shared/testing/test-doubles';
 
 const PENDIENTE: Reporte = {
   idReporte: 1,
@@ -42,12 +44,9 @@ describe('PanelAdminComponent: filtro por estado (HU-15)', () => {
         provideRouter([]),
         {
           provide: AuthService,
-          useValue: { obtenerIdUsuarioActual: () => 99 },
+          useValue: { obtenerIdUsuarioActual: () => 99, obtenerToken: () => 'token-de-prueba', esAdmin: () => true, usuarioActual: () => null, logout: () => undefined },
         },
-        {
-          provide: AuthService,
-          useValue: { obtenerIdUsuarioActual: () => 99 },
-        },
+        { provide: WebSocketService, useValue: webSocketServiceDoble() },
         {
           provide: ReporteService,
           useValue: {
