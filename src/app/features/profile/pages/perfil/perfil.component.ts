@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -33,6 +34,7 @@ export class PerfilComponent implements OnInit {
   private readonly reporteService = inject(ReporteService);
   private readonly solicitudVoluntarioService = inject(SolicitudVoluntarioService);
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly usuario = signal<Usuario | null>(null);
   readonly reportes = signal<Reporte[]>([]);
@@ -66,7 +68,7 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    this.usuarioService.obtenerPorId(idUsuario).subscribe({
+    this.usuarioService.obtenerPorId(idUsuario).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (usuario) => {
         this.usuario.set(usuario);
         this.cargandoPerfil.set(false);
@@ -77,10 +79,13 @@ export class PerfilComponent implements OnInit {
       },
     });
 
-    this.reporteService.obtenerMisReportes(idUsuario).subscribe((reportes) => {
-      this.reportes.set(reportes);
-      this.cargandoReportes.set(false);
-    });
+    this.reporteService
+      .obtenerMisReportes(idUsuario)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((reportes) => {
+        this.reportes.set(reportes);
+        this.cargandoReportes.set(false);
+      });
   }
 
   iniciales(nombre: string | undefined): string {
@@ -180,6 +185,7 @@ export class PerfilComponent implements OnInit {
         latitud: reporte.latitud,
         longitud: reporte.longitud,
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (actualizado) => {
           this.guardandoEstado.set(false);
@@ -264,6 +270,7 @@ export class PerfilComponent implements OnInit {
       // Quien ya es voluntario solo edita sus tipos de ayuda (HU-17).
       this.usuarioService
         .actualizarTiposAyuda(usuario.idUsuario, this.tiposSeleccionados())
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (usuarioActualizado) => {
             this.usuario.set(usuarioActualizado);
@@ -283,6 +290,7 @@ export class PerfilComponent implements OnInit {
     // HU-35: el usuario envía una solicitud que el administrador aprueba o rechaza.
     this.solicitudVoluntarioService
       .crear(this.tiposSeleccionados().join(','))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.enviandoVoluntario.set(false);

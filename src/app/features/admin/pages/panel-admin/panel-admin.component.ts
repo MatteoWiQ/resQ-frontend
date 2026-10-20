@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -37,6 +38,7 @@ export class PanelAdminComponent implements OnInit {
   private readonly reporteService = inject(ReporteService);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   usuarios = signal<Usuario[]>([]);
   reportes = signal<Reporte[]>([]);
@@ -80,11 +82,14 @@ export class PanelAdminComponent implements OnInit {
   }
 
   cargarUsuarios(): void {
-    this.usuarioService.obtenerTodos().subscribe({
-      next: (data) => this.usuarios.set(data),
-      error: (err) =>
-        this.mensaje.set(this.translate.t('admin.errorCargarUsuarios', { detalle: err.message })),
-    });
+    this.usuarioService
+      .obtenerTodos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => this.usuarios.set(data),
+        error: (err) =>
+          this.mensaje.set(this.translate.t('admin.errorCargarUsuarios', { detalle: err.message })),
+      });
   }
 
   cargarReportes(): void {
@@ -92,6 +97,7 @@ export class PanelAdminComponent implements OnInit {
 
     this.reporteService
       .obtenerTodos(estados, { busqueda: this.busqueda(), orden: this.orden() })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => this.reportes.set(data),
         error: (err) =>
@@ -162,15 +168,18 @@ export class PanelAdminComponent implements OnInit {
     }
 
     this.reporteAEliminar.set(null);
-    this.reporteService.eliminar(reporte.idReporte).subscribe({
-      next: () => {
-        this.mensaje.set(this.translate.t('admin.reporteEliminado'));
-        this.cancelarEdicion();
-        this.cargarReportes();
-      },
-      error: (err) =>
-        this.mensaje.set(this.translate.t('admin.errorEliminarReporte', { detalle: err.message })),
-    });
+    this.reporteService
+      .eliminar(reporte.idReporte)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.mensaje.set(this.translate.t('admin.reporteEliminado'));
+          this.cancelarEdicion();
+          this.cargarReportes();
+        },
+        error: (err) =>
+          this.mensaje.set(this.translate.t('admin.errorEliminarReporte', { detalle: err.message })),
+      });
   }
 
   etiquetaFiltro(clave: ClaveFiltro): string {
@@ -204,17 +213,20 @@ export class PanelAdminComponent implements OnInit {
   }
 
   guardarUsuario(id: number): void {
-    this.usuarioService.actualizar(id, this.usuarioEdit).subscribe({
-      next: () => {
-        this.mensaje.set(this.translate.t('admin.usuarioActualizado'));
-        this.cancelarEdicion();
-        this.cargarUsuarios();
-      },
-      error: (err) =>
-        this.mensaje.set(
-          this.translate.t('admin.errorActualizarUsuario', { detalle: err.message }),
-        ),
-    });
+    this.usuarioService
+      .actualizar(id, this.usuarioEdit)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.mensaje.set(this.translate.t('admin.usuarioActualizado'));
+          this.cancelarEdicion();
+          this.cargarUsuarios();
+        },
+        error: (err) =>
+          this.mensaje.set(
+            this.translate.t('admin.errorActualizarUsuario', { detalle: err.message }),
+          ),
+      });
   }
 
   // ============ HU-23: eliminar una cuenta ============
@@ -245,15 +257,18 @@ export class PanelAdminComponent implements OnInit {
     }
 
     this.usuarioAEliminar.set(null);
-    this.usuarioService.eliminar(usuario.idUsuario).subscribe({
-      next: () => {
-        this.mensaje.set(this.translate.t('admin.usuarioEliminado'));
-        this.cancelarEdicion();
-        this.cargarUsuarios();
-      },
-      error: (err) =>
-        this.mensaje.set(this.translate.t('admin.errorEliminarUsuario', { detalle: err.message })),
-    });
+    this.usuarioService
+      .eliminar(usuario.idUsuario)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.mensaje.set(this.translate.t('admin.usuarioEliminado'));
+          this.cancelarEdicion();
+          this.cargarUsuarios();
+        },
+        error: (err) =>
+          this.mensaje.set(this.translate.t('admin.errorEliminarUsuario', { detalle: err.message })),
+      });
   }
 
   editarReporte(r: Reporte): void {
@@ -271,17 +286,20 @@ export class PanelAdminComponent implements OnInit {
   }
 
   guardarReporte(id: number): void {
-    this.reporteService.actualizar(id, this.reporteEdit).subscribe({
-      next: () => {
-        this.mensaje.set(this.translate.t('admin.reporteActualizado'));
-        this.cancelarEdicion();
-        this.cargarReportes();
-      },
-      error: (err) =>
-        this.mensaje.set(
-          this.translate.t('admin.errorActualizarReporte', { detalle: err.message }),
-        ),
-    });
+    this.reporteService
+      .actualizar(id, this.reporteEdit)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.mensaje.set(this.translate.t('admin.reporteActualizado'));
+          this.cancelarEdicion();
+          this.cargarReportes();
+        },
+        error: (err) =>
+          this.mensaje.set(
+            this.translate.t('admin.errorActualizarReporte', { detalle: err.message }),
+          ),
+      });
   }
 
   cancelarEdicion(): void {
