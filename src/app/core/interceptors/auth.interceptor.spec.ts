@@ -106,4 +106,53 @@ describe('authInterceptor (HU-23)', () => {
 
     expect(auth.usuarioActual()).not.toBeNull();
   });
+
+  it('no cierra la sesion cuando el 401 viene del alta publica de cuentas', () => {
+    guardarSesion('token-abc', 'ADMIN');
+    const auth = TestBed.inject(AuthService);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    http
+      .post('/api/usuarios', { email: 'nuevo@resq.com', password: 'x' })
+      .subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne('/api/usuarios')
+      .flush({ message: 'x' }, { status: 401, statusText: 'Unauthorized' });
+
+    expect(auth.usuarioActual()).not.toBeNull();
+    expect(navegar).not.toHaveBeenCalled();
+  });
+
+  it('si cierra la sesion cuando el 401 viene de una ruta de usuarios con id', () => {
+    guardarSesion('token-vencido', 'ADMIN');
+    const auth = TestBed.inject(AuthService);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    http.get('/api/usuarios/5').subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne('/api/usuarios/5')
+      .flush({ message: 'x' }, { status: 401, statusText: 'Unauthorized' });
+
+    expect(auth.usuarioActual()).toBeNull();
+    expect(navegar).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('reconoce el login como publico aunque lleve query string', () => {
+    guardarSesion('token-abc', 'ADMIN');
+    const auth = TestBed.inject(AuthService);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    http
+      .post('/api/login?desde=app', { email: 'a@b.com', password: 'x' })
+      .subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne('/api/login?desde=app')
+      .flush({ message: 'x' }, { status: 401, statusText: 'Unauthorized' });
+
+    expect(auth.usuarioActual()).not.toBeNull();
+    expect(navegar).not.toHaveBeenCalled();
+  });
 });
