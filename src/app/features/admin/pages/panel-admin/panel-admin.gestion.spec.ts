@@ -4,11 +4,13 @@ import { of, throwError } from 'rxjs';
 
 import { PanelAdminComponent } from './panel-admin.component';
 import { AuthService } from '../../../../core/services/auth.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ConsultaReportes } from '../../../../core/services/reporte.service';
 import { OrdenReporte } from '../../../../shared/constants/gestion-reportes';
 import { Reporte } from '../../../../shared/models/reporte.model';
+import { webSocketServiceDoble } from '../../../../shared/testing/test-doubles';
 
 const PENDIENTE: Reporte = {
   idReporte: 1,
@@ -39,7 +41,8 @@ describe('PanelAdminComponent: gestion de reportes (HU-24)', () => {
       imports: [PanelAdminComponent],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 99 } },
+        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 99, obtenerToken: () => 'token-de-prueba', esAdmin: () => true, usuarioActual: () => null, logout: () => undefined } },
+        { provide: WebSocketService, useValue: webSocketServiceDoble() },
         {
           provide: ReporteService,
           useValue: {
@@ -76,7 +79,8 @@ describe('PanelAdminComponent: gestion de reportes (HU-24)', () => {
       imports: [PanelAdminComponent],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 99 } },
+        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 99, obtenerToken: () => 'token-de-prueba', esAdmin: () => true, usuarioActual: () => null, logout: () => undefined } },
+        { provide: WebSocketService, useValue: webSocketServiceDoble() },
         {
           provide: ReporteService,
           useValue: {

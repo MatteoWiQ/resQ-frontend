@@ -10,6 +10,7 @@ import { ReporteService } from '../../../../core/services/reporte.service';
 import { SolicitudVoluntarioService } from '../../../../core/services/solicitud-voluntario.service';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
+import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
 import { NotificacionesComponent } from '../../../../shared/components/notificaciones/notificaciones.component';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
@@ -23,7 +24,7 @@ import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model'
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, NotificacionesComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, AppHeaderComponent, NotificacionesComponent, TranslatePipe],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })

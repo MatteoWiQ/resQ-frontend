@@ -49,6 +49,11 @@ export const es = {
       panelAdmin: 'Panel administrativo',
       reportar: 'Reportar',
     },
+    // HU-logout: cabecera compartida (landing/perfil/panel).
+    header: {
+      cerrarSesion: 'Cerrar sesión',
+      notificaciones: 'Notificaciones',
+    },
     mapa: {
       eyebrow: 'Visualización geográfica',
       titulo: 'Mapa de casos',

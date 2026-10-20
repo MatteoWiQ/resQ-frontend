@@ -3,8 +3,10 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
+import { webSocketServiceDoble } from '../../../../shared/testing/test-doubles';
 import { PanelAdminComponent } from './panel-admin.component';
 
 describe('PanelAdminComponent: pestanas (HU-23)', () => {
@@ -14,7 +16,8 @@ describe('PanelAdminComponent: pestanas (HU-23)', () => {
       providers: [
         // El panel navega al detalle del reporte (HU-24), asi que necesita el Router.
         provideRouter([]),
-        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 1 } },
+        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 1, obtenerToken: () => 'token-de-prueba', esAdmin: () => true, usuarioActual: () => null, logout: () => undefined } },
+        { provide: WebSocketService, useValue: webSocketServiceDoble() },
         { provide: UsuarioService, useValue: { obtenerTodos: () => of([]) } },
         { provide: ReporteService, useValue: { obtenerTodos: () => of([]) } },
       ],

@@ -3,9 +3,11 @@ import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { Usuario } from '../../../../shared/models/usuario.model';
+import { webSocketServiceDoble } from '../../../../shared/testing/test-doubles';
 import { PanelAdminComponent } from './panel-admin.component';
 
 const ADMIN: Usuario = {
@@ -37,7 +39,8 @@ describe('PanelAdminComponent: eliminar usuarios (HU-23)', () => {
       providers: [
         // El panel navega al detalle del reporte (HU-24), asi que necesita el Router.
         provideRouter([]),
-        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => idActual } },
+        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => idActual, obtenerToken: () => 'token-de-prueba', esAdmin: () => true, usuarioActual: () => null, logout: () => undefined } },
+        { provide: WebSocketService, useValue: webSocketServiceDoble() },
         {
           provide: UsuarioService,
           useValue: {
@@ -68,7 +71,8 @@ describe('PanelAdminComponent: eliminar usuarios (HU-23)', () => {
       providers: [
         // El panel navega al detalle del reporte (HU-24), asi que necesita el Router.
         provideRouter([]),
-        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 1 } },
+        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => 1, obtenerToken: () => 'token-de-prueba', esAdmin: () => true, usuarioActual: () => null, logout: () => undefined } },
+        { provide: WebSocketService, useValue: webSocketServiceDoble() },
         {
           provide: UsuarioService,
           useValue: {

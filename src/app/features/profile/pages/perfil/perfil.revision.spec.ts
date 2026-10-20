@@ -10,6 +10,8 @@ import { ReporteService } from '../../../../core/services/reporte.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { Reporte } from '../../../../shared/models/reporte.model';
 import { Usuario } from '../../../../shared/models/usuario.model';
+import { webSocketServiceDoble } from '../../../../shared/testing/test-doubles';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 
 function usuario(rol: string): Usuario {
   return {
@@ -57,6 +59,9 @@ describe('PerfilComponent (HU-19: revision del caso)', () => {
           useValue: {
             usuarioActual: () => sesion,
             obtenerIdUsuarioActual: () => sesion?.idUsuario ?? null,
+            obtenerToken: () => (sesion ? 'token-de-prueba' : null),
+            esAdmin: () => (rol ?? '').toUpperCase() === 'ADMIN',
+            logout: () => undefined,
           },
         },
         { provide: UsuarioService, useValue: { obtenerPorId: () => of(usuario(rol ?? 'USUARIO')) } },
@@ -65,6 +70,7 @@ describe('PerfilComponent (HU-19: revision del caso)', () => {
           provide: NotificacionService,
           useValue: { obtenerDeUsuario: () => of([]), marcarComoLeida: () => of({}) },
         },
+        { provide: WebSocketService, useValue: webSocketServiceDoble() },
       ],
     }).compileComponents();
 
