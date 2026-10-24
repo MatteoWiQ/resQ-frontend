@@ -1,7 +1,8 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
-import { describe, it, expect, afterEach } from 'vitest';
+import { provideRouter, Router } from '@angular/router';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { NotificacionesComponent } from './notificaciones.component';
 import { AuthService } from '../../../core/services/auth.service';
@@ -12,15 +13,17 @@ function notificacion(id: number, extra: Partial<Notificacion> = {}): Notificaci
     idNotificacion: id,
     idUsuario: 10,
     idReporte: 55,
+    idSolicitud: null,
     tipo: 'SOLICITUD_RECHAZADA',
     mensaje: `Mensaje ${id}`,
     leida: false,
+    archivada: false,
     fechaCreacion: '2026-09-28T10:00:00',
     ...extra,
   };
 }
 
-describe('NotificacionesComponent (HU-19)', () => {
+describe('NotificacionesComponent (HU-19/HU-37)', () => {
   let httpMock: HttpTestingController;
   let fixture: ComponentFixture<NotificacionesComponent>;
   let component: NotificacionesComponent;
@@ -31,7 +34,8 @@ describe('NotificacionesComponent (HU-19)', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => idUsuario } },
+        provideRouter([]),
+        { provide: AuthService, useValue: { obtenerIdUsuarioActual: () => idUsuario, esAdmin: () => false } },
       ],
     }).compileComponents();
 
@@ -44,6 +48,7 @@ describe('NotificacionesComponent (HU-19)', () => {
 
   afterEach(() => {
     httpMock.verify();
+    TestBed.resetTestingModule();
   });
 
   it('muestra las notificaciones del usuario y cuántas están sin leer', async () => {
@@ -75,6 +80,58 @@ describe('NotificacionesComponent (HU-19)', () => {
 
     expect(component.sinLeer()).toBe(0);
     expect((fixture.nativeElement as HTMLElement).querySelector('.btn-leida')).toBeNull();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.btn-no-leida')).not.toBeNull();
+  });
+
+  it('marca una notificación como no leída desde la bandeja', async () => {
+    await crear(10);
+    fixture.detectChanges();
+    httpMock.expectOne('/api/notificaciones/usuario/10').flush([notificacion(1, { leida: true })]);
+    fixture.detectChanges();
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.btn-no-leida')!.click();
+
+    const req = httpMock.expectOne('/api/notificaciones/1/no-leida');
+    expect(req.request.method).toBe('PATCH');
+    req.flush(notificacion(1, { leida: false }));
+    fixture.detectChanges();
+
+    expect(component.sinLeer()).toBe(1);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.btn-leida')).not.toBeNull();
+  });
+
+  it('archiva una notificación y la saca de la bandeja', async () => {
+    await crear(10);
+    fixture.detectChanges();
+    httpMock.expectOne('/api/notificaciones/usuario/10').flush([notificacion(1)]);
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('.notif-item').length).toBe(1);
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.btn-archivar')!.click();
+
+    const req = httpMock.expectOne('/api/notificaciones/1/archivar');
+    expect(req.request.method).toBe('PATCH');
+    req.flush(notificacion(1, { leida: true, archivada: true }));
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('.notif-item').length).toBe(0);
+    expect(component.sinLeer()).toBe(0);
+    expect(texto()).toContain('No tienes notificaciones.');
+  });
+
+  it('al abrir una notificación lleva al caso con el idReporte', async () => {
+    await crear(10);
+    fixture.detectChanges();
+    httpMock.expectOne('/api/notificaciones/usuario/10').flush([notificacion(1, { idReporte: 77, leida: true })]);
+    fixture.detectChanges();
+
+    const router = TestBed.inject(Router);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLDivElement>('.notif-texto')!.click();
+
+    expect(navegar).toHaveBeenCalledWith(['/perfil'], { queryParams: { reporte: 77 } });
   });
 
   it('muestra un mensaje cuando no hay notificaciones', async () => {

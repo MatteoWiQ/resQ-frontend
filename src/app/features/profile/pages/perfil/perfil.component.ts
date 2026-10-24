@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../../../../core/services/auth.service';
@@ -36,6 +36,7 @@ export class PerfilComponent implements OnInit {
   private readonly solicitudVoluntarioService = inject(SolicitudVoluntarioService);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly usuario = signal<Usuario | null>(null);
   readonly reportes = signal<Reporte[]>([]);
@@ -86,12 +87,25 @@ export class PerfilComponent implements OnInit {
       .subscribe((reportes) => {
         this.reportes.set(reportes);
         this.cargandoReportes.set(false);
+        this.abrirReporteDesdeUrl();
       });
   }
 
+  private abrirReporteDesdeUrl(): void {
+    const id = Number(this.route.snapshot.queryParamMap.get('reporte'));
+    if (!Number.isFinite(id) || id <= 0) {
+      return;
+    }
+    const reporte = this.reportes().find((r) => r.idReporte === id);
+    if (reporte) {
+      this.verDetalle(reporte);
+    }
+  }
+
   iniciales(nombre: string | undefined): string {
-    if (!nombre) return '?';
-    return nombre
+    const valor = nombre;
+    if (!valor) return '?';
+    return valor
       .trim()
       .split(/\s+/)
       .slice(0, 2)

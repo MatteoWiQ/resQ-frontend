@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -34,7 +34,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   private readonly webSocket = inject(WebSocketService);
   private readonly router = inject(Router);
 
-  readonly sinLeer = signal(0);
+  readonly sinLeer = this.notificacionService.noLeidas;
   readonly haySesion = computed(() => this.authService.usuarioActual() !== null);
 
   private readonly suscripciones = new Subscription();
@@ -60,21 +60,18 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
 
   cerrarSesion(): void {
     this.authService.logout();
-    this.sinLeer.set(0);
+    this.notificacionService.limpiar();
     void this.router.navigate(['/']);
   }
 
   private cargarNotificaciones(): void {
     const idUsuario = this.authService.obtenerIdUsuarioActual();
     if (idUsuario === null) {
-      this.sinLeer.set(0);
+      this.notificacionService.limpiar();
       return;
     }
     this.suscripciones.add(
-      this.notificacionService.obtenerDeUsuario(idUsuario).subscribe({
-        next: (lista) => this.sinLeer.set(lista.filter((n) => !n.leida).length),
-        error: () => this.sinLeer.set(0),
-      }),
+      this.notificacionService.cargar(idUsuario).subscribe({ error: () => {} }),
     );
   }
 }
