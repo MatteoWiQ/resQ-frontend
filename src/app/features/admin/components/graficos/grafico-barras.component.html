@@ -1,0 +1,86 @@
+<h3 class="grafico-titulo">{{ titulo() }}</h3>
+
+<ul class="leyenda">
+  @for (serie of series(); track serie.nombre; let s = $index) {
+    <li><span class="muestra" [style.background]="colores[s]"></span>{{ serie.nombre }}</li>
+  }
+</ul>
+
+<svg
+  [attr.viewBox]="'0 0 ' + ancho() + ' ' + alto"
+  [attr.height]="alto"
+  role="img"
+  [attr.aria-label]="titulo()"
+  (mouseleave)="hover.set(null)"
+>
+  @for (marca of marcas(); track marca) {
+    <line
+      class="rejilla"
+      [attr.x1]="margen.izquierda"
+      [attr.x2]="ancho() - margen.derecha"
+      [attr.y1]="y(marca)"
+      [attr.y2]="y(marca)"
+    />
+    <text class="eje-texto" [attr.x]="margen.izquierda - 8" [attr.y]="y(marca) + 4" text-anchor="end">
+      {{ marca }}
+    </text>
+  }
+
+  @for (barra of barras(); track $index) {
+    <path [attr.d]="barra.ruta" [attr.fill]="barra.color" />
+  }
+
+  @for (categoria of categorias(); track categoria; let i = $index) {
+    <text class="eje-texto" text-anchor="middle" [attr.y]="alto - margen.abajo + 16">
+      @for (linea of lineasCategoria()[i]; track $index; let primera = $first) {
+        <tspan [attr.x]="centroCategoria(i)" [attr.dy]="primera ? 0 : 13">{{ linea }}</tspan>
+      }
+    </text>
+    <!-- Objetivo de hover: toda la columna, mas grande que las barras. -->
+    <rect
+      class="objetivo"
+      [attr.x]="inicioCategoria(i)"
+      [attr.y]="margen.arriba"
+      [attr.width]="anchoCategoria()"
+      [attr.height]="alto - margen.arriba - margen.abajo"
+      (mouseenter)="mostrar(i)"
+    />
+  }
+</svg>
+
+@if (hover(); as detalle) {
+  <div class="tooltip" [style.left.%]="detalle.izquierda" aria-hidden="true">
+    <strong>{{ categorias()[detalle.indice] }}</strong>
+    @for (serie of series(); track serie.nombre; let s = $index) {
+      <div class="tooltip-fila">
+        <span class="muestra" [style.background]="colores[s]"></span>
+        {{ serie.nombreCorto ?? serie.nombre }}
+        <span class="valor">{{ serie.valores[detalle.indice] }}</span>
+      </div>
+    }
+  </div>
+}
+
+<details>
+  <summary>{{ 'metricas.graficos.verTabla' | translate }}</summary>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        @for (serie of series(); track serie.nombre) {
+          <th>{{ serie.nombre }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (categoria of categorias(); track categoria; let i = $index) {
+        <tr>
+          <td>{{ categoria }}</td>
+          @for (serie of series(); track serie.nombre) {
+            <td>{{ serie.valores[i] }}</td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</details>

@@ -1,0 +1,119 @@
+/* HU-34: piezas compartidas por los graficos de metricas (leyenda, tooltip, tabla). */
+
+:host {
+  display: block;
+  position: relative;
+}
+
+.grafico-titulo {
+  margin: 0 0 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.leyenda li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.muestra {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.eje-texto {
+  font-size: 11px;
+  fill: var(--muted);
+}
+
+.rejilla {
+  stroke: #ecdcd8;
+  stroke-width: 1;
+}
+
+.objetivo {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.tooltip {
+  position: absolute;
+  top: 36px;
+  transform: translateX(-50%);
+  min-width: 140px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 16px rgba(88, 19, 37, 0.15);
+  font-size: 0.8rem;
+  color: var(--text);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tooltip strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.tooltip-fila {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.tooltip-fila .valor {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+details {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+summary {
+  cursor: pointer;
+}
+
+details table {
+  margin-top: 6px;
+  border-collapse: collapse;
+  color: var(--text);
+}
+
+details th,
+details td {
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+details th:first-child,
+details td:first-child {
+  text-align: left;
+}

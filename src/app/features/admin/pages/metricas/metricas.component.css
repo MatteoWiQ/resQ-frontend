@@ -1,0 +1,211 @@
+/* minmax(0, 1fr): sin esto la tabla ancha estira la columna y la pagina se desborda en celular. */
+.metricas-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.card {
+  padding: 32px;
+  border-radius: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 30px 40px var(--shadow);
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text);
+}
+
+.subtitulo,
+.nota {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.nota {
+  font-size: 0.85rem;
+}
+
+.filtros {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* Un fieldset mide al menos su contenido (min-width: min-content) y no deja envolver. */
+.periodo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.periodo legend {
+  padding: 0 6px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.periodo label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+select,
+input[type='date'] {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  color: var(--text);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.comparar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+
+.boton {
+  padding: 8px 20px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.error {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(127, 42, 63, 0.08);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.indicador {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--panel-soft);
+}
+
+.indicador-etiqueta {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.indicador-valor {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.indicador-variacion {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.indicador-detalle,
+.indicador-ayuda {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.indicador-ayuda {
+  font-style: italic;
+}
+
+.bloque {
+  margin-bottom: 24px;
+}
+
+.seccion {
+  margin: 24px 0 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.evolucion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 24px;
+}
+
+.tabla-wrapper {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabla th,
+.tabla td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  color: var(--text);
+}
+
+.tabla th:first-child,
+.tabla td:first-child {
+  text-align: left;
+}
+
+.tabla th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .metricas-page {
+    padding: 16px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+}

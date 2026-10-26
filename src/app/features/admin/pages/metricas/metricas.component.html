@@ -1,0 +1,197 @@
+<section class="metricas-page">
+  <app-header variante="app" />
+  <app-back-button ruta="/admin" />
+
+  <div class="card">
+    <h1>{{ 'metricas.titulo' | translate }}</h1>
+    <p class="subtitulo">{{ 'metricas.subtitulo' | translate }}</p>
+
+    <form class="filtros" (ngSubmit)="consultar()">
+      <fieldset class="periodo">
+        <legend>{{ 'metricas.periodo.periodoA' | translate }}</legend>
+        <label>
+          {{ 'metricas.periodo.rango' | translate }}
+          <select name="rango" [ngModel]="clavePeriodo()" (ngModelChange)="elegirPeriodo($event)">
+            @for (opcion of periodos; track opcion.clave) {
+              <option [value]="opcion.clave">{{ opcion.etiqueta | translate }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'metricas.periodo.desde' | translate }}
+          <input
+            type="date"
+            name="desdeA"
+            [ngModel]="periodoA().desde"
+            (ngModelChange)="cambiarFechaA('desde', $event)"
+          />
+        </label>
+        <label>
+          {{ 'metricas.periodo.hasta' | translate }}
+          <input
+            type="date"
+            name="hastaA"
+            [ngModel]="periodoA().hasta"
+            (ngModelChange)="cambiarFechaA('hasta', $event)"
+          />
+        </label>
+      </fieldset>
+
+      @if (comparar()) {
+        <fieldset class="periodo">
+          <legend>{{ 'metricas.periodo.periodoB' | translate }}</legend>
+          <label>
+            {{ 'metricas.periodo.desde' | translate }}
+            <input
+              type="date"
+              name="desdeB"
+              [ngModel]="periodoB().desde"
+              (ngModelChange)="cambiarFechaB('desde', $event)"
+            />
+          </label>
+          <label>
+            {{ 'metricas.periodo.hasta' | translate }}
+            <input
+              type="date"
+              name="hastaB"
+              [ngModel]="periodoB().hasta"
+              (ngModelChange)="cambiarFechaB('hasta', $event)"
+            />
+          </label>
+        </fieldset>
+      }
+
+      <div class="acciones">
+        <label class="comparar">
+          <input
+            type="checkbox"
+            name="comparar"
+            [ngModel]="comparar()"
+            (ngModelChange)="cambiarComparar($event)"
+          />
+          {{ 'metricas.periodo.comparar' | translate }}
+        </label>
+        <button type="submit" class="boton" [disabled]="cargando()">
+          {{ (cargando() ? 'metricas.periodo.consultando' : 'metricas.periodo.consultar') | translate }}
+        </button>
+      </div>
+    </form>
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+
+    @if (metricasA()) {
+      <ul class="indicadores">
+        @for (indicador of indicadores(); track indicador.etiqueta) {
+          <li class="indicador">
+            <span class="indicador-etiqueta">{{ indicador.etiqueta | translate }}</span>
+            <span class="indicador-valor">{{ indicador.valorA }}</span>
+            @if (indicador.valorB !== null) {
+              <span class="indicador-variacion">{{ textoVariacion(indicador) }}</span>
+              <span class="indicador-detalle">
+                {{ 'metricas.indicadores.enPeriodoB' | translate: { n: indicador.valorB } }}
+              </span>
+            }
+            @if (indicador.detalle) {
+              <span class="indicador-detalle">{{ indicador.detalle }}</span>
+            }
+            @if (indicador.ayuda) {
+              <span class="indicador-ayuda">{{ indicador.ayuda | translate }}</span>
+            }
+          </li>
+        }
+      </ul>
+
+      @if (comparando()) {
+        <app-grafico-barras
+          class="bloque"
+          [titulo]="'metricas.graficos.comparacion' | translate"
+          [categorias]="categoriasComparacion()"
+          [series]="seriesComparacion()"
+        />
+      }
+
+      <h2 class="seccion">{{ 'metricas.graficos.evolucion' | translate }}</h2>
+      @if (evolucionSoloA()) {
+        <p class="nota">{{ 'metricas.graficos.evolucionSoloA' | translate }}</p>
+      }
+      <div class="evolucion">
+        <app-grafico-evolucion
+          [titulo]="'metricas.graficos.evolucionRegistrados' | translate: { agrupacion: agrupacionEvolucion() }"
+          [etiquetas]="etiquetasEvolucion()"
+          [series]="seriesRegistrados()"
+        />
+        <app-grafico-evolucion
+          [titulo]="'metricas.graficos.evolucionActivos' | translate: { agrupacion: agrupacionEvolucion() }"
+          [etiquetas]="etiquetasEvolucion()"
+          [series]="seriesActivos()"
+        />
+      </div>
+
+      <h2 class="seccion">{{ 'metricas.tablas.voluntarios' | translate }}</h2>
+      <div class="tabla-wrapper">
+        <table class="tabla" id="tabla-voluntarios">
+          <thead>
+            <tr>
+              <th>{{ 'metricas.tablas.tipo' | translate }}</th>
+              <th>{{ 'metricas.tablas.nuevosEn' | translate: { periodo: 'metricas.periodo.periodoA' | translate } }}</th>
+              @if (comparando()) {
+                <th>{{ 'metricas.tablas.nuevosEn' | translate: { periodo: 'metricas.periodo.periodoB' | translate } }}</th>
+              }
+              <th>{{ 'metricas.tablas.actuales' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (fila of filasVoluntarios(); track fila.tipoAyuda) {
+              <tr>
+                <td>{{ etiquetaTipoAyuda(fila.tipoAyuda) }}</td>
+                <td>{{ fila.nuevos }}</td>
+                @if (comparando()) {
+                  <td>{{ fila.nuevosB }}</td>
+                }
+                <td>{{ fila.actuales }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="nota">{{ 'metricas.tablas.notaVoluntarios' | translate }}</p>
+
+      <h2 class="seccion">{{ 'metricas.tablas.organizaciones' | translate }}</h2>
+      <div class="tabla-wrapper">
+        <table class="tabla" id="tabla-organizaciones">
+          <thead>
+            <tr>
+              <th>{{ 'metricas.tablas.tipo' | translate }}</th>
+              <th>{{ 'metricas.tablas.nuevasEn' | translate: { periodo: 'metricas.periodo.periodoA' | translate } }}</th>
+              @if (comparando()) {
+                <th>{{ 'metricas.tablas.nuevasEn' | translate: { periodo: 'metricas.periodo.periodoB' | translate } }}</th>
+              }
+              <th>{{ 'metricas.tablas.pendientes' | translate }}</th>
+              <th>{{ 'metricas.tablas.verificadas' | translate }}</th>
+              <th>{{ 'metricas.tablas.rechazadas' | translate }}</th>
+              <th>{{ 'metricas.tablas.total' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (fila of filasOrganizaciones(); track fila.tipo) {
+              <tr>
+                <td>{{ etiquetaTipoOrganizacion(fila.tipo) }}</td>
+                <td>{{ fila.nuevas }}</td>
+                @if (comparando()) {
+                  <td>{{ fila.nuevasB }}</td>
+                }
+                <td>{{ fila.pendientes }}</td>
+                <td>{{ fila.verificadas }}</td>
+                <td>{{ fila.rechazadas }}</td>
+                <td>{{ fila.total }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="nota">{{ 'metricas.tablas.notaOrganizaciones' | translate }}</p>
+    }
+  </div>
+</section>
