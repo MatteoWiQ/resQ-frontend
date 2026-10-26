@@ -2,6 +2,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { describe, it, expect, beforeEach } from 'vitest';
+import { computed, signal } from '@angular/core';
 
 import { PerfilComponent } from './perfil.component';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -68,7 +69,16 @@ describe('PerfilComponent (HU-19: revision del caso)', () => {
         { provide: ReporteService, useValue: reporteService },
         {
           provide: NotificacionService,
-          useValue: { obtenerDeUsuario: () => of([]), marcarComoLeida: () => of({}) },
+          useValue: {
+            obtenerDeUsuario: () => of([]),
+            cargar: () => of([]),
+            marcarComoLeida: () => of({}),
+            marcarComoNoLeida: () => of({}),
+            archivar: () => of({}),
+            limpiar: () => {},
+            notificaciones: signal([]).asReadonly(),
+            noLeidas: computed(() => 0),
+          },
         },
         { provide: WebSocketService, useValue: webSocketServiceDoble() },
       ],

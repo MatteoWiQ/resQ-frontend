@@ -74,6 +74,14 @@
 
 .notif-texto {
   min-width: 0;
+  flex: 1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.notif-texto:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
 }
 
 .notif-texto p {
@@ -92,7 +100,16 @@
   font-size: 0.76rem;
 }
 
-.btn-leida {
+.notif-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-leida,
+.btn-no-leida,
+.btn-archivar {
   flex-shrink: 0;
   padding: 6px 14px;
   border-radius: 999px;
@@ -104,13 +121,23 @@
   cursor: pointer;
 }
 
-.btn-leida:hover {
+.btn-leida:hover,
+.btn-no-leida:hover,
+.btn-archivar:hover {
   background: var(--panel-soft);
+}
+
+.btn-archivar {
+  color: var(--muted);
 }
 
 @media (max-width: 640px) {
   .notif-item {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .notif-acciones {
+    justify-content: flex-end;
   }
 }

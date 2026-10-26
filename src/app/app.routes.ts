@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { adminRoutes } from './features/admin/admin.routes';
 import { authRoutes } from './features/auth/auth.routes';
 import { landingRoutes } from './features/landing/landing.routes';
+import { notificacionesRoutes } from './features/notificaciones/notificaciones.routes';
 import { profileRoutes } from './features/profile/profile.routes';
 import { voluntarioRoutes } from './features/voluntario/voluntario.routes';
 
@@ -11,4 +12,5 @@ export const routes: Routes = [
   ...profileRoutes,
   ...adminRoutes,
   ...voluntarioRoutes,
+  ...notificacionesRoutes,
 ];

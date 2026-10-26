@@ -352,8 +352,12 @@ export const es = {
     cargando: 'Cargando notificaciones...',
     vacio: 'No tienes notificaciones.',
     errorCargar: 'No se pudieron cargar tus notificaciones.',
+    errorAccion: 'No se pudo actualizar la notificación.',
     sinLeer: '{{n}} sin leer',
     marcarLeida: 'Marcar como leída',
+    marcarNoLeida: 'Marcar como no leída',
+    archivar: 'Archivar',
+    abrir: 'Abrir notificación',
   },
   admin: {
     titulo: 'Panel administrativo',

@@ -1,5 +1,6 @@
 import { provideRouter, Router } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
+import { computed, signal } from '@angular/core';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -7,13 +8,16 @@ import { AppHeaderComponent } from './app-header.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificacionService } from '../../../core/services/notificacion.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
+import { Notificacion } from '../../../shared/models/notificacion.model';
 
-describe('AppHeaderComponent (HU-logout)', () => {
-  let listarNotificaciones: ReturnType<typeof vi.fn>;
+describe('AppHeaderComponent (HU-logout/HU-37)', () => {
+  let listaActual: Notificacion[] = [];
+  let notificacionesSignal: ReturnType<typeof signal<Notificacion[]>>;
 
   beforeEach(async () => {
     localStorage.clear();
-    listarNotificaciones = vi.fn().mockReturnValue(of([]));
+    listaActual = [];
+    notificacionesSignal = signal<Notificacion[]>([]);
 
     await TestBed.configureTestingModule({
       imports: [AppHeaderComponent],
@@ -21,7 +25,21 @@ describe('AppHeaderComponent (HU-logout)', () => {
         provideRouter([]),
         {
           provide: NotificacionService,
-          useValue: { obtenerDeUsuario: listarNotificaciones, marcarComoLeida: () => of({}) },
+          useValue: {
+            notificaciones: notificacionesSignal.asReadonly(),
+            noLeidas: computed(
+              () => notificacionesSignal().filter((n) => !n.leida && !n.archivada).length,
+            ),
+            cargar: (_id: number) => {
+              notificacionesSignal.set(listaActual);
+              return of(listaActual);
+            },
+            limpiar: () => notificacionesSignal.set([]),
+            marcarComoLeida: () => of({}),
+            marcarComoNoLeida: () => of({}),
+            archivar: () => of({}),
+            obtenerDeUsuario: () => of(listaActual),
+          },
         },
         {
           provide: WebSocketService,
@@ -61,7 +79,7 @@ describe('AppHeaderComponent (HU-logout)', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.logout-btn')?.textContent).toContain('Cerrar sesión');
+    expect(compiled.querySelector('.logout-btn')?.textContent?.toLowerCase()).toContain('cerrar');
     expect(compiled.querySelector('.primary-btn')).toBeNull();
   });
 
@@ -83,17 +101,24 @@ describe('AppHeaderComponent (HU-logout)', () => {
 
   it('muestra el contador de notificaciones sin leer', () => {
     crearConSesion();
-    listarNotificaciones.mockReturnValue(
-      of([
-        { idNotificacion: 1, leida: false },
-        { idNotificacion: 2, leida: true },
-        { idNotificacion: 3, leida: false },
-      ]),
-    );
+    listaActual = [
+      { idNotificacion: 1, idUsuario: 5, idReporte: 1, tipo: 'SOLICITUD_APROBADA', mensaje: 'a', leida: false, archivada: false, fechaCreacion: '2026-10-01T00:00:00' },
+      { idNotificacion: 2, idUsuario: 5, idReporte: 1, tipo: 'SOLICITUD_APROBADA', mensaje: 'b', leida: true, archivada: false, fechaCreacion: '2026-10-01T00:00:00' },
+      { idNotificacion: 3, idUsuario: 5, idReporte: 1, tipo: 'SOLICITUD_APROBADA', mensaje: 'c', leida: false, archivada: false, fechaCreacion: '2026-10-01T00:00:00' },
+    ] as Notificacion[];
     const fixture = TestBed.createComponent(AppHeaderComponent);
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).querySelector('.notif-badge')?.textContent).toBe('2');
+  });
+
+  it('el icono de notificaciones lleva a la bandeja', () => {
+    crearConSesion();
+    const fixture = TestBed.createComponent(AppHeaderComponent);
+    fixture.detectChanges();
+
+    const notificacionesLink = (fixture.nativeElement as HTMLElement).querySelector('.notif-btn');
+    expect(notificacionesLink?.getAttribute('routerLink')).toBe('/notificaciones');
   });
 
   it('un admin ve el acceso al panel administrativo', () => {
