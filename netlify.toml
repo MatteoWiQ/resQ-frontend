@@ -5,7 +5,6 @@
 
 [build]
   command = "npm ci && npm run build"
-  publish = "dist/angular-frontend/browser"
 
 # Backend por proxy: todo /api/* va a Render sin cambiar una linea del front.
 [[redirects]]

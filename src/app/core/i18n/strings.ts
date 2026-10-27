@@ -207,6 +207,10 @@ export const es = {
     },
   },
   perfil: {
+    configuracion: {
+      titulo: 'Configuración',
+      descripcion: 'Ajusta tus preferencias de idioma y apariencia',
+    },
     cargandoPerfil: 'Cargando tu perfil...',
     correo: 'Correo',
     telefono: 'Teléfono',

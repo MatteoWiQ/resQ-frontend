@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificacionService } from '../../../core/services/notificacion.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher';
 
 /**
  * HU-logout: cabecera compartida por landing, perfil y panel administrativo.

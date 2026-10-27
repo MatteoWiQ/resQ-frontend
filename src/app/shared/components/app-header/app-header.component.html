@@ -4,6 +4,8 @@
     <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
   </div>
 
+  <app-language-switcher></app-language-switcher>
+
   <nav class="nav" [attr.aria-label]="'landing.topbar.ariaLabel' | translate">
     @if (variante() === 'landing') {
       <a href="#inicio">{{ 'landing.topbar.inicio' | translate }}</a>

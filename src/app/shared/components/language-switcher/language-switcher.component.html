@@ -1,0 +1,11 @@
+<div class="language-switcher" aria-label="Cambiar idioma / Change language">
+  <span class="current-lang">
+    @if (translateService.lang() === 'es') {
+      ES
+    } @else {
+      EN
+    }
+  </span>
+  <button class="lang-btn" (click)="setLang('es')">ES</button>
+  <button class="lang-btn" (click)="setLang('en')">EN</button>
+</div>
