@@ -68,4 +68,3 @@ export const gestionCasosEn = {
     errorGenerico: 'Could not save tracking. Try again.',
   },
 }
-as const;

@@ -79,3 +79,4 @@ export const organizacionesEn = {
     PENDIENTE_VERIFICACION: 'Verification pending',
     VERIFICADA: 'Verified',
   },
+}

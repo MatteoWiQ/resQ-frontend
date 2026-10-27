@@ -77,4 +77,3 @@ export const metricasEn = {
       'Organizations registered at the close of period A, with their current verification status.',
   },
 }
-as const;
