@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, computed, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { FeatureToggleDirective } from '../../../../core/directives/feature-toggle.directive';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificacionService } from '../../../core/services/notificacion.service';
@@ -23,7 +24,7 @@ import { LanguageSwitcherComponent } from '../../../../shared/components/languag
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, FeatureToggleDirective],
   templateUrl: './app-header.component.html',
   styleUrl: './app-header.component.css',
 })

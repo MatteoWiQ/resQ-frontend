@@ -4,7 +4,7 @@
     <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
   </div>
 
-  <app-language-switcher></app-language-switcher>
+  <app-language-switcher appFeatureToggle="enableLanguageInHeader"></app-language-switcher>
 
   <nav class="nav" [attr.aria-label]="'landing.topbar.ariaLabel' | translate">
     @if (variante() === 'landing') {
