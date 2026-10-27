@@ -1,6 +1,9 @@
 import { organizacionesEs } from './strings-organizaciones';
 import { gestionCasosEs } from './strings-gestionar-casos';
 import { metricasEs } from './strings-metricas';
+import { organizacionesEn } from './strings-organizaciones-en';
+import { gestionCasosEn } from './strings-gestionar-casos-en';
+import { metricasEn } from './strings-metricas-en';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
@@ -469,4 +472,348 @@ export function getTranslation(
   params?: Record<string, string | number>,
 ): string {
   return interpolate(lookup(catalog, key), params);
+}
+
+export const en = {
+  organizaciones: organizacionesEn,
+  gestionCasos: gestionCasosEn,
+  metricas: metricasEn,
+  shared: {
+    brand: {
+      marca: 'R',
+      nombre: 'ResQ',
+    },
+    volverAtras: 'Back',
+    ubicacionSeleccionada: 'Selected location',
+    estados: {
+      PENDIENTE: 'Pending',
+      EN_PROCESO: 'In progress',
+      RESUELTO: 'Resolved',
+      CANCELADO: 'Cancelled',
+    },
+    estadosRevision: {
+      PENDIENTE_REVISION: 'Under review',
+      APROBADO: 'Approved',
+      RECHAZADO: 'Rejected',
+    },
+    roles: {
+      USUARIO: 'User',
+      VOLUNTARIO: 'Volunteer',
+      ADMIN: 'Admin',
+    },
+    tiposCaso: {
+      PERDIDA: 'Loss',
+      ENCONTRADA: 'Found',
+      ABANDONADA: 'Abandoned',
+    },
+  },
+  landing: {
+    topbar: {
+      ariaLabel: 'Main navigation',
+      inicio: 'Home',
+      mapa: 'Map',
+      casos: 'Cases',
+      ayudar: 'Help',
+      guia: 'Guide to report',
+      perfil: 'My Profile',
+      panelAdmin: 'Admin panel',
+      reportar: 'Report',
+    },
+    header: {
+      cerrarSesion: 'Log out',
+      notificaciones: 'Notifications',
+    },
+    mapa: {
+      eyebrow: 'Geographic visualization',
+      titulo: 'Cases map',
+      subtitulo: 'Explore the location of reported animals in your area',
+      casosUbicados: 'Cases located',
+      totalCasos: 'Total cases',
+      leyenda: 'States',
+      cargando: 'Loading cases...',
+      errorCargar: 'Error loading cases: {{detalle}}',
+      reintentar: 'Retry',
+      sinCasos: 'No cases with registered location yet.',
+      sinCasosFiltrado: 'No cases with those states.',
+      filtrandoPor: 'Showing:',
+      detalleCaso: 'Case detail',
+      tipoCaso: 'Case type',
+      estado: 'State',
+      descripcion: 'Description',
+      fechaCreacion: 'Creation date',
+      ubicacion: 'Location',
+      fotoAlt: 'Report photo',
+      marcadorTexto: 'Report {{id}}, {{estado}}',
+      cerrar: 'Close',
+      cerrarDetalle: 'Close case detail',
+    },
+    hero: {
+      eyebrow: 'Animal rescue network',
+      tituloAntes: 'Connecting ',
+      tituloAccento: 'relief',
+      tituloDespues: ' with action.',
+      descripcion:
+        'We help locate, rescue and care for animals at risk, connecting people, shelters and volunteers in a single network.',
+      acciones: {
+        ayudar: 'I want to help',
+        verCasos: 'View cases',
+      },
+      estadisticas: {
+        ariaLabel: 'Community statistics',
+        rescatados: 'Rescued',
+        voluntarios: 'Volunteers',
+        casosSemana: 'Cases this week',
+      },
+      imagenAriaLabel: 'Animal rescue image',
+    },
+    steps: {
+      eyebrow: 'How it works',
+      titulo: 'A simple and urgent process',
+      paso1: {
+        titulo: 'Report',
+        descripcion: 'Upload the photo, describe the situation and locate the animal at risk.',
+      },
+      paso2: {
+        titulo: 'Locate',
+        descripcion: 'The community and shelters receive the alert to coordinate help.',
+      },
+      paso3: {
+        titulo: 'Connect',
+        descripcion: 'Volunteers, transporters and veterinarians join to solve it.',
+      },
+    },
+    help: {
+      eyebrow: 'Ways to help',
+      titulo: 'There are many ways to collaborate',
+      transporte: {
+        titulo: 'Transport',
+        descripcion: 'Go to pick up animals and take them to clinic or shelters.',
+      },
+      hogarTemporal: {
+        titulo: 'Temporary home',
+        descripcion: 'Offers a safe space while adoption is resolved.',
+      },
+      rescate: {
+        titulo: 'Rescue',
+        descripcion: 'Coordinates interventions and immediate emergency support.',
+      },
+    },
+    guia: {
+      eyebrow: 'Guide to report',
+      titulo: 'Make a clear and useful report',
+      descripcion:
+        'Follow these steps to share the information that will help find or protect a pet.',
+      pasosAriaLabel: 'Steps to create a report',
+      paso1: {
+        titulo: 'Choose report type',
+        descripcion:
+          'Indicate if the pet is lost, found or needs help due to abandonment. This allows the case to reach the right people.',
+      },
+      paso2: {
+        titulo: 'Count case details',
+        descripcion:
+          'Describe where and when it occurred, plus its breed, color, name and any particular mark. You can also add a URL with a photo.',
+      },
+      paso3: {
+        titulo: 'Review and send',
+        descripcion:
+          'Check that the information is correct and send the report. You need to log in to register the case in your profile.',
+      },
+      paso4: {},
+      accion: {
+        kicker: 'Ready to help?',
+        titulo: 'Start your report',
+        boton: 'Make a report',
+      },
+    },
+  },
+  auth: {
+    login: {
+      titulo: 'Login',
+      correo: 'Email',
+      correoPlaceholder: 'Your email',
+      password: 'Password',
+      passwordPlaceholder: 'Your password',
+      boton: 'Login',
+      noCuenta: 'No have an account?',
+      registrate: 'Register here',
+      errorCredenciales: 'Incorrect credentials. Check your email and password.',
+      errorDb: 'Could not connect to the database. Try again later.',
+    },
+    register: {
+      titulo: 'Create account',
+      subtitle: 'Register in ResQ',
+      nombre: 'Name',
+      nombrePlaceholder: 'Your name',
+      correo: 'Email',
+      correoPlaceholder: 'Your email',
+      password: 'Password',
+      passwordError: 'Password must have at least 8 characters.',
+      telefono: 'Phone',
+      telefonoPlaceholder: 'Your phone',
+      telefonoError: 'Phone is required.',
+      rol: 'Role',
+      seleccionarRol: 'Select a role',
+      rolUsuario: 'User',
+      rolVoluntario: 'Volunteer',
+      boton: 'Register',
+      ok: 'User registered correctly',
+      errorDb: 'Could not connect to the database. Try again later.',
+      yaTienesCuenta: 'Already have an account?',
+      iniciaSesion: 'Login',
+    },
+  },
+  perfil: {
+    configuracion: {
+      titulo: 'Configuration',
+      descripcion: 'Adjust your language and appearance preferences',
+    },
+    cargandoPerfil: 'Loading your profile...',
+    correo: 'Email',
+    telefono: 'Phone',
+    noRegistrado: 'Not registered',
+    etiquetaRol: {
+      USUARIO: 'User',
+      VOLUNTARIO: 'Volunteer',
+      ADMIN: 'Admin',
+    },
+    panelAdmin: 'Admin panel',
+    misReportes: 'My reports',
+    sinReportes: 'No reports yet.',
+    crearNuevoReporte: 'Create new report',
+    panelVoluntario: 'Volunteer panel',
+    botonEditar: 'Edit',
+    revisarSolicitudes: 'Review requests',
+    tiposAyuda: {
+      transporte: 'Transport',
+      hogarTemporal: 'Temporary home',
+      alimento: 'Food',
+      rescate: 'Rescue',
+    },
+    botonVoluntario: 'I want to help',
+    notificaciones: 'Notifications',
+    mensajeSolicitud: 'Your request has been submitted and is pending review by the administrator.',
+    errorVoluntario: 'There was an error with the volunteer request.',
+    verSolicitudes: 'View requests',
+    solicitudEnviada: 'Request sent',
+    errorVoluntarioMostrar: 'Error with volunteer request',
+    reportesSection: 'Reports',
+    reportesHead: 'My reports',
+    reportesNuevo: 'New report',
+    reportesLista: 'Reports list',
+    filtros: 'Filters',
+    estado: 'State',
+    verReporte: 'View report',
+    eliminarReporte: 'Delete report',
+    editarReporte: 'Edit report',
+    compartirReporte: 'Share report',
+  },
+  voluntario: {
+    boton: 'I want to help',
+    tiposAyuda: {
+      transporte: 'Transport',
+      hogarTemporal: 'Temporary home',
+      alimento: 'Food',
+      rescate: 'Rescue',
+    },
+    solicitudEnviada: 'Request sent',
+    errorVoluntario: 'There was an error with the volunteer request.',
+    verSolicitudes: 'View requests',
+    modalVoluntario: {
+      titulo: 'Volunteer request',
+      subtitulo: 'Submit your availability',
+      descripcion: 'Tell us when you are available to help',
+      campos: {
+        nombre: 'Name',
+        telefono: 'Phone',
+        disponibilidad: 'Availability',
+      },
+      botonEnviar: 'Send',
+      error: 'There was an error submitting the request.',
+    },
+  },
+  admin: {
+    panelAdmin: 'Admin panel',
+    gestionCasos: 'Manage cases',
+    organizaciones: 'Organizations',
+    verDetalle: 'View detail',
+    eliminar: 'Delete',
+    editar: 'Edit',
+    crear: 'Create',
+    filtros: 'Filters',
+    estado: 'State',
+    verReporte: 'View report',
+    dashboard: 'Dashboard',
+    metricas: 'Metrics',
+    grafico: 'Graph',
+    metricasPorCaso: 'Metrics per case',
+    fecha: 'Date',
+    usuario: 'User',
+    accion: 'Action',
+  },
+  reportar: {
+    tipoReporte: {
+      PERDIDA: 'Lost',
+      ENCONTRADA: 'Found',
+      ABANDONADA: 'Abandoned',
+    },
+    formulario: {
+      titulo: 'Make a report',
+      tipo: {
+        titulo: 'Report type',
+        descripcion:
+          'Indicate if the pet is lost, found or needs help due to abandonment. This allows the case to reach the right people.',
+      },
+      detalles: {
+        titulo: 'Case details',
+        descripcion:
+          'Describe where and when it occurred, plus its breed, color, name and any particular mark. You can also add a URL with a photo.',
+      },
+      revisar: 'Review and send',
+      descripcion:
+        'Check that the information is correct and send the report. You need to log in to register the case in your profile.',
+      accion: {
+        kicker: 'Ready to help?',
+        titulo: 'Start your report',
+        boton: 'Make a report',
+      },
+    },
+  },
+  // HU-19: notificaciones.
+  notificaciones: 'Notifications',
+  // HU-19: bandeja.
+  bandeja: 'Inbox',
+  // HU-19: mensaje.
+  mensaje: 'Message',
+  // HU-19: solicitud.
+  solicitud: 'Request',
+  // HU-19: administrar.
+  administrar: 'Manage',
+};
+
+export type StringCatalogEn = typeof en;
+
+type ExtractPathsEn<T> = {
+  [K in keyof T]: T[K] extends string ? K & string : `${K & string}.${ExtractPathsEn<T[K]>}`;
+}[keyof T];
+
+export type TranslationKeyEn = ExtractPathsEn<StringCatalogEn>;
+
+function lookupEn(catalog: StringCatalogEn, key: string): string {
+  let value: unknown = catalog;
+  for (const part of key.split('.')) {
+    if (value == null || typeof value !== 'object') {
+      return key;
+    }
+    value = (value as Record<string, unknown>)[part];
+  }
+  return typeof value === 'string' ? value : key;
+}
+
+export function getTranslationEn(
+  key: TranslationKeyEn,
+  catalog: StringCatalogEn,
+  params?: Record<string, string | number>,
+): string {
+  return interpolate(lookupEn(catalog, key), params);
 }

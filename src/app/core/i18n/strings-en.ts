@@ -1,4 +1,4 @@
-import { organizacionesEn } from './strings-organizaciones-en';
+﻿import { organizacionesEn } from './strings-organizaciones-en';
 import { gestionCasosEn } from './strings-gestionar-casos-en';
 import { metricasEn } from './strings-metricas-en';
 
@@ -6,7 +6,7 @@ export const en = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones-en.ts)
   organizaciones: organizacionesEn,
   gestionCasos: gestionCasosEn,
-  // HU-34: métricas de la comunidad (textos en strings-metricas-en.ts)
+  // HU-34: mÃ©tricas de la comunidad (textos en strings-metricas-en.ts)
   metricas: metricasEn,
   shared: {
     brand: {
@@ -21,7 +21,7 @@ export const en = {
       RESUELTO: 'Resolved',
       CANCELADO: 'Cancelled',
     },
-    // HU-19: resultado de la revisión del caso por un voluntario. Vive en el
+    // HU-19: resultado de la revisiÃ³n del caso por un voluntario. Vive en el
     // catalogo compartido (y no en perfil) porque tambien lo muestra el detalle
     // del caso en el panel administrativo.
     estadosRevision: {
@@ -308,17 +308,17 @@ export const en = {
     // HU-19: ver reporte.
     verReporte: 'View report',
     dashboard: 'Dashboard',
-    // HU-34: métricas.
+    // HU-34: mÃ©tricas.
     metricas: 'Metrics',
-    // HU-34: gráfico.
+    // HU-34: grÃ¡fico.
     grafico: 'Graph',
-    // HU-34: métricas por caso.
+    // HU-34: mÃ©tricas por caso.
     metricasPorCaso: 'Metrics per case',
     // HU-34: fecha.
     fecha: 'Date',
     // HU-34: usuario.
     usuario: 'User',
-    // HU-34: acción.
+    // HU-34: acciÃ³n.
     accion: 'Action',
   },
   reportar: {
@@ -364,3 +364,5 @@ export const en = {
   solicitud: 'Request',
   // HU-19: administrar.
   administrar: 'Manage',
+
+}

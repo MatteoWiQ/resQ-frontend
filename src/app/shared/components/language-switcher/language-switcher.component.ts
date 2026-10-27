@@ -50,7 +50,7 @@ export type Language = typeof LANGUAGES[number];
   ],
 })
 export class LanguageSwitcherComponent {
-  private readonly translateService = inject(TranslateService);
+  public readonly translateService = inject(TranslateService);
 
   setLang(lang: Language): void {
     this.translateService.setLang(lang);

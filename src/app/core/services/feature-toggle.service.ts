@@ -1,5 +1,6 @@
 import { Injectable, signal, effect } from '@angular/core';
-import { DEFAULT_FEATURE_FLAGS, type FeatureFlags, getFeatureFlags } from './config/feature-flags.config';
+import { DEFAULT_FEATURE_FLAGS, type FeatureFlags } from '../config/feature-flags.model';
+import { getFeatureFlags } from '../config/feature-flags.config';
 
 @Injectable({ providedIn: 'root' })
 export class FeatureToggleService {

@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FeatureToggleService } from '../services/feature-toggle.service';
+import { FeatureToggleService } from '../../core/services/feature-toggle.service';
+import { FeatureFlags } from '../../core/config/feature-flags.model';
 
 @Pipe({
   name: 'featureToggle',
@@ -11,7 +12,7 @@ export class FeatureTogglePipe implements PipeTransform {
   transform<T>(value: T | string): T {
     // Si es string, asumimos que es el nombre de la flag
     if (typeof value === 'string') {
-      return this.ft.isEnabled(value as keyof import('../core/config/feature-flags.model').FeatureFlags) ? value : null as any;
+      return this.ft.isEnabled(value as keyof FeatureFlags) ? value : null as any;
     }
     return value;
   }
