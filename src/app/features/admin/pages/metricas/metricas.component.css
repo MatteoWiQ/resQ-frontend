@@ -17,9 +17,41 @@
 }
 
 h1 {
-  margin: 0 0 4px;
+  margin: 0 0 12px;
   font-family: 'Poppins', sans-serif;
   color: var(--text);
+}
+
+/* HU-33: pestanas Comunidad / Casos y reportes (mismo estilo que el panel administrativo). */
+.pestanas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pestana {
+  margin-bottom: -1px;
+  padding: 8px 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.pestana.activa {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--primary);
+}
+
+.pestana:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .subtitulo,

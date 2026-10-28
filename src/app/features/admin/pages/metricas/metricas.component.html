@@ -3,8 +3,27 @@
   <app-back-button ruta="/admin" />
 
   <div class="card">
-    <h1>{{ 'metricas.titulo' | translate }}</h1>
-    <p class="subtitulo">{{ 'metricas.subtitulo' | translate }}</p>
+    <h1>{{ (vista() === 'casos' ? 'metricasCasos.titulo' : 'metricas.titulo') | translate }}</h1>
+
+    <div class="pestanas" role="tablist" [attr.aria-label]="'metricasCasos.vistas.etiqueta' | translate">
+      @for (opcion of vistas; track opcion) {
+        <button
+          type="button"
+          class="pestana"
+          role="tab"
+          [id]="'pestana-' + opcion"
+          [class.activa]="vista() === opcion"
+          [attr.aria-selected]="vista() === opcion"
+          (click)="elegirVista(opcion)"
+        >
+          {{ (opcion === 'casos' ? 'metricasCasos.vistas.casos' : 'metricasCasos.vistas.comunidad') | translate }}
+        </button>
+      }
+    </div>
+
+    @if (vista() === 'comunidad') {
+      <p class="subtitulo">{{ 'metricas.subtitulo' | translate }}</p>
+    }
 
     <form class="filtros" (ngSubmit)="consultar()">
       <fieldset class="periodo">
@@ -77,11 +96,13 @@
       </div>
     </form>
 
-    @if (error()) {
+    @if (error() && (vista() === 'comunidad' || !errorDeCarga())) {
       <p class="error" role="alert">{{ error() }}</p>
     }
 
-    @if (metricasA()) {
+    @if (vista() === 'casos') {
+      <app-metricas-casos [consulta]="consultaCasos()" />
+    } @else if (metricasA()) {
       <ul class="indicadores">
         @for (indicador of indicadores(); track indicador.etiqueta) {
           <li class="indicador">

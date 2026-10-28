@@ -1,6 +1,7 @@
 /** HU-33: textos de las métricas de casos y reportes. Se incorpora a `es` en strings.ts. */
 export const metricasCasosEs = {
   enlacePanel: 'Ver métricas de casos y reportes',
+  titulo: 'Métricas de casos y reportes',
   vistas: {
     etiqueta: 'Tipo de métricas',
     comunidad: 'Comunidad',

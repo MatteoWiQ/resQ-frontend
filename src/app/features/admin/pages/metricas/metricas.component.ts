@@ -1,6 +1,7 @@
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 
 import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
@@ -23,9 +24,18 @@ import {
 import { Metricas, Periodo } from '../../../../shared/models/metricas.model';
 import { GraficoBarrasComponent } from '../../components/graficos/grafico-barras.component';
 import { GraficoEvolucionComponent } from '../../components/graficos/grafico-evolucion.component';
+import {
+  ConsultaMetricas,
+  MetricasCasosComponent,
+} from '../../components/metricas-casos/metricas-casos.component';
 import { SerieGrafico } from '../../components/graficos/grafico.model';
 
 const SIN_TIPO = 'SIN_TIPO';
+
+/** HU-33: la pagina muestra las metricas de la comunidad (HU-34) o las de casos y reportes. */
+export type VistaMetricas = 'comunidad' | 'casos';
+
+const VISTAS: readonly VistaMetricas[] = ['comunidad', 'casos'];
 
 /** Un indicador principal (tarjeta) con su valor en el periodo A y, si se compara, en el B. */
 export interface Indicador {
@@ -42,6 +52,9 @@ export interface Indicador {
  *
  * Graficos para la comparacion y la evolucion en el tiempo; tablas para los
  * indicadores agrupados (por tipo de ayuda y por tipo de organizacion).
+ *
+ * HU-33: una segunda pestana muestra los indicadores de casos y reportes con los
+ * mismos controles de periodo (?vista=casos abre directamente esa pestana).
  */
 @Component({
   selector: 'app-metricas',
@@ -53,6 +66,7 @@ export interface Indicador {
     TranslatePipe,
     GraficoBarrasComponent,
     GraficoEvolucionComponent,
+    MetricasCasosComponent,
   ],
   templateUrl: './metricas.component.html',
   styleUrl: './metricas.component.css',
@@ -61,8 +75,15 @@ export class MetricasComponent implements OnInit {
   private readonly metricasService = inject(MetricasService);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly periodos = PERIODOS_PREDEFINIDOS;
+  readonly vistas = VISTAS;
+
+  readonly vista = signal<VistaMetricas>(
+    this.route.snapshot.queryParamMap.get('vista') === 'casos' ? 'casos' : 'comunidad',
+  );
 
   readonly clavePeriodo = signal<ClavePeriodo>(PERIODO_POR_DEFECTO);
   readonly periodoA = signal<Periodo>(periodoPredefinido(PERIODO_POR_DEFECTO));
@@ -73,6 +94,11 @@ export class MetricasComponent implements OnInit {
   readonly metricasB = signal<Metricas | null>(null);
   readonly cargando = signal(false);
   readonly error = signal('');
+  /** El error es de la carga de HU-34 (no del periodo): no se muestra en la pestana de casos. */
+  readonly errorDeCarga = signal(false);
+
+  /** HU-33: lo que consulta la pestana de casos; `version` cambia en cada "Consultar". */
+  readonly consultaCasos = signal<ConsultaMetricas>({ a: this.periodoA(), b: null, version: 0 });
 
   /** Lo que se muestra sigue a lo ultimo consultado, no al checkbox todavia sin consultar. */
   readonly comparando = computed(() => this.metricasB() !== null);
@@ -223,11 +249,19 @@ export class MetricasComponent implements OnInit {
     const errorPeriodo = this.errorDePeriodos();
     if (errorPeriodo) {
       this.error.set(errorPeriodo);
+      this.errorDeCarga.set(false);
       return;
     }
 
+    this.consultaCasos.update((anterior) => ({
+      a: this.periodoA(),
+      b: this.comparar() ? this.periodoB() : null,
+      version: anterior.version + 1,
+    }));
+
     this.cargando.set(true);
     this.error.set('');
+    this.errorDeCarga.set(false);
     forkJoin({
       a: this.metricasService.obtener(this.periodoA()),
       b: this.comparar() ? this.metricasService.obtener(this.periodoB()) : of(null),
@@ -241,9 +275,23 @@ export class MetricasComponent implements OnInit {
         },
         error: () => {
           this.error.set(this.translate.t('metricas.errores.cargar'));
+          this.errorDeCarga.set(true);
           this.cargando.set(false);
         },
       });
+  }
+
+  // ============ Vistas (HU-33) ============
+
+  /** Cambia de pestana y lo deja en la URL, para volver o compartir el enlace a la misma vista. */
+  elegirVista(vista: VistaMetricas): void {
+    this.vista.set(vista);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { vista: vista === 'casos' ? 'casos' : null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   // ============ Presentacion ============

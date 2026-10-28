@@ -1,12 +1,13 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 import { describe, it, expect, vi } from 'vitest';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { MetricasService } from '../../../../core/services/metricas.service';
+import { MetricasCasosService } from '../../../../core/services/metricas-casos.service';
 import { WebSocketService } from '../../../../core/services/websocket.service';
-import { Metricas, Periodo } from '../../../../shared/models/metricas.model';
+import { Metricas, MetricasCasos, Periodo } from '../../../../shared/models/metricas.model';
 import { authServiceDoble, webSocketServiceDoble } from '../../../../shared/testing/test-doubles';
 import { MetricasComponent } from './metricas.component';
 
@@ -40,9 +41,20 @@ function metricas(periodo: Periodo, base: number, extra: Partial<Metricas> = {})
   };
 }
 
+/** HU-33: respuesta minima de la pestana de casos. */
+function metricasCasos(periodo: Periodo): MetricasCasos {
+  return {
+    desde: periodo.desde,
+    hasta: periodo.hasta,
+    reportes: { total: 8, porEstado: [], porCategoria: [] },
+    casos: { total: 5, porEstado: [], porCategoria: [], porZona: [] },
+  };
+}
+
 describe('MetricasComponent (HU-34)', () => {
   /** Por defecto el periodo A devuelve base 10 y cualquier otro (el B) base 5. */
-  async function crear(obtener?: (periodo: Periodo) => Observable<Metricas>) {
+  async function crear(obtener?: (periodo: Periodo) => Observable<Metricas>, vista?: string) {
+    const espiaCasos = vi.fn((periodo: Periodo) => of(metricasCasos(periodo)));
     const espia = vi.fn(
       obtener ??
         ((periodo: Periodo) =>
@@ -56,6 +68,10 @@ describe('MetricasComponent (HU-34)', () => {
         { provide: AuthService, useValue: authServiceDoble({ idUsuario: 1, email: 'admin@resq.com', rol: 'ADMIN' }) },
         { provide: WebSocketService, useValue: webSocketServiceDoble() },
         { provide: MetricasService, useValue: { obtener: espia } },
+        { provide: MetricasCasosService, useValue: { obtener: espiaCasos } },
+        ...(vista
+          ? [{ provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({ vista }) } } }]
+          : []),
       ],
     }).compileComponents();
 
@@ -64,7 +80,7 @@ describe('MetricasComponent (HU-34)', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
-    return { fixture, espia };
+    return { fixture, espia, espiaCasos };
   }
 
   let fixtureActual: ComponentFixture<MetricasComponent> | undefined;
@@ -169,5 +185,78 @@ describe('MetricasComponent (HU-34)', () => {
 
     expect(espia).toHaveBeenCalledTimes(2);
     expect(fixture.componentInstance.periodoA().desde.endsWith('-01')).toBe(true);
+  });
+
+  // ============ HU-33: pestana de casos y reportes ============
+
+  it('abre en la pestana Comunidad y no consulta las metricas de casos', async () => {
+    const { fixture, espiaCasos } = await crear();
+    const raiz = fixture.nativeElement as HTMLElement;
+
+    const pestanas = raiz.querySelectorAll('[role="tab"]');
+    expect(Array.from(pestanas).map((p) => p.textContent?.trim())).toEqual(['Comunidad', 'Casos y reportes']);
+    expect(pestanas[0].getAttribute('aria-selected')).toBe('true');
+    expect(raiz.querySelector('app-metricas-casos')).toBeNull();
+    expect(espiaCasos).not.toHaveBeenCalled();
+  });
+
+  it('la pestana Casos y reportes muestra sus indicadores con el periodo elegido', async () => {
+    const { fixture, espiaCasos } = await crear();
+
+    fixture.componentInstance.elegirVista('casos');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const raiz = fixture.nativeElement as HTMLElement;
+    expect(raiz.querySelector('h1')?.textContent).toContain('Métricas de casos y reportes');
+    expect(raiz.querySelector('app-metricas-casos')).not.toBeNull();
+    expect(raiz.querySelector('#tabla-voluntarios')).toBeNull();
+    expect(espiaCasos).toHaveBeenCalledWith(fixture.componentInstance.periodoA());
+    expect(raiz.textContent).toContain('Reportes registrados');
+  });
+
+  it('?vista=casos abre directamente la pestana de casos', async () => {
+    const { fixture } = await crear(undefined, 'casos');
+
+    expect(fixture.componentInstance.vista()).toBe('casos');
+    expect((fixture.nativeElement as HTMLElement).querySelector('app-metricas-casos')).not.toBeNull();
+  });
+
+  it('cada Consultar valido pasa a la pestana de casos una consulta nueva, con el periodo B si se compara', async () => {
+    const { fixture } = await crear();
+    const antes = fixture.componentInstance.consultaCasos().version;
+
+    fixture.componentInstance.comparar.set(true);
+    fixture.componentInstance.consultar();
+
+    const consulta = fixture.componentInstance.consultaCasos();
+    expect(consulta.version).toBe(antes + 1);
+    expect(consulta.a).toEqual(fixture.componentInstance.periodoA());
+    expect(consulta.b).toEqual(fixture.componentInstance.periodoB());
+  });
+
+  it('un periodo invalido no se consulta en la pestana de casos y muestra el motivo', async () => {
+    const { fixture } = await crear(undefined, 'casos');
+    const antes = fixture.componentInstance.consultaCasos().version;
+
+    fixture.componentInstance.cambiarFechaA('desde', '2026-12-31');
+    fixture.componentInstance.cambiarFechaA('hasta', '2026-01-01');
+    fixture.componentInstance.consultar();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.consultaCasos().version).toBe(antes);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.error')?.textContent).toContain(
+      'la fecha inicial no puede ser posterior a la final',
+    );
+  });
+
+  it('en la pestana de casos no muestra el error de carga de las metricas de la comunidad', async () => {
+    const { fixture } = await crear(() => throwError(() => new Error('sin red')), 'casos');
+
+    expect(fixture.componentInstance.errorDeCarga()).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain(
+      'No se pudieron cargar las métricas. Inténtalo de nuevo.',
+    );
   });
 });
