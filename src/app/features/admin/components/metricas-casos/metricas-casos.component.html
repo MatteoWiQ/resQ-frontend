@@ -1,0 +1,99 @@
+<p class="subtitulo">{{ 'metricasCasos.subtitulo' | translate }}</p>
+<p class="nota">{{ 'metricasCasos.definicion' | translate }}</p>
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
+@if (cargando() && !metricasA()) {
+  <p class="nota" role="status">{{ 'metricasCasos.cargando' | translate }}</p>
+}
+
+@if (metricasA()) {
+  <ul class="indicadores" [class.actualizando]="cargando()">
+    @for (indicador of indicadores(); track indicador.etiqueta) {
+      <li class="indicador">
+        <span class="indicador-etiqueta">{{ indicador.etiqueta | translate }}</span>
+        <span class="indicador-valor">{{ indicador.valorA }}</span>
+        @if (indicador.valorB !== null) {
+          <span class="indicador-variacion">{{ textoVariacion(indicador) }}</span>
+          <span class="indicador-detalle">
+            {{ 'metricas.indicadores.enPeriodoB' | translate: { n: indicador.valorB } }}
+          </span>
+        }
+        @if (indicador.detalle) {
+          <span class="indicador-detalle">{{ indicador.detalle }}</span>
+        }
+        @if (indicador.ayuda) {
+          <span class="indicador-ayuda">{{ indicador.ayuda | translate }}</span>
+        }
+      </li>
+    }
+  </ul>
+
+  <div class="graficos-casos">
+    <app-grafico-barras
+      [titulo]="'metricasCasos.graficos.casosPorZona' | translate"
+      [categorias]="zonasGrafico()"
+      [series]="seriesZonas()"
+    />
+    <app-grafico-barras
+      [titulo]="'metricasCasos.graficos.casosPorEstado' | translate"
+      [categorias]="estadosGrafico()"
+      [series]="seriesEstados()"
+    />
+  </div>
+
+  <div class="tablas-casos">
+    @for (tabla of tablas(); track tabla.id) {
+      <section class="grupo">
+        <h2 class="seccion">{{ tabla.titulo | translate }}</h2>
+        <div class="tabla-wrapper">
+          <table class="tabla" [id]="tabla.id">
+            <thead>
+              <tr>
+                <th>{{ tabla.columna | translate }}</th>
+                <th>
+                  {{ 'metricasCasos.tablas.cantidadEn' | translate: { periodo: nombrePeriodo(0) } }}
+                </th>
+                <th>{{ 'metricasCasos.tablas.porcentaje' | translate }}</th>
+                @if (comparando()) {
+                  <th>
+                    {{
+                      'metricasCasos.tablas.cantidadEn' | translate: { periodo: nombrePeriodo(1) }
+                    }}
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of tabla.filas; track fila.clave) {
+                <tr>
+                  <td>{{ fila.etiqueta }}</td>
+                  <td>{{ fila.cantidadA }}</td>
+                  <td>{{ fila.porcentajeA }} %</td>
+                  @if (comparando()) {
+                    <td>{{ fila.cantidadB }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">{{ 'metricasCasos.tablas.total' | translate }}</th>
+                <td>{{ tabla.totalA }}</td>
+                <td></td>
+                @if (comparando()) {
+                  <td>{{ tabla.totalB }}</td>
+                }
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        @if (tabla.id === 'tabla-casos-zona') {
+          <p class="nota">{{ 'metricasCasos.tablas.notaZonas' | translate }}</p>
+        }
+      </section>
+    }
+  </div>
+}

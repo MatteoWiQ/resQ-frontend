@@ -10,7 +10,9 @@ describe('MetricasCasosService (HU-33)', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     servicio = TestBed.inject(MetricasCasosService);
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -19,7 +21,9 @@ describe('MetricasCasosService (HU-33)', () => {
 
   it('pide los indicadores de casos del periodo con las fechas como parametros', () => {
     let respuesta: unknown;
-    servicio.obtener({ desde: '2026-10-01', hasta: '2026-10-31' }).subscribe((r) => (respuesta = r));
+    servicio
+      .obtener({ desde: '2026-10-01', hasta: '2026-10-31' })
+      .subscribe((r) => (respuesta = r));
 
     const req = httpMock.expectOne((r) => r.url === '/api/metricas/casos');
     expect(req.request.method).toBe('GET');

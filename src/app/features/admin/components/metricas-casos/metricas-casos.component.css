@@ -1,0 +1,27 @@
+/* HU-33: el resto de estilos (tarjetas, tablas, notas) vienen de metricas.component.css. */
+:host {
+  display: block;
+}
+
+.graficos-casos,
+.tablas-casos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.grupo {
+  min-width: 0;
+}
+
+.tabla tfoot th,
+.tabla tfoot td {
+  font-weight: 700;
+  border-bottom: 0;
+}
+
+/* Mientras llega una nueva consulta se siguen viendo los datos anteriores, atenuados. */
+.actualizando {
+  opacity: 0.6;
+}
