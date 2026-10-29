@@ -4,56 +4,73 @@
     <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
   </div>
 
-  <nav class="nav" [attr.aria-label]="'landing.topbar.ariaLabel' | translate">
-    @if (variante() === 'landing') {
-      <a href="#inicio">{{ 'landing.topbar.inicio' | translate }}</a>
-      <a href="#mapa">{{ 'landing.topbar.mapa' | translate }}</a>
-      <a href="#casos">{{ 'landing.topbar.casos' | translate }}</a>
-      <a href="#ayudar">{{ 'landing.topbar.ayudar' | translate }}</a>
-    }
-    <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
-    <a routerLink="/organizaciones/registro">{{ 'organizaciones.enlaceTopbar' | translate }}</a>
-    @if (haySesion()) {
-      <!-- NUEVO: Enlace al Chat -->
-      <a routerLink="/chat">Mensajes</a>
-      <a routerLink="/notificaciones">{{ 'landing.header.notificaciones' | translate }}</a>
-      <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
-    }
-  </nav>
+  <button
+    type="button"
+    class="menu-toggle"
+    (click)="alternarMenu()"
+    [attr.aria-expanded]="menuAbierto()"
+    aria-controls="header-panel"
+    [attr.aria-label]="menuAbierto() ? 'Cerrar menú' : 'Abrir menú'"
+  >
+    <span aria-hidden="true">{{ menuAbierto() ? '✕' : '☰' }}</span>
+  </button>
 
-  <div class="acciones">
-    @if (haySesion()) {
-      <!-- NUEVO: Botón de Chat al lado de la campana -->
-      <a
-        routerLink="/chat"
-        class="notif-btn"
-        title="Mis mensajes"
-        aria-label="Mis mensajes"
-        style="margin-right: 8px;"
-      >
-        <span aria-hidden="true">&#9993;</span>
-      </a>
-
-      <a
-        routerLink="/notificaciones"
-        class="notif-btn"
-        [attr.aria-label]="'landing.header.notificaciones' | translate"
-        [attr.title]="'landing.header.notificaciones' | translate"
-      >
-        <span aria-hidden="true">&#128276;</span>
-        @if (sinLeer() > 0) {
-          <span class="notif-badge" aria-hidden="true">{{ sinLeer() }}</span>
-        }
-      </a>
-
-      @if (esAdmin()) {
-        <a routerLink="/admin" class="secondary-btn">{{ 'landing.topbar.panelAdmin' | translate }}</a>
+  <div id="header-panel" class="header-panel" [class.abierto]="menuAbierto()">
+    <nav
+      class="nav"
+      [attr.aria-label]="'landing.topbar.ariaLabel' | translate"
+      (click)="cerrarMenu()"
+    >
+      @if (variante() === 'landing') {
+        <a href="#inicio">{{ 'landing.topbar.inicio' | translate }}</a>
+        <a href="#mapa">{{ 'landing.topbar.mapa' | translate }}</a>
+        <a href="#casos">{{ 'landing.topbar.casos' | translate }}</a>
+        <a href="#ayudar">{{ 'landing.topbar.ayudar' | translate }}</a>
       }
-      <button type="button" class="logout-btn" (click)="cerrarSesion()">
-        {{ 'landing.header.cerrarSesion' | translate }}
-      </button>
-    } @else {
-      <a routerLink="/login" class="primary-btn">{{ 'landing.topbar.reportar' | translate }}</a>
-    }
+      <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
+      <a routerLink="/organizaciones/registro">{{ 'organizaciones.enlaceTopbar' | translate }}</a>
+      @if (haySesion()) {
+        <a routerLink="/notificaciones">{{ 'landing.header.notificaciones' | translate }}</a>
+        <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
+      }
+    </nav>
+
+    <div class="acciones">
+      @if (haySesion()) {
+        <a
+          routerLink="/chat"
+          class="notif-btn chat-btn"
+          title="Mis mensajes"
+          aria-label="Mis mensajes"
+        >
+          <span aria-hidden="true">&#9993;</span>
+        </a>
+
+        <a
+          routerLink="/notificaciones"
+          class="notif-btn bell-btn"
+          [attr.aria-label]="'landing.header.notificaciones' | translate"
+          [attr.title]="'landing.header.notificaciones' | translate"
+        >
+          <span aria-hidden="true">&#128276;</span>
+          @if (sinLeer() > 0) {
+            <span class="notif-badge" aria-hidden="true">{{ sinLeer() }}</span>
+          }
+        </a>
+
+        @if (esAdmin()) {
+          <a routerLink="/admin" class="secondary-btn" (click)="cerrarMenu()">
+            {{ 'landing.topbar.panelAdmin' | translate }}
+          </a>
+        }
+        <button type="button" class="logout-btn" (click)="cerrarSesion()">
+          {{ 'landing.header.cerrarSesion' | translate }}
+        </button>
+      } @else {
+        <a routerLink="/login" class="primary-btn" (click)="cerrarMenu()">
+          {{ 'landing.topbar.reportar' | translate }}
+        </a>
+      }
+    </div>
   </div>
 </header>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, inject, input } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -37,6 +37,9 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   readonly sinLeer = this.notificacionService.noLeidas;
   readonly haySesion = computed(() => this.authService.usuarioActual() !== null);
 
+  // Menu desplegable de la cabecera en pantallas pequenas.
+  readonly menuAbierto = signal(false);
+
   private readonly suscripciones = new Subscription();
 
   ngOnInit(): void {
@@ -58,7 +61,16 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     return this.authService.esAdmin();
   }
 
+  alternarMenu(): void {
+    this.menuAbierto.update((abierto) => !abierto);
+  }
+
+  cerrarMenu(): void {
+    this.menuAbierto.set(false);
+  }
+
   cerrarSesion(): void {
+    this.cerrarMenu();
     this.authService.logout();
     this.notificacionService.limpiar();
     void this.router.navigate(['/']);
