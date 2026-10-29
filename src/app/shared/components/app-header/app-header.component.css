@@ -171,6 +171,13 @@
   }
 }
 
+@media (min-width: 1025px) {
+  .nav {
+    flex-wrap: nowrap;
+    gap: 32px;
+  }
+}
+
 @media (max-width: 1024px) {
   .topbar {
     flex-wrap: wrap;
