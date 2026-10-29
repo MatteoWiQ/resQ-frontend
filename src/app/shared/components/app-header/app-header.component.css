@@ -17,11 +17,49 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-soft);
+  color: var(--primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.menu-toggle:hover {
+  background: var(--border);
+}
+
+.menu-toggle:focus-visible,
+.nav a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .nav {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 28px;
 }
 
@@ -30,7 +68,9 @@
   text-decoration: none;
   font-size: 0.96rem;
   font-weight: 600;
-  transition: color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
 .nav a:hover {
@@ -52,6 +92,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .notif-btn {
@@ -124,31 +165,80 @@
   background: #ffe0e0;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1120px) {
+  .nav {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1024px) {
   .topbar {
     flex-wrap: wrap;
-    justify-content: center;
+    padding: 14px 16px;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    order: 2;
+  }
+
+  .header-panel {
+    display: none;
+    order: 3;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding-top: 14px;
+    margin-top: 2px;
+    border-top: 1px solid var(--border);
+  }
+
+  .header-panel.abierto {
+    display: flex;
   }
 
   .nav {
-    order: 3;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  .nav a,
+  .nav .guide-link {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .nav .guide-link {
+    border: 0;
+    background: var(--panel-soft);
+  }
+
+  .nav a:hover {
+    background: var(--panel-soft);
+  }
+
+  .acciones {
     width: 100%;
-    justify-content: center;
     flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .acciones .primary-btn,
+  .acciones .secondary-btn,
+  .acciones .logout-btn {
+    flex: 1 1 140px;
+    text-align: center;
   }
 }
 
 @media (max-width: 640px) {
-  .topbar {
-    padding: 14px 16px;
-  }
-
   .brand-name {
     font-size: 1.5rem;
   }
 
   .acciones {
-    width: 100%;
-    justify-content: center;
+    justify-content: stretch;
   }
 }

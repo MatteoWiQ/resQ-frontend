@@ -117,8 +117,29 @@ describe('AppHeaderComponent (HU-logout/HU-37)', () => {
     const fixture = TestBed.createComponent(AppHeaderComponent);
     fixture.detectChanges();
 
-    const notificacionesLink = (fixture.nativeElement as HTMLElement).querySelector('.notif-btn');
+    const notificacionesLink = (fixture.nativeElement as HTMLElement).querySelector('.bell-btn');
     expect(notificacionesLink?.getAttribute('routerLink')).toBe('/notificaciones');
+  });
+
+  it('el boton de menu alterna el panel de navegacion en pantallas pequenas', () => {
+    crearConSesion();
+    const fixture = TestBed.createComponent(AppHeaderComponent);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const toggle = compiled.querySelector<HTMLButtonElement>('.menu-toggle');
+    expect(toggle?.getAttribute('aria-expanded')).toBe('false');
+    expect(compiled.querySelector('.header-panel.abierto')).toBeNull();
+
+    toggle?.click();
+    fixture.detectChanges();
+    expect(toggle?.getAttribute('aria-expanded')).toBe('true');
+    expect(compiled.querySelector('.header-panel.abierto')).not.toBeNull();
+
+    toggle?.click();
+    fixture.detectChanges();
+    expect(toggle?.getAttribute('aria-expanded')).toBe('false');
+    expect(compiled.querySelector('.header-panel.abierto')).toBeNull();
   });
 
   it('un admin ve el acceso al panel administrativo', () => {

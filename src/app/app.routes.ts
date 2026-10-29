@@ -5,6 +5,7 @@ import { landingRoutes } from './features/landing/landing.routes';
 import { notificacionesRoutes } from './features/notificaciones/notificaciones.routes';
 import { profileRoutes } from './features/profile/profile.routes';
 import { voluntarioRoutes } from './features/voluntario/voluntario.routes';
+import { BandejaChatComponent } from './features/chat/pages/bandeja-chat/bandeja-chat.component';
 
 export const routes: Routes = [
   ...landingRoutes,
@@ -13,4 +14,5 @@ export const routes: Routes = [
   ...adminRoutes,
   ...voluntarioRoutes,
   ...notificacionesRoutes,
+  { path: 'chat', component: BandejaChatComponent },
 ];
