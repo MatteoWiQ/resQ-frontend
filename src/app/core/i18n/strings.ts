@@ -438,13 +438,20 @@ export const es = {
   },
 } as const;
 
-export type StringCatalog = typeof es;
+/** Forma de referencia (catalogo es) de la que se derivan las claves validas. */
+export type CatalogShape = typeof es;
+
+/**
+ * Un catalogo puede estar incompleto: el ingles todavia no cubre todas las
+ * claves y las ausentes caen al espanol en TranslateService.
+ */
+export type StringCatalog = { readonly [key: string]: string | StringCatalog };
 
 type ExtractPaths<T> = {
   [K in keyof T]: T[K] extends string ? K & string : `${K & string}.${ExtractPaths<T[K]>}`;
 }[keyof T];
 
-export type TranslationKey = ExtractPaths<StringCatalog>;
+export type TranslationKey = ExtractPaths<CatalogShape>;
 
 function lookup(catalog: StringCatalog, key: string): string {
   let value: unknown = catalog;

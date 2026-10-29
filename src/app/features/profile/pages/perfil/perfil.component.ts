@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { FeatureToggleDirective } from '../../../../core/directives/feature-toggle.directive';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
@@ -15,6 +14,7 @@ import { FeatureToggleService } from '../../../../core/services/feature-toggle.s
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
 import { NotificacionesComponent } from '../../../../shared/components/notificaciones/notificaciones.component';
+import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher/language-switcher.component';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
@@ -27,7 +27,7 @@ import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model'
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, AppHeaderComponent, NotificacionesComponent, TranslatePipe, FeatureToggleDirective],
+  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, AppHeaderComponent, NotificacionesComponent, LanguageSwitcherComponent, TranslatePipe],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })

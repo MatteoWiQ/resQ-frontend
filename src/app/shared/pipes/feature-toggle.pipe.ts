@@ -12,7 +12,7 @@ export class FeatureTogglePipe implements PipeTransform {
   transform<T>(value: T | string): T {
     // Si es string, asumimos que es el nombre de la flag
     if (typeof value === 'string') {
-      return this.ft.isEnabled(value as keyof FeatureFlags) ? value : null as any;
+      return (this.ft.isEnabled(value as keyof FeatureFlags) ? value : null) as T;
     }
     return value;
   }

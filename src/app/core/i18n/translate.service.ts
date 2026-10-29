@@ -25,7 +25,13 @@ export class TranslateService {
   }
 
   t(key: TranslationKey, params?: TranslateParams): string {
-    return getTranslation(key, this.catalog(), params);
+    const catalog = this.catalog();
+    const value = getTranslation(key, catalog, params);
+    // El catalogo ingles aun es parcial: si falta la clave, cae al espanol.
+    if (value === key && catalog !== es) {
+      return getTranslation(key, es, params);
+    }
+    return value;
   }
 
   setLang(lang: string): void {
