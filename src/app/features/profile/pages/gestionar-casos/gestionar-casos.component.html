@@ -90,7 +90,7 @@
                     </label>
                     <select
                       [id]="'estado-' + caso.idReporte"
-                      [ngModel]="estadoSeleccionado()[caso.idReporte] ?? ''"
+                      [ngModel]="estadoSeleccionado()[caso.idReporte]"
                       (ngModelChange)="seleccionarEstado(caso.idReporte, $event)"
                     >
                       <option value="">{{ 'gestionCasos.filtro.todos' | translate }}</option>

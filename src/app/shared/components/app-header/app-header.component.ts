@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { FeatureToggleDirective } from '../../../core/directives/feature-toggle.directive';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificacionService } from '../../../core/services/notificacion.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 
 /**
  * HU-logout: cabecera compartida por landing, perfil y panel administrativo.
@@ -22,7 +24,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, FeatureToggleDirective],
   templateUrl: './app-header.component.html',
   styleUrl: './app-header.component.css',
 })
