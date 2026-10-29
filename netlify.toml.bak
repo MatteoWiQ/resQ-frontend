@@ -1,0 +1,22 @@
+# Config de Netlify para el frontend de resq.
+# Deploy: New site -> Import from Git -> elegir repo de tu cuenta (MatteoWiQ/resQ-frontend)
+# y Netlify toma esta config automaticamente.
+# El proxy evita tocar CORS en el backend: el navegador solo ve mismo-origen.
+
+[build]
+  command = "npm ci && npm run build"
+  publish = "dist/angular-frontend/browser"
+
+# Backend por proxy: todo /api/* va a Render sin cambiar una linea del front.
+[[redirects]]
+  from = "/api/*"
+  to = "https://resq-backend-ui24.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# SPA fallback: rutas de Angular (ej: /login) sirven index.html.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true

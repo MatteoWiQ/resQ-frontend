@@ -9,10 +9,12 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { SolicitudVoluntarioService } from '../../../../core/services/solicitud-voluntario.service';
+import { FeatureToggleService } from '../../../../core/services/feature-toggle.service';
 
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
 import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
 import { NotificacionesComponent } from '../../../../shared/components/notificaciones/notificaciones.component';
+import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher/language-switcher.component';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
@@ -25,7 +27,7 @@ import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model'
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, AppHeaderComponent, NotificacionesComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, BackButtonComponent, AppHeaderComponent, NotificacionesComponent, LanguageSwitcherComponent, TranslatePipe],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })
@@ -34,9 +36,12 @@ export class PerfilComponent implements OnInit {
   private readonly usuarioService = inject(UsuarioService);
   private readonly reporteService = inject(ReporteService);
   private readonly solicitudVoluntarioService = inject(SolicitudVoluntarioService);
+  private readonly featureToggle = inject(FeatureToggleService);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
+
+  readonly mostrarConfiguracion = signal(this.featureToggle.isEnabled('enableLanguageInProfile'));
 
   readonly usuario = signal<Usuario | null>(null);
   readonly reportes = signal<Reporte[]>([]);

@@ -98,6 +98,15 @@
     }
   </div>
 
+  <!-- ============ HU-40: configuración de preferencias ============ -->
+  @if (mostrarConfiguracion()) {
+    <section class="configuracion-section">
+      <h3>{{ 'perfil.configuracion.titulo' | translate }}</h3>
+      <p>{{ 'perfil.configuracion.descripcion' | translate }}</p>
+      <app-language-switcher></app-language-switcher>
+    </section>
+  }
+
   @if (reporteSeleccionado(); as r) {
     <div class="modal-overlay" (click)="cerrarDetalle()">
       <div
