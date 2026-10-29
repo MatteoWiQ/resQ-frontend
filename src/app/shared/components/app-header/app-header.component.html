@@ -14,6 +14,8 @@
     <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
     <a routerLink="/organizaciones/registro">{{ 'organizaciones.enlaceTopbar' | translate }}</a>
     @if (haySesion()) {
+      <!-- NUEVO: Enlace al Chat -->
+      <a routerLink="/chat">Mensajes</a>
       <a routerLink="/notificaciones">{{ 'landing.header.notificaciones' | translate }}</a>
       <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
     }
@@ -21,6 +23,17 @@
 
   <div class="acciones">
     @if (haySesion()) {
+      <!-- NUEVO: Botón de Chat al lado de la campana -->
+      <a
+        routerLink="/chat"
+        class="notif-btn"
+        title="Mis mensajes"
+        aria-label="Mis mensajes"
+        style="margin-right: 8px;"
+      >
+        <span aria-hidden="true">&#9993;</span>
+      </a>
+
       <a
         routerLink="/notificaciones"
         class="notif-btn"
