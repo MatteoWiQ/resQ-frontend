@@ -4,6 +4,8 @@ import { metricasEs } from './strings-metricas';
 import { organizacionesEn } from './strings-organizaciones-en';
 import { gestionCasosEn } from './strings-gestionar-casos-en';
 import { metricasEn } from './strings-metricas-en';
+import { adminOrganizacionesEs } from './strings-admin-organizaciones';
+import { adminOrganizacionesEn } from './strings-admin-organizaciones-en';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
@@ -11,6 +13,8 @@ export const es = {
   gestionCasos: gestionCasosEs,
   // HU-34: métricas de la comunidad (textos en strings-metricas.ts)
   metricas: metricasEs,
+  // HU-25: administración de organizaciones (textos en strings-admin-organizaciones.ts)
+  adminOrganizaciones: adminOrganizacionesEs,
   shared: {
     brand: {
       marca: 'R',
@@ -485,6 +489,7 @@ export const en = {
   organizaciones: organizacionesEn,
   gestionCasos: gestionCasosEn,
   metricas: metricasEn,
+  adminOrganizaciones: adminOrganizacionesEn,
   shared: {
     brand: {
       marca: 'R',
