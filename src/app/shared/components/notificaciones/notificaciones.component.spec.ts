@@ -134,6 +134,22 @@ describe('NotificacionesComponent (HU-19/HU-37)', () => {
     expect(navegar).toHaveBeenCalledWith(['/perfil'], { queryParams: { reporte: 77 } });
   });
 
+  it('HU-32: una notificación de verificación de organización lleva a su ficha', async () => {
+    await crear(10);
+    fixture.detectChanges();
+    httpMock
+      .expectOne('/api/notificaciones/usuario/10')
+      .flush([notificacion(1, { idReporte: null, tipo: 'ORGANIZACION_RECHAZADA', leida: true })]);
+    fixture.detectChanges();
+
+    const router = TestBed.inject(Router);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLDivElement>('.notif-texto')!.click();
+
+    expect(navegar).toHaveBeenCalledWith(['/organizaciones/registro']);
+  });
+
   it('muestra un mensaje cuando no hay notificaciones', async () => {
     await crear(10);
     fixture.detectChanges();
