@@ -13,10 +13,12 @@ import { BackButtonComponent } from '../../../../shared/components/back-button/b
 import { FOTO_ACCEPT, validarFoto } from '../../../../shared/constants/foto';
 import {
   DESCRIPCION_MAX,
+  DOCUMENTO_ACCEPT,
   ErroresOrganizacion,
   HORARIOS_MAX,
   TIPOS_ORGANIZACION,
   ZONAS_COBERTURA_MAX,
+  validarDocumento,
   validarFormularioOrganizacion,
 } from '../../../../shared/constants/organizacion';
 import { FormularioOrganizacion, Organizacion } from '../../../../shared/models/organizacion.model';
@@ -25,6 +27,9 @@ import { FormularioOrganizacion, Organizacion } from '../../../../shared/models/
  * HU-20 / HU-28: el representante de un refugio, veterinaria o rescatista independiente registra
  * su organización y, una vez registrada, puede editar su ficha (datos, logo, horarios y zonas
  * de cobertura). Si el usuario ya tiene una, se muestra su estado de verificación.
+ *
+ * HU-32: adjunta el documento de verificación y, si un administrador la rechaza, ve el
+ * motivo, corrige la ficha y reenvía la solicitud.
  */
 @Component({
   selector: 'app-registrar-organizacion',
@@ -40,6 +45,7 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
 
   readonly tipos = TIPOS_ORGANIZACION;
   readonly logoAccept = FOTO_ACCEPT;
+  readonly documentoAccept = DOCUMENTO_ACCEPT;
   readonly descripcionMax = DESCRIPCION_MAX;
   readonly horariosMax = HORARIOS_MAX;
   readonly zonasCoberturaMax = ZONAS_COBERTURA_MAX;
@@ -66,6 +72,10 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
 
   readonly logo = signal<File | null>(null);
   readonly vistaPrevia = signal<string | null>(null);
+
+  /** HU-32: documento de verificación elegido (todavía no enviado). */
+  readonly documento = signal<File | null>(null);
+  readonly reenviando = signal(false);
 
   /** HU-28: true mientras se edita la ficha en vez de mostrar el detalle. */
   readonly editando = signal(false);
@@ -160,6 +170,61 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     this.vistaPrevia.set(null);
   }
 
+  // ============ Documento de verificación (HU-32) ============
+  seleccionarDocumento(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    input.value = '';
+    if (!archivo) {
+      return;
+    }
+
+    const error = validarDocumento(archivo);
+    if (error) {
+      this.documento.set(null);
+      this.fijarError(
+        'documento',
+        this.translate.t(
+          error === 'FORMATO' ? 'organizaciones.documento.errorFormato' : 'organizaciones.documento.errorTamano',
+        ),
+      );
+      return;
+    }
+    this.quitarError('documento');
+    this.documento.set(archivo);
+  }
+
+  quitarDocumento(): void {
+    this.documento.set(null);
+    this.quitarError('documento');
+  }
+
+  textoBotonDocumento(): string {
+    const tiene = this.documento() !== null || (this.editando() && this.organizacion()?.tieneDocumento === true);
+    return this.translate.t(tiene ? 'organizaciones.documento.cambiar' : 'organizaciones.documento.seleccionar');
+  }
+
+  // ============ Reenvío tras un rechazo (HU-32) ============
+  reenviar(): void {
+    const org = this.organizacion();
+    if (!org || org.estadoVerificacion !== 'RECHAZADA' || this.reenviando()) {
+      return;
+    }
+    this.reenviando.set(true);
+    this.mensaje.set('');
+    this.organizacionService.reenviar(org.idOrganizacion).subscribe({
+      next: (actualizada) => {
+        this.reenviando.set(false);
+        this.organizacion.set(actualizada);
+        this.mensaje.set(this.translate.t('organizaciones.rechazo.reenviada'));
+      },
+      error: () => {
+        this.reenviando.set(false);
+        this.mensaje.set(this.translate.t('organizaciones.rechazo.error'));
+      },
+    });
+  }
+
   // ============ Edición (HU-28) ============
   iniciarEdicion(): void {
     const org = this.organizacion();
@@ -177,6 +242,7 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
       zonasCobertura: org.zonasCobertura ?? '',
     };
     this.quitarLogo();
+    this.quitarDocumento();
     this.quitarLogoActual.set(false);
     this.errores.set({});
     this.mensaje.set('');
@@ -185,6 +251,7 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
 
   cancelarEdicion(): void {
     this.quitarLogo();
+    this.quitarDocumento();
     this.quitarLogoActual.set(false);
     this.errores.set({});
     this.mensaje.set('');
@@ -216,8 +283,10 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     for (const [campo, codigo] of Object.entries(erroresCampos)) {
       traducidos[campo] = this.translate.t(('organizaciones.error.' + codigo) as TranslationKey);
     }
-    if (this.errores()['logo']) {
-      traducidos['logo'] = this.errores()['logo'];
+    for (const campo of ['logo', 'documento']) {
+      if (this.errores()[campo]) {
+        traducidos[campo] = this.errores()[campo];
+      }
     }
     this.errores.set(traducidos);
 
@@ -229,12 +298,13 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     this.mensaje.set('');
     this.enviando.set(true);
 
-    this.organizacionService.registrar(idUsuario, this.form, this.logo()).subscribe({
+    this.organizacionService.registrar(idUsuario, this.form, this.logo(), this.documento()).subscribe({
       next: (respuesta) => {
         this.enviando.set(false);
         this.organizacion.set(respuesta.organizacion);
         this.confirmacionEnviada.set(respuesta.confirmacionEnviada);
         this.quitarLogo();
+        this.quitarDocumento();
       },
       error: (err: HttpErrorResponse) => {
         this.enviando.set(false);
@@ -256,6 +326,9 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     for (const [campo, codigo] of Object.entries(erroresCampos)) {
       traducidos[campo] = this.translate.t(('organizaciones.error.' + codigo) as TranslationKey);
     }
+    if (this.errores()['documento']) {
+      traducidos['documento'] = this.errores()['documento'];
+    }
     this.errores.set(traducidos);
 
     if (Object.keys(traducidos).length > 0) {
@@ -267,7 +340,14 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
     this.enviando.set(true);
 
     this.organizacionService
-      .actualizar(org.idOrganizacion, idUsuario, this.form, this.logo(), this.quitarLogoActual())
+      .actualizar(
+        org.idOrganizacion,
+        idUsuario,
+        this.form,
+        this.logo(),
+        this.quitarLogoActual(),
+        this.documento(),
+      )
       .subscribe({
         next: (actualizada) => {
           this.enviando.set(false);
@@ -286,10 +366,12 @@ export class RegistrarOrganizacionComponent implements OnInit, OnDestroy {
   private manejarError(err: HttpErrorResponse): void {
     const detalle = (err.error?.errors ?? {}) as Record<string, string>;
 
+    // HU-32: un 413/415 puede venir del documento; el backend lo indica en errors.documento.
+    const campoArchivo = detalle['documento'] ? 'documento' : 'logo';
     if (err.status === 413) {
-      this.fijarError('logo', this.translate.t('organizaciones.logo.errorTamano'));
+      this.fijarError(campoArchivo, this.translate.t(`organizaciones.${campoArchivo}.errorTamano` as TranslationKey));
     } else if (err.status === 415) {
-      this.fijarError('logo', this.translate.t('organizaciones.logo.errorFormato'));
+      this.fijarError(campoArchivo, this.translate.t(`organizaciones.${campoArchivo}.errorFormato` as TranslationKey));
     } else if ((err.status === 400 || err.status === 409) && Object.keys(detalle).length > 0) {
       this.errores.set(detalle);
     }

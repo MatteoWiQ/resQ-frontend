@@ -267,3 +267,49 @@ textarea:focus {
     padding: 32px 24px;
   }
 }
+
+/* ---- HU-32: documento de verificación y rechazo ---- */
+.documento-campo {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.documento-nombre {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.documento-estado {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: #15803d;
+}
+
+.documento-estado.sin-documento {
+  color: var(--danger, #b91c1c);
+}
+
+.rechazo {
+  margin: 0 0 20px;
+  padding: 16px;
+  border: 1px solid #fecaca;
+  border-radius: 14px;
+  background: #fef2f2;
+}
+
+.rechazo h2 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  color: #b91c1c;
+}
+
+.rechazo-motivo {
+  margin: 0 0 8px;
+  white-space: pre-line;
+  color: #7f1d1d;
+}
+
+.btn-reenviar {
+  margin-top: 8px;
+}

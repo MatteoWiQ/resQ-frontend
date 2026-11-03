@@ -46,6 +46,27 @@
           <p class="aviso">{{ avisoEstado(org.estadoVerificacion) }}</p>
         </div>
 
+        <!-- HU-32: motivo del rechazo y reenvío de la solicitud -->
+        @if (org.estadoVerificacion === 'RECHAZADA') {
+          <section class="rechazo" aria-labelledby="titulo-rechazo">
+            <h2 id="titulo-rechazo">{{ 'organizaciones.rechazo.motivo' | translate }}</h2>
+            @if (org.notaRevision) {
+              <p class="rechazo-motivo">{{ org.notaRevision }}</p>
+            }
+            <p class="ayuda">{{ 'organizaciones.rechazo.pasos' | translate }}</p>
+            <button type="button" class="btn-accion btn-reenviar" [disabled]="reenviando()" (click)="reenviar()">
+              {{ (reenviando() ? 'organizaciones.rechazo.reenviando' : 'organizaciones.rechazo.reenviar') | translate }}
+            </button>
+          </section>
+        }
+
+        <p class="documento-estado" [class.sin-documento]="!org.tieneDocumento">
+          {{
+            (org.tieneDocumento ? 'organizaciones.documento.adjuntado' : 'organizaciones.documento.sinDocumento')
+              | translate
+          }}
+        </p>
+
         @if (org.logoUrl) {
           <img class="logo-final" [src]="org.logoUrl" [alt]="'organizaciones.detalle.logoAlt' | translate" />
         }
@@ -267,6 +288,39 @@
       <p class="ayuda">{{ 'organizaciones.logo.ayuda' | translate }}</p>
       @if (errores()['logo']) {
         <p class="field-error" role="alert">{{ errores()['logo'] }}</p>
+      }
+    </div>
+
+    <!-- HU-32: documento de verificación -->
+    <span class="etiqueta-campo">{{ 'organizaciones.documento.etiqueta' | translate }}</span>
+    <div class="documento-campo">
+      <input
+        #documentoInput
+        id="documento"
+        type="file"
+        name="documento"
+        class="logo-input"
+        [attr.accept]="documentoAccept"
+        (change)="seleccionarDocumento($event)"
+      />
+      @if (documento(); as doc) {
+        <p class="ayuda documento-nombre">{{ doc.name }}</p>
+      } @else if (editando() && organizacion()?.tieneDocumento) {
+        <p class="ayuda">{{ 'organizaciones.documento.actual' | translate }}</p>
+      }
+      <div class="logo-acciones">
+        <button type="button" class="btn-volver" (click)="documentoInput.click()">
+          {{ textoBotonDocumento() }}
+        </button>
+        @if (documento()) {
+          <button type="button" class="btn-volver" (click)="quitarDocumento()">
+            {{ 'organizaciones.documento.quitar' | translate }}
+          </button>
+        }
+      </div>
+      <p class="ayuda">{{ 'organizaciones.documento.ayuda' | translate }}</p>
+      @if (errores()['documento']) {
+        <p class="field-error" role="alert">{{ errores()['documento'] }}</p>
       }
     </div>
 

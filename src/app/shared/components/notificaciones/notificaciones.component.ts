@@ -81,6 +81,12 @@ export class NotificacionesComponent implements OnInit {
       this.marcarComoLeida(notificacion);
     }
 
+    // HU-32: el resultado de la verificación se ve (y se corrige) en la ficha de la organización.
+    if (notificacion.tipo.startsWith('ORGANIZACION_')) {
+      void this.router.navigate(['/organizaciones/registro']);
+      return;
+    }
+
     if (!notificacion.idReporte && notificacion.idSolicitud && this.authService.esAdmin()) {
       void this.router.navigate(['/admin/solicitudes-voluntarios']);
       return;
