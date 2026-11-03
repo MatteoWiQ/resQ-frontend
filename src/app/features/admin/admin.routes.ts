@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { adminGuard } from '../../core/guards/admin.guard';
 import { DetalleReporteComponent } from './pages/detalle-reporte/detalle-reporte.component';
 import { MetricasComponent } from './pages/metricas/metricas.component';
+import { OrganizacionesAdminComponent } from './pages/organizaciones/organizaciones-admin.component';
 import { PanelAdminComponent } from './pages/panel-admin/panel-admin.component';
 import { SolicitudesVoluntariosComponent } from './pages/solicitudes-voluntarios/solicitudes-voluntarios.component';
 
@@ -24,4 +25,10 @@ export const adminRoutes: Routes = [
   },
   // HU-34: metricas de la comunidad, solo para el administrador.
   { path: 'admin/metricas', component: MetricasComponent, canActivate: [adminGuard] },
+  // HU-25: administración de organizaciones, solo para el administrador.
+  {
+    path: 'admin/organizaciones',
+    component: OrganizacionesAdminComponent,
+    canActivate: [adminGuard],
+  },
 ];

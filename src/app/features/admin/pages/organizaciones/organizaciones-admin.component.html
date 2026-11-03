@@ -1,0 +1,202 @@
+<section class="ao-page">
+  <app-header variante="app" />
+  <app-back-button ruta="/admin" />
+
+  <div class="card">
+    <h1>{{ 'adminOrganizaciones.titulo' | translate }}</h1>
+    <p class="subtitulo">{{ 'adminOrganizaciones.subtitulo' | translate }}</p>
+
+    <div
+      class="filtros"
+      role="tablist"
+      [attr.aria-label]="'adminOrganizaciones.filtros.etiqueta' | translate"
+    >
+      @for (opcion of filtros; track opcion) {
+        <button
+          type="button"
+          class="filtro"
+          role="tab"
+          [id]="'filtro-' + opcion"
+          [class.activo]="filtro() === opcion"
+          [attr.aria-selected]="filtro() === opcion"
+          (click)="elegirFiltro(opcion)"
+        >
+          {{ etiquetaFiltro(opcion) }}
+        </button>
+      }
+    </div>
+
+    @if (toast()) {
+      <p class="toast" role="status">{{ toast() }}</p>
+    }
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+
+    @if (cargando()) {
+      <p class="estado-lista" role="status">
+        {{ 'adminOrganizaciones.lista.cargando' | translate }}
+      </p>
+    } @else if (vacia()) {
+      <p class="estado-lista">{{ 'adminOrganizaciones.lista.vacia' | translate }}</p>
+    } @else {
+      <ul class="lista">
+        @for (o of organizaciones(); track o.idOrganizacion) {
+          <li>
+            <button type="button" class="fila" (click)="verDetalle(o.idOrganizacion)">
+              <span class="fila-principal">
+                <span class="nombre">{{ o.nombre }}</span>
+                <span class="secundario">
+                  {{ etiquetaTipo(o.tipo) }} ·
+                  {{
+                    'adminOrganizaciones.lista.representante'
+                      | translate: { nombre: o.nombreRepresentante ?? '—' }
+                  }}
+                </span>
+              </span>
+              <span class="fila-lateral">
+                <span class="badge" [attr.data-estado]="o.estadoVerificacion">
+                  {{ etiquetaEstado(o.estadoVerificacion) }}
+                </span>
+                <span class="secundario">
+                  {{
+                    'adminOrganizaciones.lista.registrada'
+                      | translate: { fecha: (o.fechaRegistro | date: 'dd/MM/yyyy') ?? '' }
+                  }}
+                </span>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  @if (seleccionada(); as o) {
+    <div class="overlay" (click)="cerrarDetalle()">
+      <article
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-organizacion"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="modal-cabecera">
+          @if (o.logoUrl) {
+            <img
+              class="logo"
+              [src]="o.logoUrl"
+              [alt]="'adminOrganizaciones.detalle.logo' | translate: { nombre: o.nombre }"
+            />
+          }
+          <div>
+            <h2 id="titulo-organizacion">{{ o.nombre }}</h2>
+            <span class="badge" [attr.data-estado]="o.estadoVerificacion">
+              {{ etiquetaEstado(o.estadoVerificacion) }}
+            </span>
+          </div>
+        </header>
+
+        <dl class="datos">
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.tipo' | translate }}</dt>
+            <dd>{{ etiquetaTipo(o.tipo) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.direccion' | translate }}</dt>
+            <dd>{{ o.direccion }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.telefono' | translate }}</dt>
+            <dd>{{ o.telefono }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.email' | translate }}</dt>
+            <dd>{{ o.email }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.descripcion' | translate }}</dt>
+            <dd>{{ o.descripcion || ('adminOrganizaciones.detalle.sinDato' | translate) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.horarios' | translate }}</dt>
+            <dd>{{ o.horarios || ('adminOrganizaciones.detalle.sinDato' | translate) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.zonas' | translate }}</dt>
+            <dd>{{ o.zonasCobertura || ('adminOrganizaciones.detalle.sinDato' | translate) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.representante' | translate }}</dt>
+            <dd>{{ o.nombreRepresentante ?? '—' }} ({{ o.emailRepresentante ?? '—' }})</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.registrada' | translate }}</dt>
+            <dd>{{ o.fechaRegistro | date: 'dd/MM/yyyy HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'adminOrganizaciones.detalle.revision' | translate }}</dt>
+            <dd class="revision">
+              @if (o.fechaRevision) {
+                {{
+                  'adminOrganizaciones.detalle.revisadaPor'
+                    | translate
+                      : {
+                          estado: etiquetaEstado(o.estadoVerificacion),
+                          revisor: o.nombreRevisor ?? '—',
+                          fecha: (o.fechaRevision | date: 'dd/MM/yyyy HH:mm') ?? '',
+                        }
+                }}
+              } @else {
+                {{ 'adminOrganizaciones.detalle.sinRevisar' | translate }}
+              }
+            </dd>
+          </div>
+        </dl>
+
+        @if (confirmandoRechazo()) {
+          <p class="confirmacion" role="alert">
+            {{ 'adminOrganizaciones.acciones.confirmarRechazo' | translate: { nombre: o.nombre } }}
+          </p>
+          <footer class="acciones">
+            <button
+              type="button"
+              class="btn btn-rechazar"
+              [disabled]="procesando()"
+              (click)="confirmarRechazo()"
+            >
+              {{ 'adminOrganizaciones.acciones.confirmar' | translate }}
+            </button>
+            <button type="button" class="btn btn-secundario" (click)="cancelarRechazo()">
+              {{ 'adminOrganizaciones.acciones.cancelar' | translate }}
+            </button>
+          </footer>
+        } @else {
+          <footer class="acciones">
+            @if (pendiente()) {
+              <button
+                type="button"
+                class="btn btn-aprobar"
+                [disabled]="procesando()"
+                (click)="aprobar()"
+              >
+                {{ 'adminOrganizaciones.acciones.aprobar' | translate }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-rechazar"
+                [disabled]="procesando()"
+                (click)="pedirRechazo()"
+              >
+                {{ 'adminOrganizaciones.acciones.rechazar' | translate }}
+              </button>
+            }
+            <button type="button" class="btn btn-secundario" (click)="cerrarDetalle()">
+              {{ 'adminOrganizaciones.acciones.cerrar' | translate }}
+            </button>
+          </footer>
+        }
+      </article>
+    </div>
+  }
+</section>
