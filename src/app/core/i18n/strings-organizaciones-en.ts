@@ -44,6 +44,27 @@ export const organizacionesEn = {
     errorFormato: 'Format not allowed. Use a JPG, PNG or WEBP image.',
     errorTamano: 'Image exceeds maximum allowed size of 5 MB.',
   },
+  documento: {
+    etiqueta: 'Verification document (recommended)',
+    seleccionar: 'Select document',
+    cambiar: 'Change document',
+    quitar: 'Remove document',
+    ayuda:
+      'Legal registration, operating license or another document that accredits the organization. PDF, JPG or PNG, up to 5 MB.',
+    errorFormato: 'Format not allowed. Upload a PDF, JPG or PNG.',
+    errorTamano: 'The document exceeds the 5 MB size limit.',
+    actual: 'You already attached a document. Choosing another one will replace it.',
+    adjuntado: 'Verification document attached',
+    sinDocumento: 'You have not attached a verification document yet',
+  },
+  rechazo: {
+    motivo: 'Reason for rejection',
+    pasos: 'Fix what was pointed out with "Edit profile" and then resubmit your request.',
+    reenviar: 'Resubmit request',
+    reenviando: 'Resubmitting...',
+    reenviada: 'Your request was resubmitted. An administrator will review it again.',
+    error: 'The request could not be resubmitted. Please try again.',
+  },
   error: {
     obligatorio: 'This field is required.',
     nombreCorto: 'Name must have at least 3 characters.',
@@ -78,5 +99,6 @@ export const organizacionesEn = {
     titulo: 'Your organization',
     PENDIENTE_VERIFICACION: 'Verification pending',
     VERIFICADA: 'Verified',
+    RECHAZADA: 'Rejected',
   },
 }

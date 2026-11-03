@@ -18,6 +18,10 @@ export interface Organizacion {
   fechaRegistro: string;
   /** Regla del backend: solo una organización verificada puede gestionar casos. */
   puedeGestionarCasos: boolean;
+  /** HU-32: si adjuntó su documento de verificación. */
+  tieneDocumento?: boolean;
+  /** HU-32: nota de la última revisión (el motivo, si fue rechazada). */
+  notaRevision?: string | null;
 }
 
 /** Respuesta de POST /api/organizaciones. */

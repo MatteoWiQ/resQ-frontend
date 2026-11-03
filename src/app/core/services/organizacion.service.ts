@@ -10,6 +10,7 @@ import {
 
 /**
  * HU-20 / HU-28: registro, consulta y edición de organizaciones.
+ * HU-32: documento de verificación y reenvío tras un rechazo.
  */
 @Injectable({ providedIn: 'root' })
 export class OrganizacionService {
@@ -22,6 +23,7 @@ export class OrganizacionService {
     idRepresentante: number,
     form: FormularioOrganizacion,
     logo: File | null,
+    documento: File | null = null,
   ): Observable<OrganizacionRegistrada> {
     const datos = new FormData();
     datos.append('idRepresentante', String(idRepresentante));
@@ -36,6 +38,9 @@ export class OrganizacionService {
     if (logo) {
       datos.append('logo', logo);
     }
+    if (documento) {
+      datos.append('documento', documento);
+    }
     return this.http.post<OrganizacionRegistrada>(this.baseUrl, datos);
   }
 
@@ -47,6 +52,7 @@ export class OrganizacionService {
     form: FormularioOrganizacion,
     logo: File | null,
     quitarLogo: boolean,
+    documento: File | null = null,
   ): Observable<Organizacion> {
     const datos = new FormData();
     datos.append('idRepresentante', String(idRepresentante));
@@ -66,7 +72,15 @@ export class OrganizacionService {
     if (quitarLogo) {
       datos.append('quitarLogo', 'true');
     }
+    if (documento) {
+      datos.append('documento', documento);
+    }
     return this.http.put<Organizacion>(`${this.baseUrl}/${idOrganizacion}`, datos);
+  }
+
+  /** HU-32: una organización rechazada vuelve a pedir verificación (después de corregirla). */
+  reenviar(idOrganizacion: number): Observable<Organizacion> {
+    return this.http.post<Organizacion>(`${this.baseUrl}/${idOrganizacion}/reenviar`, {});
   }
 
   /** Organización que representa el usuario, o null si todavía no registró ninguna. */

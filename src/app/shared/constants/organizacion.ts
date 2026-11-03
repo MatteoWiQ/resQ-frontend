@@ -89,3 +89,29 @@ export function validarFormularioOrganizacion(form: FormularioOrganizacion): Err
 
   return errores;
 }
+
+// ============================================================
+// HU-32: documento de verificación (deben coincidir con DocumentoStorageService)
+// ============================================================
+
+export const DOCUMENTO_TIPOS_PERMITIDOS = ['application/pdf', 'image/jpeg', 'image/png'] as const;
+export const DOCUMENTO_EXTENSIONES_PERMITIDAS = ['.pdf', '.jpg', '.jpeg', '.png'] as const;
+export const DOCUMENTO_TAMANO_MAXIMO_BYTES = 5 * 1024 * 1024;
+export const DOCUMENTO_ACCEPT = [...DOCUMENTO_TIPOS_PERMITIDOS, ...DOCUMENTO_EXTENSIONES_PERMITIDAS].join(',');
+
+export type ErrorDocumento = 'FORMATO' | 'TAMANO';
+
+/**
+ * Motivo por el que el documento no es válido, o null. El backend vuelve a validar el
+ * formato por la firma de bytes; esto solo evita subir algo que seguro será rechazado.
+ */
+export function validarDocumento(archivo: File): ErrorDocumento | null {
+  const nombre = archivo.name.toLowerCase();
+  const tipoValido = archivo.type
+    ? (DOCUMENTO_TIPOS_PERMITIDOS as readonly string[]).includes(archivo.type)
+    : DOCUMENTO_EXTENSIONES_PERMITIDAS.some((ext) => nombre.endsWith(ext));
+  if (!tipoValido) {
+    return 'FORMATO';
+  }
+  return archivo.size > DOCUMENTO_TAMANO_MAXIMO_BYTES ? 'TAMANO' : null;
+}

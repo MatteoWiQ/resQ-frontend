@@ -44,6 +44,29 @@ export const organizacionesEs = {
     errorFormato: 'Formato no permitido. Usa una imagen JPG, PNG o WEBP.',
     errorTamano: 'La imagen supera el tamaño máximo permitido de 5 MB.',
   },
+  // HU-32: documento de verificación que revisa el administrador.
+  documento: {
+    etiqueta: 'Documento de verificación (recomendado)',
+    seleccionar: 'Seleccionar documento',
+    cambiar: 'Cambiar documento',
+    quitar: 'Quitar documento',
+    ayuda:
+      'Personería jurídica, licencia de funcionamiento u otro documento que acredite a la organización. PDF, JPG o PNG, máximo 5 MB.',
+    errorFormato: 'Formato no permitido. Sube un PDF, JPG o PNG.',
+    errorTamano: 'El documento supera el tamaño máximo de 5 MB.',
+    actual: 'Ya adjuntaste un documento. Si eliges otro, reemplazará al actual.',
+    adjuntado: 'Documento de verificación adjuntado',
+    sinDocumento: 'Todavía no adjuntaste un documento de verificación',
+  },
+  // HU-32: organización rechazada que corrige y reenvía su solicitud.
+  rechazo: {
+    motivo: 'Motivo del rechazo',
+    pasos: 'Corrige lo indicado con "Editar ficha" y luego vuelve a enviar la solicitud.',
+    reenviar: 'Reenviar solicitud',
+    reenviando: 'Reenviando...',
+    reenviada: 'Tu solicitud fue reenviada. Un administrador la revisará de nuevo.',
+    error: 'No se pudo reenviar la solicitud. Inténtalo de nuevo.',
+  },
   error: {
     obligatorio: 'Este campo es obligatorio.',
     nombreCorto: 'El nombre debe tener al menos 3 caracteres.',

@@ -2,6 +2,9 @@ export type TipoNotificacion =
   | 'SOLICITUD_APROBADA'
   | 'SOLICITUD_RECHAZADA'
   | 'SOLICITUD_VOLUNTARIO'
+  // HU-32: resultado de la verificación de la organización del usuario.
+  | 'ORGANIZACION_VERIFICADA'
+  | 'ORGANIZACION_RECHAZADA'
   | 'SISTEMA';
 
 export interface Notificacion {
