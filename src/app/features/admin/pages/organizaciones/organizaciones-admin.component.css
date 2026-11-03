@@ -265,6 +265,78 @@ h1 {
   border: 1px solid var(--border);
 }
 
+/* ---- HU-32 ---- */
+.btn-enlace {
+  padding: 0;
+  background: none;
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.sin-documento {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.nota-revision,
+.historial-nota {
+  white-space: pre-line;
+}
+
+.historial {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.historial h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.historial-lista {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.historial-lista li {
+  display: grid;
+  gap: 2px;
+}
+
+.historial-nota {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.motivo {
+  display: block;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  resize: vertical;
+}
+
+.contador {
+  margin: 4px 0 0;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
 @media (max-width: 600px) {
   .ao-page {
     padding: 16px;

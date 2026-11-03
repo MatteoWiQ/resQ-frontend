@@ -127,6 +127,28 @@
             <dd>{{ o.zonasCobertura || ('adminOrganizaciones.detalle.sinDato' | translate) }}</dd>
           </div>
           <div>
+            <dt>{{ 'adminOrganizaciones.detalle.documento' | translate }}</dt>
+            <dd>
+              @if (o.tieneDocumento) {
+                <button
+                  type="button"
+                  class="btn btn-enlace"
+                  [disabled]="abriendoDocumento()"
+                  (click)="abrirDocumento()"
+                >
+                  {{
+                    (abriendoDocumento()
+                      ? 'adminOrganizaciones.detalle.abriendoDocumento'
+                      : 'adminOrganizaciones.detalle.verDocumento'
+                    ) | translate
+                  }}
+                </button>
+              } @else {
+                <span class="sin-documento">{{ 'adminOrganizaciones.detalle.sinDocumento' | translate }}</span>
+              }
+            </dd>
+          </div>
+          <div>
             <dt>{{ 'adminOrganizaciones.detalle.representante' | translate }}</dt>
             <dd>{{ o.nombreRepresentante ?? '—' }} ({{ o.emailRepresentante ?? '—' }})</dd>
           </div>
@@ -152,17 +174,62 @@
               }
             </dd>
           </div>
+          @if (o.notaRevision) {
+            <div>
+              <dt>{{ 'adminOrganizaciones.detalle.notaRevision' | translate }}</dt>
+              <dd class="nota-revision">{{ o.notaRevision }}</dd>
+            </div>
+          }
         </dl>
+
+        <section class="historial" aria-labelledby="titulo-historial">
+          <h3 id="titulo-historial">{{ 'adminOrganizaciones.historial.titulo' | translate }}</h3>
+          @if (historial().length === 0) {
+            <p class="secundario">{{ 'adminOrganizaciones.historial.vacio' | translate }}</p>
+          } @else {
+            <ol class="historial-lista">
+              @for (r of historial(); track r.idRevision) {
+                <li [attr.data-accion]="r.accion">
+                  <span>
+                    {{
+                      'adminOrganizaciones.historial.entrada'
+                        | translate
+                          : {
+                              accion: etiquetaAccion(r.accion),
+                              usuario: r.nombreUsuario ?? '—',
+                              fecha: (r.fecha | date: 'dd/MM/yyyy HH:mm') ?? '',
+                            }
+                    }}
+                  </span>
+                  @if (r.nota) {
+                    <span class="historial-nota">“{{ r.nota }}”</span>
+                  }
+                </li>
+              }
+            </ol>
+          }
+        </section>
 
         @if (confirmandoRechazo()) {
           <p class="confirmacion" role="alert">
             {{ 'adminOrganizaciones.acciones.confirmarRechazo' | translate: { nombre: o.nombre } }}
           </p>
+          <label class="motivo" for="motivo-rechazo">{{ 'adminOrganizaciones.acciones.motivo' | translate }}</label>
+          <textarea
+            id="motivo-rechazo"
+            name="motivo"
+            rows="3"
+            [attr.maxlength]="motivoMax"
+            [ngModel]="motivo()"
+            (ngModelChange)="motivo.set($event)"
+            [placeholder]="'adminOrganizaciones.acciones.motivoPlaceholder' | translate"
+          ></textarea>
+          <p class="contador">{{ 'adminOrganizaciones.acciones.motivoContador' | translate: { n: motivo().length } }}</p>
           <footer class="acciones">
             <button
               type="button"
               class="btn btn-rechazar"
-              [disabled]="procesando()"
+              [disabled]="procesando() || motivoInvalido()"
               (click)="confirmarRechazo()"
             >
               {{ 'adminOrganizaciones.acciones.confirmar' | translate }}

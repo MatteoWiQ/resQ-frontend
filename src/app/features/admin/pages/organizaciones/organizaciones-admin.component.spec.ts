@@ -34,6 +34,8 @@ function organizacion(id: number, extra: Partial<OrganizacionAdmin> = {}): Organ
     idRevisor: null,
     nombreRevisor: null,
     fechaRevision: null,
+    tieneDocumento: false,
+    notaRevision: null,
     ...extra,
   };
 }
@@ -43,6 +45,8 @@ interface Doble {
   detalle: ReturnType<typeof vi.fn>;
   aprobar: ReturnType<typeof vi.fn>;
   rechazar: ReturnType<typeof vi.fn>;
+  historial: ReturnType<typeof vi.fn>;
+  documento: ReturnType<typeof vi.fn>;
 }
 
 describe('OrganizacionesAdminComponent (HU-25)', () => {
@@ -56,6 +60,8 @@ describe('OrganizacionesAdminComponent (HU-25)', () => {
       detalle: vi.fn((id: number) => of(organizacion(id))),
       aprobar: vi.fn((id: number) => of(organizacion(id, { estadoVerificacion: 'VERIFICADA' }))),
       rechazar: vi.fn((id: number) => of(organizacion(id, { estadoVerificacion: 'RECHAZADA' }))),
+      historial: vi.fn(() => of([])),
+      documento: vi.fn(() => of(new Blob(['%PDF'], { type: 'application/pdf' }))),
     };
 
     await TestBed.configureTestingModule({
@@ -144,7 +150,7 @@ describe('OrganizacionesAdminComponent (HU-25)', () => {
     expect(doble.listar).toHaveBeenCalledTimes(2);
   });
 
-  it('rechazar pide confirmación antes de enviar', async () => {
+  it('rechazar pide confirmación y el motivo antes de enviar', async () => {
     const { fixture, doble } = await crear();
     await abrirDetalle(fixture);
 
@@ -155,10 +161,12 @@ describe('OrganizacionesAdminComponent (HU-25)', () => {
       '¿Rechazar a Refugio 1?',
     );
 
+    fixture.componentInstance.motivo.set('Falta la personería jurídica');
+    fixture.detectChanges();
     (raiz(fixture).querySelector('.btn-rechazar') as HTMLButtonElement).click();
     fixture.detectChanges();
 
-    expect(doble.rechazar).toHaveBeenCalledWith(1);
+    expect(doble.rechazar).toHaveBeenCalledWith(1, 'Falta la personería jurídica');
     expect(raiz(fixture).querySelector('.toast')?.textContent).toContain('Refugio 1 fue rechazada');
   });
 

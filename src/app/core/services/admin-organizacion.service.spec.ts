@@ -43,9 +43,10 @@ describe('AdminOrganizacionService (HU-25)', () => {
     expect(aprobar.request.method).toBe('PUT');
     aprobar.flush({});
 
-    servicio.rechazar(8).subscribe();
+    servicio.rechazar(8, ' Falta documento ').subscribe();
     const rechazar = http.expectOne('/api/admin/organizaciones/8/rechazar');
     expect(rechazar.request.method).toBe('PUT');
+    expect(rechazar.request.body).toEqual({ nota: 'Falta documento' });
     rechazar.flush({});
   });
 });
