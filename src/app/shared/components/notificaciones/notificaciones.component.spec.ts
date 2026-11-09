@@ -134,6 +134,22 @@ describe('NotificacionesComponent (HU-19/HU-37)', () => {
     expect(navegar).toHaveBeenCalledWith(['/perfil'], { queryParams: { reporte: 77 } });
   });
 
+  it('HU-22: un mensaje nuevo del chat abre el chat del caso', async () => {
+    await crear(10);
+    fixture.detectChanges();
+    httpMock
+      .expectOne('/api/notificaciones/usuario/10')
+      .flush([notificacion(1, { tipo: 'MENSAJE_CASO', idReporte: 77, leida: true })]);
+    fixture.detectChanges();
+
+    const router = TestBed.inject(Router);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLDivElement>('.notif-texto')!.click();
+
+    expect(navegar).toHaveBeenCalledWith(['/casos', 77, 'chat']);
+  });
+
   it('muestra un mensaje cuando no hay notificaciones', async () => {
     await crear(10);
     fixture.detectChanges();
