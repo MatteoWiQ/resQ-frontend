@@ -14,6 +14,8 @@ export const en = {
       nombre: 'ResQ',
     },
     volverAtras: 'Back',
+    abrirMenu: 'Open menu',
+    cerrarMenu: 'Close menu',
     ubicacionSeleccionada: 'Selected location',
     estados: {
       PENDIENTE: 'Pending',
@@ -364,5 +366,44 @@ export const en = {
   solicitud: 'Request',
   // HU-19: administrar.
   administrar: 'Manage',
+
+  // HU-27: mensajes entre usuarios.
+  mensajes: {
+    bandejaTitulo: 'Messages',
+    nuevaConversacion: 'New conversation',
+    buscar: 'Search',
+    buscarOrganizacion: 'Search organization by name',
+    organizacion: 'Organization',
+    iniciar: 'Message',
+    iniciarCon: 'Start a conversation with {{nombre}}',
+    sinOrganizaciones: 'No organizations found.',
+    sinConversaciones: "You don't have any conversations yet.",
+    sinMensajes: 'There are no messages in this conversation yet.',
+    sinSesion: 'Sign in to use messages.',
+    conversacion: 'Conversation',
+    contador: '{{n}}/{{max}} characters',
+    cargando: 'Loading...',
+    yo: 'You',
+    escribir: 'Write a message...',
+    vacio: 'Write a message or attach a file.',
+    adjuntar: 'Attach image or file',
+    quitarAdjunto: 'Remove attachment',
+    archivo: 'Attached file',
+    eliminar: 'Delete',
+    eliminado: 'Message deleted',
+    enviar: 'Send',
+    enviando: 'Sending...',
+    errorCargar: 'Messages could not be loaded.',
+    errorEnviar: 'The message could not be sent. Try again.',
+    errorEliminar: 'The message could not be deleted.',
+    errorAbrir: 'The conversation could not be opened.',
+    errorDemasiadoLargo: 'The message exceeds the character limit.',
+    errorSinPermiso: 'You cannot take part in this conversation.',
+    formato: {
+      negrita: 'Bold',
+      cursiva: 'Italic',
+      mono: 'Monospace',
+    },
+  },
 
 }

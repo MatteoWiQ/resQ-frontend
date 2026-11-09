@@ -236,6 +236,14 @@
   color: #fff;
 }
 
+/* HU-27: escribirle a un usuario. Comparte el color de "editar" para que no
+   compita con "eliminar", que es la accion destructiva de la celda. */
+.btn.mensaje {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--primary);
+}
+
 .btn.guardar {
   background: #2e7d32;
   color: #fff;

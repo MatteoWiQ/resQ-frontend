@@ -4,7 +4,9 @@ export type TipoEventoWebSocket =
   | 'notification.new'
   | 'chat.message'
   | 'chat.typing'
-  | 'user.online';
+  | 'user.online'
+  | 'mensaje.nuevo'
+  | 'mensaje.eliminado';
 
 /**
  * HU-38b: sobre comun que manda el servidor por STOMP. `id` es la secuencia de
@@ -34,10 +36,30 @@ export interface DatosUsuarioEnLinea {
   enLinea: boolean;
 }
 
+/** HU-27: payload de un mensaje nuevo en una conversacion entre usuarios. */
+export interface DatosMensajeNuevo {
+  idConversacion: number;
+  idMensaje: number;
+  idEmisor: number;
+  tipo: string;
+  contenido: string;
+  urlAdjunto: string | null;
+  nombreAdjunto: string | null;
+  fechaEnvio: string;
+}
+
+/** HU-27: el emisor elimino un mensaje de la conversacion. */
+export interface DatosMensajeEliminado {
+  idConversacion: number;
+  idMensaje: number;
+}
+
 /** Mapa tipo de evento -> payload, para que el bus quede tipado de punta a punta. */
 export interface DatosPorTipoEvento {
   'notification.new': Notificacion;
   'chat.message': DatosChatMensaje;
   'chat.typing': DatosChatEscribiendo;
   'user.online': DatosUsuarioEnLinea;
+  'mensaje.nuevo': DatosMensajeNuevo;
+  'mensaje.eliminado': DatosMensajeEliminado;
 }

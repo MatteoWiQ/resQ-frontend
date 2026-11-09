@@ -8,6 +8,7 @@ import { AppHeaderComponent } from '../../../../shared/components/app-header/app
 import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
+import { MensajeService } from '../../../../core/services/mensaje.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
@@ -37,6 +38,7 @@ export class PanelAdminComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly reporteService = inject(ReporteService);
+  private readonly mensajeService = inject(MensajeService);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -249,6 +251,22 @@ export class PanelAdminComponent implements OnInit {
 
   cerrarConfirmacionEliminar(): void {
     this.usuarioAEliminar.set(null);
+  }
+
+  // ============ HU-27: escribirle a un usuario ============
+  /**
+   * Abre (o recupera) la conversacion privada con el usuario y salta a ella. Si el
+   * backend rechaza el envio se muestra el motivo en el aviso del panel.
+   */
+  mensajearUsuario(u: Usuario): void {
+    this.mensajeService.abrirConversacion({ idUsuario: u.idUsuario }).subscribe({
+      next: (conversacion) => {
+        this.mensaje.set('');
+        void this.router.navigate(['/chat', conversacion.idConversacion]);
+      },
+      error: () =>
+        this.mensaje.set(this.translate.t('admin.errorMensaje', { nombre: u.nombre })),
+    });
   }
 
   confirmarEliminarUsuario(): void {

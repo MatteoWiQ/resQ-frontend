@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, throwError } from 'rxjs';
 
@@ -67,6 +67,18 @@ export class OrganizacionService {
       datos.append('quitarLogo', 'true');
     }
     return this.http.put<Organizacion>(`${this.baseUrl}/${idOrganizacion}`, datos);
+  }
+
+  /** HU-27: directorio de organizaciones, para elegir con quién conversar. */
+  listarDirectorio(tipo?: string, zona?: string): Observable<Organizacion[]> {
+    let params = new HttpParams();
+    if (tipo) {
+      params = params.set('tipo', tipo);
+    }
+    if (zona) {
+      params = params.set('zona', zona);
+    }
+    return this.http.get<Organizacion[]>(this.baseUrl, { params });
   }
 
   /** Organización que representa el usuario, o null si todavía no registró ninguna. */

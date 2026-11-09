@@ -99,6 +99,14 @@
                       <button class="btn editar" type="button" (click)="editarUsuario(u)">
                         {{ 'admin.editar' | translate }}
                       </button>
+                      <button
+                        class="btn mensaje"
+                        type="button"
+                        [attr.aria-label]="'admin.mensajeA' | translate: { nombre: u.nombre }"
+                        (click)="mensajearUsuario(u)"
+                      >
+                        {{ 'admin.mensaje' | translate }}
+                      </button>
                       @if (!esLaPropiaCuenta(u)) {
                         <button
                           class="btn eliminar"
