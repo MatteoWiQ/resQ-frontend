@@ -2,7 +2,9 @@ export type TipoNotificacion =
   | 'SOLICITUD_APROBADA'
   | 'SOLICITUD_RECHAZADA'
   | 'SOLICITUD_VOLUNTARIO'
-  | 'SISTEMA';
+  | 'SISTEMA'
+  /** HU-22: mensaje nuevo en el chat de un caso (idReporte es el caso). */
+  | 'MENSAJE_CASO';
 
 export interface Notificacion {
   idNotificacion: number;
