@@ -1,0 +1,88 @@
+<section class="chat-page">
+  <app-header variante="app" />
+  <app-back-button ruta="/" />
+
+  <div class="chat-container">
+    <div class="chat-head">
+      <h1>{{ 'mensajes.bandejaTitulo' | translate }}</h1>
+      <button type="button" class="primary-btn btn-nueva" (click)="abrirNueva()">
+        {{ 'mensajes.nuevaConversacion' | translate }}
+      </button>
+    </div>
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+
+    @if (mostrarNueva()) {
+      <div class="nueva-conversacion">
+        <label for="buscar-org">{{ 'mensajes.buscarOrganizacion' | translate }}</label>
+        <div class="fila">
+          <input
+            id="buscar-org"
+            type="text"
+            [ngModel]="busquedaOrganizacion()"
+            (ngModelChange)="busquedaOrganizacion.set($event)"
+            (keyup.enter)="cargarOrganizaciones()"
+            [attr.placeholder]="'mensajes.buscarOrganizacion' | translate"
+          />
+          <button type="button" class="btn-buscar" (click)="cargarOrganizaciones()">
+            {{ 'mensajes.buscar' | translate }}
+          </button>
+        </div>
+
+        @if (cargandoOrganizaciones()) {
+          <p class="hint">{{ 'mensajes.cargando' | translate }}</p>
+        } @else if (organizaciones().length === 0) {
+          <p class="hint">{{ 'mensajes.sinOrganizaciones' | translate }}</p>
+        } @else {
+          <ul class="lista-org">
+            @for (org of organizaciones(); track org.idOrganizacion) {
+              <li>
+                <span>{{ org.nombre }}</span>
+                <button
+                  type="button"
+                  class="btn-abrir"
+                  [attr.aria-label]="'mensajes.iniciarCon' | translate: { nombre: org.nombre }"
+                  (click)="iniciarConOrganizacion(org.idOrganizacion)"
+                >
+                  {{ 'mensajes.iniciar' | translate }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+
+    @if (cargando()) {
+      <p class="hint">{{ 'mensajes.cargando' | translate }}</p>
+    } @else if (conversaciones().length === 0) {
+      <p class="hint">{{ 'mensajes.sinConversaciones' | translate }}</p>
+    } @else {
+      <ul class="lista-chats">
+        @for (chat of conversaciones(); track chat.idConversacion) {
+          <li class="chat-item">
+            <div class="avatar">{{ chat.nombre.charAt(0) }}</div>
+            <a class="info" [routerLink]="['/chat', chat.idConversacion]">
+              <h3>
+                {{ chat.nombre }}
+                @if (chat.esOrganizacion) {
+                  <span class="etiqueta">{{ 'mensajes.organizacion' | translate }}</span>
+                }
+              </h3>
+              <p>{{ chat.ultimoMensaje || ('mensajes.sinMensajes' | translate) }}</p>
+            </a>
+            <small class="fecha">
+              {{
+                chat.fechaUltimoMensaje
+                  ? (chat.fechaUltimoMensaje | date: 'dd/MM HH:mm')
+                  : ''
+              }}
+            </small>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>

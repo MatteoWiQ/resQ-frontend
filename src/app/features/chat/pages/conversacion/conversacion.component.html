@@ -1,0 +1,132 @@
+<section class="conversacion-page">
+  <app-header variante="app" />
+  <app-back-button ruta="/chat" />
+
+  <div class="conversacion-card">
+    <header class="conversacion-head">
+      <h1>{{ nombreOtro() }}</h1>
+      <p class="contador" [class.excedido]="caracteres > maxCaracteres">
+        {{ 'mensajes.contador' | translate: { n: caracteres, max: maxCaracteres } }}
+      </p>
+    </header>
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+
+    @if (cargando()) {
+      <p class="hint">{{ 'mensajes.cargando' | translate }}</p>
+    } @else if (mensajes().length === 0) {
+      <p class="hint">{{ 'mensajes.sinMensajes' | translate }}</p>
+    } @else {
+      <ul class="historial">
+        @for (m of mensajes(); track m.idMensaje) {
+          <li class="mensaje" [class.mio]="esMio(m)" [class.eliminado]="m.eliminado">
+            <div class="burbuja">
+              <span class="remitente">
+                {{ esMio(m) ? ('mensajes.yo' | translate) : nombreOtro() }}
+              </span>
+
+              @if (m.eliminado) {
+                <p class="texto-eliminado">{{ 'mensajes.eliminado' | translate }}</p>
+              } @else {
+                @if (m.contenido) {
+                  <p class="texto" [innerHTML]="m.contenido | textoEnriquecido"></p>
+                }
+                @if (m.urlAdjunto) {
+                  <figure class="adjunto">
+                    @if (esImagen(m)) {
+                      <img [src]="rutaAdjunto(m)!" [attr.alt]="m.nombreAdjunto ?? ''" />
+                    } @else {
+                      <a [href]="rutaAdjunto(m)!" target="_blank" rel="noopener">
+                        {{ m.nombreAdjunto ?? ('mensajes.archivo' | translate) }}
+                      </a>
+                    }
+                  </figure>
+                }
+              }
+
+              <footer class="pie">
+                <small>{{ formato(m.fechaEnvio) }}</small>
+                @if (esMio(m) && !m.eliminado) {
+                  <button
+                    type="button"
+                    class="btn-eliminar"
+                    [attr.aria-label]="'mensajes.eliminar' | translate"
+                    (click)="eliminar(m)"
+                  >
+                    {{ 'mensajes.eliminar' | translate }}
+                  </button>
+                }
+              </footer>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    <form class="redactar" (ngSubmit)="enviar()">
+      <div class="barra-formato">
+        <button
+          type="button"
+          class="btn-formato"
+          [attr.aria-label]="'mensajes.formato.negrita' | translate"
+          [attr.title]="'mensajes.formato.negrita' | translate"
+          (click)="envolver('**')"
+        >
+          <strong>N</strong>
+        </button>
+        <button
+          type="button"
+          class="btn-formato"
+          [attr.aria-label]="'mensajes.formato.cursiva' | translate"
+          [attr.title]="'mensajes.formato.cursiva' | translate"
+          (click)="envolver('*')"
+        >
+          <em>C</em>
+        </button>
+        <button
+          type="button"
+          class="btn-formato"
+          [attr.aria-label]="'mensajes.formato.mono' | translate"
+          [attr.title]="'mensajes.formato.mono' | translate"
+          (click)="envolver('`')"
+        >
+          <code>M</code>
+        </button>
+      </div>
+
+      <label class="adjuntar">
+        <input type="file" (change)="seleccionarAdjunto($event)" #archivo />
+        <span>{{ 'mensajes.adjuntar' | translate }}</span>
+      </label>
+      @if (adjunto(); as archivoAdjunto) {
+        <div class="adjunto-elegido">
+          <span>{{ archivoAdjunto.name }}</span>
+          <button type="button" class="btn-quitar" (click)="quitarAdjunto(archivo)">
+            {{ 'mensajes.quitarAdjunto' | translate }}
+          </button>
+        </div>
+      }
+
+      <textarea
+        rows="3"
+        [ngModel]="borrador()"
+        (ngModelChange)="borrador.set($event)"
+        name="borrador"
+        [maxlength]="maxCaracteres"
+        [attr.placeholder]="'mensajes.escribir' | translate"
+      ></textarea>
+
+      <div class="acciones">
+        <button
+          type="submit"
+          class="primary-btn"
+          [disabled]="enviando() || caracteres > maxCaracteres"
+        >
+          {{ enviando() ? ('mensajes.enviando' | translate) : ('mensajes.enviar' | translate) }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
