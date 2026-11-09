@@ -4,6 +4,8 @@ import { metricasEs } from './strings-metricas';
 import { organizacionesEn } from './strings-organizaciones-en';
 import { gestionCasosEn } from './strings-gestionar-casos-en';
 import { metricasEn } from './strings-metricas-en';
+import { chatCasoEs } from './strings-chat-caso';
+import { chatCasoEn } from './strings-chat-caso-en';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
@@ -11,6 +13,8 @@ export const es = {
   gestionCasos: gestionCasosEs,
   // HU-34: métricas de la comunidad (textos en strings-metricas.ts)
   metricas: metricasEs,
+  // HU-22: chat en vivo del caso (textos en strings-chat-caso.ts)
+  chatCaso: chatCasoEs,
   shared: {
     brand: {
       marca: 'R',
@@ -485,6 +489,7 @@ export const en = {
   organizaciones: organizacionesEn,
   gestionCasos: gestionCasosEn,
   metricas: metricasEn,
+  chatCaso: chatCasoEn,
   shared: {
     brand: {
       marca: 'R',
