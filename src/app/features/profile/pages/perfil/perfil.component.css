@@ -407,3 +407,9 @@ dd {
   font-size: 0.9rem;
 }
 
+
+/* HU-22: enlace al chat del caso con el mismo aspecto que "Ver" */
+.enlace-chat {
+  text-decoration: none;
+  white-space: nowrap;
+}

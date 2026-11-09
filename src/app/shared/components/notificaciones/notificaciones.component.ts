@@ -81,6 +81,12 @@ export class NotificacionesComponent implements OnInit {
       this.marcarComoLeida(notificacion);
     }
 
+    // HU-22: un mensaje nuevo del chat lleva directo a la conversacion del caso.
+    if (notificacion.tipo === 'MENSAJE_CASO' && notificacion.idReporte) {
+      void this.router.navigate(['/casos', notificacion.idReporte, 'chat']);
+      return;
+    }
+
     if (!notificacion.idReporte && notificacion.idSolicitud && this.authService.esAdmin()) {
       void this.router.navigate(['/admin/solicitudes-voluntarios']);
       return;
