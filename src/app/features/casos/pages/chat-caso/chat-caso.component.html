@@ -1,0 +1,103 @@
+<section class="chat-caso-page">
+  <app-back-button ruta="/perfil" />
+
+  <div class="chat-card">
+    <header class="chat-cabecera">
+      <div>
+        <h1>{{ 'chatCaso.titulo' | translate: { id: idCaso() ?? '' } }}</h1>
+        <p class="subtitulo">{{ 'chatCaso.subtitulo' | translate }}</p>
+      </div>
+
+      @if (otrosParticipantes().length > 0) {
+        <ul class="participantes" [attr.aria-label]="'chatCaso.participantes' | translate">
+          @for (p of otrosParticipantes(); track p.idUsuario) {
+            <li class="participante">
+              <span class="punto" [class.en-linea]="p.enLinea" aria-hidden="true"></span>
+              <span class="participante-nombre">{{ p.nombre ?? ('chatCaso.alguien' | translate) }}</span>
+              <span class="participante-rol">{{ etiquetaRol(p) }}</span>
+              <small class="presencia">
+                @if (p.enLinea) {
+                  {{ 'chatCaso.enLinea' | translate }}
+                } @else if (p.ultimaVez) {
+                  {{ 'chatCaso.ultimaVez' | translate: { fecha: (p.ultimaVez | date: 'dd/MM HH:mm') ?? '' } }}
+                } @else {
+                  {{ 'chatCaso.desconectado' | translate }}
+                }
+              </small>
+            </li>
+          }
+        </ul>
+      }
+    </header>
+
+    @if (error()) {
+      <p class="chat-error" role="alert">{{ error() }}</p>
+    }
+
+    @if (cargando()) {
+      <p class="hint">{{ 'chatCaso.cargando' | translate }}</p>
+    } @else if (!sinAcceso() && idCaso() !== null) {
+      <div class="mensajes" #lista aria-live="polite">
+        @for (m of mensajes(); track m.idMensaje) {
+          <article class="mensaje" [class.propio]="esPropio(m)">
+            @if (!esPropio(m)) {
+              <span class="emisor">{{ m.nombreEmisor ?? nombreDe(m.idEmisor) }}</span>
+            }
+            @switch (m.tipo) {
+              @case ('UBICACION') {
+                <a class="ubicacion" [href]="urlMapa(m)" target="_blank" rel="noopener">
+                  📍 {{ 'chatCaso.verUbicacion' | translate }}
+                </a>
+              }
+              @case ('FOTO') {
+                <a [href]="m.fotoUrl" target="_blank" rel="noopener">
+                  <img class="foto" [src]="m.fotoUrl" [alt]="'chatCaso.fotoAlt' | translate" loading="lazy" />
+                </a>
+              }
+            }
+            @if (m.contenido) {
+              <p class="contenido">{{ m.contenido }}</p>
+            }
+            <time class="hora" [attr.datetime]="m.fechaEnvio">{{ m.fechaEnvio | date: 'dd/MM HH:mm' }}</time>
+          </article>
+        } @empty {
+          <p class="hint vacio">{{ 'chatCaso.vacio' | translate }}</p>
+        }
+      </div>
+
+      <p class="escribiendo" aria-live="polite">
+        @if (nombreEscribiendo(); as nombre) {
+          {{ 'chatCaso.escribiendo' | translate: { nombre } }}
+        }
+      </p>
+
+      <form class="redactar" (ngSubmit)="enviarTexto()">
+        <label class="visualmente-oculto" for="chat-texto">{{ 'chatCaso.placeholder' | translate }}</label>
+        <textarea
+          id="chat-texto"
+          name="texto"
+          rows="2"
+          [maxlength]="contenidoMax"
+          [(ngModel)]="texto"
+          (input)="alEscribir()"
+          (keydown.enter)="$event.preventDefault(); enviarTexto()"
+          [placeholder]="'chatCaso.placeholder' | translate"
+        ></textarea>
+        <div class="acciones">
+          <button type="button" class="btn-secundario" [disabled]="enviando()" (click)="compartirUbicacion()"
+                  [title]="'chatCaso.compartirUbicacion' | translate">
+            📍 <span>{{ 'chatCaso.compartirUbicacion' | translate }}</span>
+          </button>
+          <button type="button" class="btn-secundario" [disabled]="enviando()" (click)="fotoInput.click()"
+                  [title]="'chatCaso.adjuntarFoto' | translate">
+            📷 <span>{{ 'chatCaso.adjuntarFoto' | translate }}</span>
+          </button>
+          <input #fotoInput type="file" accept="image/jpeg,image/png,image/webp" hidden (change)="enviarFoto($event)" />
+          <button type="submit" class="btn-enviar" [disabled]="enviando() || !texto.trim()">
+            {{ enviando() ? ('chatCaso.enviando' | translate) : ('chatCaso.enviar' | translate) }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</section>

@@ -1,3 +1,4 @@
+import { MensajeCaso } from './mensaje-caso.model';
 import { Notificacion } from './notificacion.model';
 
 export type TipoEventoWebSocket =
@@ -22,12 +23,8 @@ export interface DatosChatEscribiendo {
   idUsuario: number;
 }
 
-export interface DatosChatMensaje {
-  idCaso: number;
-  idMensaje: number;
-  idEmisor: number;
-  contenido: string;
-}
+/** HU-22: el payload de chat.message es el mensaje completo del chat del caso. */
+export type DatosChatMensaje = MensajeCaso;
 
 export interface DatosUsuarioEnLinea {
   idUsuario: number;

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { casosRoutes } from './features/casos/casos.routes';
 import { adminRoutes } from './features/admin/admin.routes';
 import { authRoutes } from './features/auth/auth.routes';
 import { landingRoutes } from './features/landing/landing.routes';
@@ -14,5 +15,6 @@ export const routes: Routes = [
   ...adminRoutes,
   ...voluntarioRoutes,
   ...notificacionesRoutes,
+  ...casosRoutes,
   { path: 'chat', component: BandejaChatComponent },
 ];

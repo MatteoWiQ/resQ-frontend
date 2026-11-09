@@ -91,6 +91,8 @@
               }
               <span [class]="claseEstado(reporte.estado)">{{ etiquetaEstado(reporte.estado) }}</span>
               <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">{{ 'perfil.ver' | translate }}</button>
+              <!-- HU-22: chat con la organizacion y el voluntario del caso -->
+              <a class="btn-detalle enlace-chat" [routerLink]="['/casos', reporte.idReporte, 'chat']">💬 {{ 'chatCaso.abrir' | translate }}</a>
             </div>
           </li>
         }

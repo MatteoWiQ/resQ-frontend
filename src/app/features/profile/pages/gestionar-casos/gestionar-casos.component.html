@@ -115,6 +115,9 @@
                   <p class="ayuda">{{ 'gestionCasos.cambiarEstado.sinTransiciones' | translate }}</p>
                 }
 
+                <!-- HU-22: chat con el reportante y el voluntario del caso -->
+                <a class="btn-volver enlace" [routerLink]="['/casos', caso.idReporte, 'chat']">💬 {{ 'chatCaso.abrir' | translate }}</a>
+
                 <button type="button" class="btn-volver" (click)="toggleSeguimiento(caso)">
                   {{
                     casoExpandido() === caso.idReporte
