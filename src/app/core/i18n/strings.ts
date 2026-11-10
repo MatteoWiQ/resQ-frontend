@@ -30,9 +30,6 @@ export const es = {
       RESUELTO: 'Resuelto',
       CANCELADO: 'Cancelado',
     },
-    // HU-19: resultado de la revisión del caso por un voluntario. Vive en el
-    // catalogo compartido (y no en perfil) porque tambien lo muestra el detalle
-    // del caso en el panel administrativo.
     estadosRevision: {
       PENDIENTE_REVISION: 'En revisión',
       APROBADO: 'Aprobado',
@@ -61,7 +58,6 @@ export const es = {
       panelAdmin: 'Panel administrativo',
       reportar: 'Reportar',
     },
-    // HU-logout: cabecera compartida (landing/perfil/panel).
     header: {
       cerrarSesion: 'Cerrar sesión',
       notificaciones: 'Notificaciones',
@@ -329,7 +325,6 @@ export const es = {
       RESCATE: 'Rescate',
     },
   },
-  // ============ HU-19: aceptar o rechazar solicitudes ============
   solicitudes: {
     titulo: 'Solicitudes pendientes',
     subtitulo: 'Valida la información de los casos reportados por los usuarios.',
@@ -372,7 +367,6 @@ export const es = {
     archivar: 'Archivar',
     abrir: 'Abrir notificación',
   },
-  // HU-27: mensajes entre usuarios.
   mensajes: {
     bandejaTitulo: 'Mensajes',
     nuevaConversacion: 'Nueva conversación',
@@ -488,10 +482,6 @@ export const es = {
 /** Forma de referencia (catalogo es) de la que se derivan las claves validas. */
 export type CatalogShape = typeof es;
 
-/**
- * Un catalogo puede estar incompleto: el ingles todavia no cubre todas las
- * claves y las ausentes caen al espanol en TranslateService.
- */
 export type StringCatalog = { readonly [key: string]: string | StringCatalog };
 
 type ExtractPaths<T> = {
@@ -539,6 +529,8 @@ export const en = {
       nombre: 'ResQ',
     },
     volverAtras: 'Back',
+    abrirMenu: 'Open menu',
+    cerrarMenu: 'Close menu',
     ubicacionSeleccionada: 'Selected location',
     estados: {
       PENDIENTE: 'Pending',
@@ -834,15 +826,13 @@ export const en = {
       },
     },
   },
-  // HU-19: notificaciones.
+  mensajes: {
+    bandejaTitulo: 'Messages',
+  },
   notificaciones: 'Notifications',
-  // HU-19: bandeja.
   bandeja: 'Inbox',
-  // HU-19: mensaje.
   mensaje: 'Message',
-  // HU-19: solicitud.
   solicitud: 'Request',
-  // HU-19: administrar.
   administrar: 'Manage',
 };
 

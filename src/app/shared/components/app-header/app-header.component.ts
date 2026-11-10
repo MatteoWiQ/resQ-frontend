@@ -24,7 +24,7 @@ import { LanguageSwitcherComponent } from '../language-switcher/language-switche
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, FeatureToggleDirective],
+  imports: [RouterLink, TranslatePipe, FeatureToggleDirective, LanguageSwitcherComponent],
   templateUrl: './app-header.component.html',
   styleUrl: './app-header.component.css',
 })
