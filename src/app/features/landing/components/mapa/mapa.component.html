@@ -41,13 +41,28 @@
   </nav>
 
   <ul class="leyenda" [attr.aria-label]="'landing.mapa.leyenda' | translate">
-    @for (estado of estados; track estado) {
-      <li class="leyenda__item">
-        <span class="leyenda__punto" [style.background-color]="colorEstado(estado)"></span>
-        {{ etiquetaEstado(estado) }}
-      </li>
-    }
-  </ul>
+  @for (estado of estados; track estado) {
+    <li
+      class="leyenda__item"
+      [class.leyenda__item--activo]="estaEstadoActivo(estado)"
+      [attr.aria-pressed]="estaEstadoActivo(estado)"
+      role="button"
+      tabindex="0"
+      (click)="seleccionarEstadoFiltro(estado)"
+      (keydown.enter)="seleccionarEstadoFiltro(estado)"
+      (keydown.space)="seleccionarEstadoFiltro(estado); $event.preventDefault()"
+    >
+      <span class="leyenda__punto" [style.background-color]="colorEstado(estado)"></span>
+      {{ etiquetaEstado(estado) }}
+    </li>
+  }
+</ul>
+
+@if (estadoFiltro()) {
+  <button type="button" class="limpiar-filtro" (click)="seleccionarEstadoFiltro(estadoFiltro()!)">
+    ✕ Quitar filtro de estado: {{ etiquetaEstado(estadoFiltro()!) }}
+  </button>
+}
 
   <div class="mapa-layout">
     <div class="mapa-container" #mapContainer></div>
