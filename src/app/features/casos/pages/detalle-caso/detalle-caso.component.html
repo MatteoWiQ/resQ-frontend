@@ -43,9 +43,15 @@
           <div class="detalle-chips">
             <span [class]="'insignia-caso ' + insignia()">{{ etiquetaInsignia() }}</span>
             <span class="chip-tipo">{{ etiquetaTipo() }}</span>
+            @if (textoAnimal()) {
+              <span class="chip-tipo">{{ textoAnimal() }}</span>
+            }
           </div>
           <h1>{{ titulo() }}</h1>
           <p class="detalle-meta">{{ textoReportado() }} · {{ textoEstado() }}</p>
+          @if (textoReferencia()) {
+            <p class="detalle-meta detalle-referencia">📍 {{ textoReferencia() }}</p>
+          }
         </header>
 
         <section class="detalle-bloque" aria-labelledby="lo-que-vio">
@@ -82,6 +88,80 @@
 
       <!-- Columna lateral: una accion principal -->
       <aside class="detalle-lateral">
+        @if (mostrarNecesidades()) {
+          <section class="tarjeta-lateral tarjeta-necesidades" aria-labelledby="necesidades-titulo">
+            <div>
+              <h2 id="necesidades-titulo">{{ 'detalleCaso.necesidades.titulo' | translate }}</h2>
+              @if (necesidades().length > 0) {
+                <span class="texto-suave">{{ textoProgreso() }}</span>
+                <div class="barra-progreso" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                     [attr.aria-valuenow]="porcentajeCubierto()" [attr.aria-label]="textoProgreso()">
+                  <span [style.width.%]="porcentajeCubierto()"></span>
+                </div>
+              } @else {
+                <p class="texto-suave">{{ 'detalleCaso.necesidades.vacio' | translate }}</p>
+              }
+            </div>
+
+            <ul class="necesidades">
+              @for (n of necesidades(); track n.idNecesidad) {
+                <li [class]="'necesidad ' + n.estado.toLowerCase()">
+                  <span class="necesidad-marca" aria-hidden="true">
+                    @if (n.estado === 'CUBIERTA') {
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                           stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10" /></svg>
+                    }
+                  </span>
+                  <span class="necesidad-texto">
+                    <span class="necesidad-tipo">{{ etiquetaNecesidad(n.tipo) }}</span>
+                    <span class="necesidad-estado">{{ estadoNecesidad(n) }}</span>
+                  </span>
+                  <span class="necesidad-acciones">
+                    @if (puedeOfrecerse(n)) {
+                      <button type="button" class="boton-mini principal" [disabled]="actualizandoNecesidad()"
+                              (click)="accionNecesidad(n, 'ofrecer')">
+                        {{ (haySesion() ? 'detalleCaso.necesidades.meOfrezco' : 'detalleCaso.necesidades.ingresarParaOfrecer') | translate }}
+                      </button>
+                    }
+                    @if (gestiona() && abierto() && n.estado === 'OFRECIDA') {
+                      <button type="button" class="boton-mini principal" [disabled]="actualizandoNecesidad()"
+                              (click)="accionNecesidad(n, 'confirmar')">{{ 'detalleCaso.necesidades.confirmar' | translate }}</button>
+                    }
+                    @if (abierto() && n.estado !== 'BUSCADA' && (gestiona() || esMiOferta(n))) {
+                      <button type="button" class="boton-mini" [disabled]="actualizandoNecesidad()"
+                              (click)="accionNecesidad(n, 'liberar')">
+                        {{ (gestiona() ? 'detalleCaso.necesidades.liberar' : 'detalleCaso.necesidades.retirar') | translate }}
+                      </button>
+                    }
+                    @if (gestiona() && abierto() && n.estado === 'BUSCADA') {
+                      <button type="button" class="boton-quitar" [disabled]="actualizandoNecesidad()"
+                              [attr.aria-label]="textoQuitar(n)" [attr.title]="textoQuitar(n)" (click)="quitarNecesidad(n)">×</button>
+                    }
+                  </span>
+                </li>
+              }
+            </ul>
+
+            @if (gestiona() && abierto() && tiposParaAgregar().length > 0) {
+              <div class="agregar-necesidad">
+                <label class="visually-hidden" for="necesidad-nueva">{{ 'detalleCaso.necesidades.agregarEtiqueta' | translate }}</label>
+                <select id="necesidad-nueva" name="necesidadNueva" [value]="necesidadNueva"
+                        (change)="necesidadNueva = $any($event.target).value">
+                  <option value="">{{ 'detalleCaso.necesidades.elegir' | translate }}</option>
+                  @for (t of tiposParaAgregar(); track t) {
+                    <option [value]="t">{{ etiquetaNecesidad(t) }}</option>
+                  }
+                </select>
+                <button type="button" class="boton-mini" [disabled]="!necesidadNueva || actualizandoNecesidad()"
+                        (click)="agregarNecesidad()">{{ 'detalleCaso.necesidades.agregar' | translate }}</button>
+              </div>
+            }
+            @if (errorNecesidad()) {
+              <p class="texto-error" role="alert">{{ errorNecesidad() }}</p>
+            }
+          </section>
+        }
+
         <section class="tarjeta-lateral" aria-labelledby="ayuda-titulo">
           <h2 id="ayuda-titulo">{{ 'detalleCaso.ayuda.titulo' | translate }}</h2>
           @if (!abierto()) {

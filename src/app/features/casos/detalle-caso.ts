@@ -1,4 +1,4 @@
-import { Reporte, SeguimientoCaso } from '../../shared/models/reporte.model';
+import { NovedadCaso, Reporte } from '../../shared/models/reporte.model';
 
 /**
  * Rediseño: reglas del detalle de un caso que no dependen de la pantalla.
@@ -25,7 +25,7 @@ export interface EventoCaso {
  * Linea de tiempo del caso, de lo mas reciente a lo mas antiguo. Solo entra lo que
  * tiene fecha: el reporte, la revision aprobada y las novedades de la organizacion.
  */
-export function lineaDeTiempo(reporte: Reporte, seguimientos: SeguimientoCaso[]): EventoCaso[] {
+export function lineaDeTiempo(reporte: Reporte, seguimientos: NovedadCaso[]): EventoCaso[] {
   const eventos: EventoCaso[] = [{ tipo: 'reportado', fecha: reporte.fechaCreacion, nota: null, fotoUrl: null }];
   if (reporte.estadoRevision === 'APROBADO' && reporte.fechaRevision) {
     eventos.push({ tipo: 'revisado', fecha: reporte.fechaRevision, nota: null, fotoUrl: null });

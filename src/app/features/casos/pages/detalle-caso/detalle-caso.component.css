@@ -423,6 +423,154 @@
   margin-left: auto;
 }
 
+/* Que necesita */
+.detalle-page .barra-progreso {
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 999px;
+  background: #eef2ef;
+  overflow: hidden;
+}
+
+.detalle-page .barra-progreso span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.detalle-page .necesidades {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detalle-page .necesidad {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detalle-page .necesidad-marca {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 2px dashed #c9d3cd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.detalle-page .necesidad.cubierta .necesidad-marca {
+  border: 0;
+  background: var(--primary);
+}
+
+.detalle-page .necesidad.ofrecida .necesidad-marca {
+  border-style: solid;
+  border-color: var(--primary);
+}
+
+.detalle-page .necesidad.buscada .necesidad-marca {
+  border-color: #d9a27f;
+}
+
+.detalle-page .necesidad-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-page .necesidad-tipo {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.detalle-page .necesidad-estado {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.detalle-page .necesidad.buscada .necesidad-estado {
+  color: var(--urgente-texto);
+}
+
+.detalle-page .necesidad-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.detalle-page .boton-mini {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1.5px solid #c9d3cd;
+  background: var(--panel);
+  color: var(--primary-strong);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.detalle-page .boton-mini.principal {
+  border-color: var(--primary-strong);
+  background: var(--primary-strong);
+  color: #fff;
+}
+
+.detalle-page .boton-mini:disabled,
+.detalle-page .boton-quitar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.detalle-page .boton-quitar {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.detalle-page .boton-quitar:hover {
+  background: #eef2ef;
+}
+
+.detalle-page .agregar-necesidad {
+  display: flex;
+  gap: 8px;
+}
+
+.detalle-page .agregar-necesidad select {
+  flex: 1;
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #c9d3cd;
+  background: var(--panel);
+  font: inherit;
+  font-size: 14px;
+}
+
+.detalle-page .boton-mini:focus-visible,
+.detalle-page .boton-quitar:focus-visible,
+.detalle-page .agregar-necesidad select:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
 /* Contacto de quien reporto */
 .detalle-page .contacto-nombre {
   margin: 0;
