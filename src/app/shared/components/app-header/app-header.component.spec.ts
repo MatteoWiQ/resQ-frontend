@@ -9,14 +9,17 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificacionService } from '../../../core/services/notificacion.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { Notificacion } from '../../../shared/models/notificacion.model';
+import { OrganizacionService } from '../../../core/services/organizacion.service';
 
-describe('AppHeaderComponent (HU-logout/HU-37)', () => {
+describe('AppHeaderComponent (rediseño de la navegacion)', () => {
+  let organizacion: { idOrganizacion: number } | null = null;
   let listaActual: Notificacion[] = [];
   let notificacionesSignal: ReturnType<typeof signal<Notificacion[]>>;
 
   beforeEach(async () => {
     localStorage.clear();
     listaActual = [];
+    organizacion = null;
     notificacionesSignal = signal<Notificacion[]>([]);
 
     await TestBed.configureTestingModule({
@@ -42,6 +45,10 @@ describe('AppHeaderComponent (HU-logout/HU-37)', () => {
           },
         },
         {
+          provide: OrganizacionService,
+          useValue: { obtenerDeRepresentante: vi.fn(() => of(organizacion)) },
+        },
+        {
           provide: WebSocketService,
           useValue: { enEvento: () => of() },
         },
@@ -62,104 +69,169 @@ describe('AppHeaderComponent (HU-logout/HU-37)', () => {
     );
   }
 
-  it('sin sesion muestra "Reportar" que lleva a login y no muestra cerrar sesion', () => {
+  function montar() {
     const fixture = TestBed.createComponent(AppHeaderComponent);
     fixture.detectChanges();
+    return { fixture, dom: fixture.nativeElement as HTMLElement };
+  }
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const reportar = compiled.querySelector('.primary-btn');
-    expect(reportar?.textContent).toContain('Reportar');
-    expect(reportar?.getAttribute('routerLink')).toBe('/login');
-    expect(compiled.querySelector('.logout-btn')).toBeNull();
+  function abrirCuenta(fixture: ReturnType<typeof montar>['fixture'], dom: HTMLElement): void {
+    dom.querySelector<HTMLButtonElement>('.avatar-btn')!.click();
+    fixture.detectChanges();
+  }
+
+  it('muestra un solo menu con Casos, Organizaciones y Como ayudar, sin "Inicio" ni "Mapa"', () => {
+    const { dom } = montar();
+
+    expect(dom.querySelectorAll('nav').length).toBe(1);
+    const enlaces = Array.from(dom.querySelectorAll('nav a')).map((a) => a.textContent?.trim());
+    expect(enlaces).toEqual(['Casos', 'Organizaciones', 'Cómo ayudar', 'Iniciar sesión']);
+    expect(dom.querySelector('nav a[href="/mapa"]')).not.toBeNull();
+    expect(dom.querySelector('nav a[href="/#ayudar"]')).not.toBeNull();
   });
 
-  it('con sesion muestra "Cerrar sesion" en lugar de "Reportar"', () => {
-    crearConSesion();
-    const fixture = TestBed.createComponent(AppHeaderComponent);
-    fixture.detectChanges();
+  it('el logo lleva al inicio', () => {
+    const { dom } = montar();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.logout-btn')?.textContent?.toLowerCase()).toContain('cerrar');
-    expect(compiled.querySelector('.primary-btn')).toBeNull();
+    expect(dom.querySelector('a.marca')?.getAttribute('href')).toBe('/');
   });
 
-  it('al hacer click en cerrar sesion limpia la sesion y navega a la raiz', () => {
+  it('sin sesion "Reportar un caso" lleva a iniciar sesion y no hay iconos ni avatar', () => {
+    const { dom } = montar();
+
+    const reportar = dom.querySelector('.acciones .reportar-btn');
+    expect(reportar?.textContent).toContain('Reportar un caso');
+    expect(reportar?.getAttribute('href')).toBe('/login');
+    expect(dom.querySelector('.avatar-btn')).toBeNull();
+    expect(dom.querySelector('.icono-btn')).toBeNull();
+  });
+
+  it('con sesion "Reportar un caso" abre el formulario y se ven los iconos y el avatar', () => {
     crearConSesion();
-    const auth = TestBed.inject(AuthService);
-    const router = TestBed.inject(Router);
-    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const { dom } = montar();
 
-    const fixture = TestBed.createComponent(AppHeaderComponent);
-    fixture.detectChanges();
+    expect(dom.querySelector('.acciones .reportar-btn')?.getAttribute('href')).toBe('/reportes/nuevo');
+    expect(dom.querySelector('.icono-btn[href="/chat"]')).not.toBeNull();
+    expect(dom.querySelector('.icono-btn[href="/notificaciones"]')).not.toBeNull();
+    expect(dom.querySelector('.avatar')?.textContent).toBe('A');
+    expect(dom.querySelector('nav a[href="/login"]')).toBeNull();
+  });
 
-    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.logout-btn')?.click();
+  it('con sesion ya no repite "Mensajes", "Notificaciones" ni "Mi Perfil" como texto en el menu', () => {
+    crearConSesion();
+    const { dom } = montar();
 
-    expect(auth.usuarioActual()).toBeNull();
-    expect(localStorage.getItem('resq_token')).toBeNull();
-    expect(navegar).toHaveBeenCalledWith(['/']);
+    const textos = Array.from(dom.querySelectorAll('nav a')).map((a) => a.textContent?.trim());
+    expect(textos).toEqual(['Casos', 'Organizaciones', 'Cómo ayudar']);
   });
 
   it('muestra el contador de notificaciones sin leer', () => {
     crearConSesion();
     listaActual = [
-      { idNotificacion: 1, idUsuario: 5, idReporte: 1, tipo: 'SOLICITUD_APROBADA', mensaje: 'a', leida: false, archivada: false, fechaCreacion: '2026-10-01T00:00:00' },
-      { idNotificacion: 2, idUsuario: 5, idReporte: 1, tipo: 'SOLICITUD_APROBADA', mensaje: 'b', leida: true, archivada: false, fechaCreacion: '2026-10-01T00:00:00' },
-      { idNotificacion: 3, idUsuario: 5, idReporte: 1, tipo: 'SOLICITUD_APROBADA', mensaje: 'c', leida: false, archivada: false, fechaCreacion: '2026-10-01T00:00:00' },
-    ] as Notificacion[];
-    const fixture = TestBed.createComponent(AppHeaderComponent);
-    fixture.detectChanges();
+      { idNotificacion: 1, idUsuario: 5, idReporte: 1, tipo: 'SISTEMA', mensaje: 'x', leida: false, fechaCreacion: '' },
+      { idNotificacion: 2, idUsuario: 5, idReporte: 1, tipo: 'SISTEMA', mensaje: 'y', leida: true, fechaCreacion: '' },
+    ];
+    const { dom } = montar();
 
-    expect((fixture.nativeElement as HTMLElement).querySelector('.notif-badge')?.textContent).toBe('2');
+    expect(dom.querySelector('.notif-badge')?.textContent?.trim()).toBe('1');
+    expect(dom.querySelector('.icono-btn[href="/notificaciones"]')?.getAttribute('aria-label')).toBe(
+      'Notificaciones, 1 sin leer',
+    );
   });
 
-  it('el icono de notificaciones lleva a la bandeja', () => {
+  it('el menu de la cuenta tiene Mi perfil, Mis casos e idioma, y se cierra con Escape', () => {
     crearConSesion();
-    const fixture = TestBed.createComponent(AppHeaderComponent);
-    fixture.detectChanges();
+    const { fixture, dom } = montar();
+    expect(dom.querySelector('.menu-cuenta')).toBeNull();
 
-    const notificacionesLink = (fixture.nativeElement as HTMLElement).querySelector('.bell-btn');
-    expect(notificacionesLink?.getAttribute('routerLink')).toBe('/notificaciones');
+    abrirCuenta(fixture, dom);
+
+    expect(dom.querySelector('.avatar-btn')?.getAttribute('aria-expanded')).toBe('true');
+    expect(dom.querySelector('.menu-cuenta a[href="/perfil"]')?.textContent).toContain('Mi perfil');
+    const misCasos = Array.from(dom.querySelectorAll('.menu-cuenta a')).find((a) => a.textContent?.includes('Mis casos'));
+    expect(misCasos?.getAttribute('href')).toBe('/perfil');
+    expect(dom.querySelector('.menu-cuenta a[href="/voluntario/solicitudes"]')).toBeNull();
+    expect(dom.querySelector('.menu-cuenta-idioma')).not.toBeNull();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+    expect(dom.querySelector('.menu-cuenta')).toBeNull();
   });
 
-  it('el boton de menu alterna el panel de navegacion en pantallas pequenas', () => {
+  it('si la cuenta representa una organizacion, "Mis casos" lleva a su panel', () => {
     crearConSesion();
-    const fixture = TestBed.createComponent(AppHeaderComponent);
+    organizacion = { idOrganizacion: 3 };
+    const { fixture, dom } = montar();
+
+    abrirCuenta(fixture, dom);
+
+    const misCasos = Array.from(dom.querySelectorAll('.menu-cuenta a')).find((a) => a.textContent?.includes('Mis casos'));
+    expect(misCasos?.getAttribute('href')).toBe('/organizaciones/panel');
+  });
+
+  it('un voluntario ve sus solicitudes por revisar en el menu de la cuenta', () => {
+    crearConSesion('VOLUNTARIO');
+    const { fixture, dom } = montar();
+
+    abrirCuenta(fixture, dom);
+
+    expect(dom.querySelector('.menu-cuenta a[href="/voluntario/solicitudes"]')).not.toBeNull();
+  });
+
+  it('cambia el idioma desde el menu de la cuenta', () => {
+    crearConSesion();
+    const { fixture, dom } = montar();
+    abrirCuenta(fixture, dom);
+
+    const en = Array.from(dom.querySelectorAll<HTMLButtonElement>('.menu-cuenta-idioma button')).find(
+      (b) => b.textContent === 'EN',
+    )!;
+    en.click();
     fixture.detectChanges();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const toggle = compiled.querySelector<HTMLButtonElement>('.menu-toggle');
-    expect(toggle?.getAttribute('aria-expanded')).toBe('false');
-    expect(compiled.querySelector('.header-panel.abierto')).toBeNull();
+    expect(dom.querySelector('nav a')?.textContent?.trim()).toBe('Cases');
+    expect(dom.querySelector('.menu-cuenta')).not.toBeNull();
+  });
 
-    toggle?.click();
-    fixture.detectChanges();
-    expect(toggle?.getAttribute('aria-expanded')).toBe('true');
-    expect(compiled.querySelector('.header-panel.abierto')).not.toBeNull();
+  it('al cerrar sesion limpia la sesion y navega a la raiz', () => {
+    crearConSesion();
+    const { fixture, dom } = montar();
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
-    toggle?.click();
+    abrirCuenta(fixture, dom);
+    dom.querySelector<HTMLButtonElement>('.menu-cuenta-salir')!.click();
     fixture.detectChanges();
-    expect(toggle?.getAttribute('aria-expanded')).toBe('false');
-    expect(compiled.querySelector('.header-panel.abierto')).toBeNull();
+
+    expect(localStorage.getItem('resq_token')).toBeNull();
+    expect(navegar).toHaveBeenCalledWith(['/']);
+  });
+
+  it('el boton ☰ abre y cierra los enlaces en pantallas pequenas', () => {
+    const { fixture, dom } = montar();
+    const toggle = dom.querySelector<HTMLButtonElement>('.menu-toggle')!;
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(dom.querySelector('.header-panel.abierto')).toBeNull();
+
+    toggle.click();
+    fixture.detectChanges();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(dom.querySelector('.header-panel.abierto')).not.toBeNull();
+
+    toggle.click();
+    fixture.detectChanges();
+    expect(dom.querySelector('.header-panel.abierto')).toBeNull();
   });
 
   it('un admin ve el acceso al panel administrativo', () => {
     crearConSesion('ADMIN');
-    const fixture = TestBed.createComponent(AppHeaderComponent);
-    fixture.detectChanges();
+    const { dom } = montar();
 
-    expect((fixture.nativeElement as HTMLElement).querySelector('.secondary-btn')?.textContent).toContain(
-      'Panel administrativo',
-    );
+    expect(dom.querySelector('.admin-btn')?.textContent).toContain('Panel administrativo');
   });
 
-  it('en variante landing muestra los enlaces de ancla; en app no', () => {
-    const landing = TestBed.createComponent(AppHeaderComponent);
-    landing.componentRef.setInput('variante', 'landing');
-    landing.detectChanges();
-    expect((landing.nativeElement as HTMLElement).querySelector('a[href="#inicio"]')).not.toBeNull();
+  it('incluye "Reportar un caso" fijo para movil', () => {
+    const { dom } = montar();
 
-    const app = TestBed.createComponent(AppHeaderComponent);
-    app.detectChanges();
-    expect((app.nativeElement as HTMLElement).querySelector('a[href="#inicio"]')).toBeNull();
+    expect(dom.querySelector('.reportar-fijo .reportar-btn')?.textContent).toContain('Reportar un caso');
   });
 });
