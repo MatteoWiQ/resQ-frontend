@@ -8,6 +8,8 @@ import { chatCasoEs } from './strings-chat-caso';
 import { chatCasoEn } from './strings-chat-caso-en';
 import { inicioEs } from './strings-inicio';
 import { inicioEn } from './strings-inicio-en';
+import { casosEs } from './strings-casos';
+import { casosEn } from './strings-casos-en';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
@@ -19,6 +21,8 @@ export const es = {
   chatCaso: chatCasoEs,
   // Rediseño: página de Inicio (textos en strings-inicio.ts)
   inicio: inicioEs,
+  // Rediseño: página Casos, lista + mapa (textos en strings-casos.ts)
+  casos: casosEs,
   shared: {
     brand: {
       marca: 'R',
@@ -554,6 +558,7 @@ export const en = {
   metricas: metricasEn,
   chatCaso: chatCasoEn,
   inicio: inicioEn,
+  casos: casosEn,
   shared: {
     brand: {
       marca: 'R',
