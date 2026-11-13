@@ -4,7 +4,7 @@ export const casosEs = {
   filtros: {
     ariaLabel: 'Filtrar casos',
     buscar: 'Buscar casos',
-    buscarPlaceholder: 'Buscar por descripción o tipo de caso',
+    buscarPlaceholder: 'Buscar casos...',
     estado: 'Estado',
     tipo: 'Tipo de caso',
     tipoTodos: 'Todos los tipos',
@@ -14,6 +14,7 @@ export const casosEs = {
     animal: 'Animal',
     necesita: 'Necesita',
     proximamente: 'Próximamente',
+    pronto: 'Pronto',
     limpiar: 'Quitar filtros',
   },
   estados: {
