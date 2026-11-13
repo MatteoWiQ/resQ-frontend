@@ -140,6 +140,20 @@
   line-height: 1;
 }
 
+.ingresar-btn {
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: var(--primary-strong);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ingresar-btn:hover {
+  background: var(--panel-soft);
+}
+
 .secundario-btn {
   padding: 11px 14px;
   border-radius: 10px;
@@ -319,6 +333,7 @@
   }
 
   .acciones > .reportar-btn,
+  .ingresar-btn,
   .admin-btn {
     display: none;
   }
@@ -376,6 +391,28 @@
   }
 
   .acciones {
-    gap: 6px;
+    gap: 4px;
+  }
+
+  .icono-btn,
+  .avatar-btn,
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .avatar-btn {
+    padding: 0;
+  }
+
+  .avatar-btn svg {
+    display: none;
+  }
+}
+
+/* En los telefonos mas angostos queda solo el icono de la marca. */
+@media (max-width: 420px) {
+  .marca-nombre {
+    display: none;
   }
 }

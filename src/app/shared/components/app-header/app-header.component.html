@@ -83,6 +83,7 @@
         }
       </div>
     } @else {
+      <a routerLink="/login" class="ingresar-btn">{{ 'shared.nav.ingresar' | translate }}</a>
       <div class="idioma-suelto" role="group" [attr.aria-label]="'shared.nav.idioma' | translate">
         <button type="button" [class.activo]="idioma() === 'es'" [attr.aria-pressed]="idioma() === 'es'"
                 (click)="cambiarIdioma('es')">ES</button>
