@@ -256,3 +256,44 @@ button {
   background: #e4e0ef;
   color: #4b3a6e;
 }
+/* --------------------------------------------------------------------------
+   Rediseño: secciones con titulo, subtitulo y enlace a la derecha
+   -------------------------------------------------------------------------- */
+.seccion {
+  padding-top: 64px;
+}
+
+.seccion-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 22px;
+}
+
+.seccion-cabecera h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-titulos);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.seccion-cabecera p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.enlace-flecha {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.enlace-flecha:hover {
+  text-decoration: underline;
+}

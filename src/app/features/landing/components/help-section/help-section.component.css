@@ -1,38 +1,84 @@
-.help-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+.ayudar {
+  scroll-margin-top: 110px;
 }
 
-.help-card {
-  background: var(--panel);
+.formas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px 20px;
+  border-radius: 18px;
+  background: var(--panel);
+  overflow: hidden;
 }
 
-.icon {
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  border-radius: 16px;
-  background: #f4d7d2;
-  font-size: 1.5rem;
-  margin-bottom: 16px;
+.formas li + li {
+  border-top: 1px solid var(--border);
 }
 
-.help-card h3 {
-  margin: 0 0 10px;
+.forma {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 24px;
   color: var(--text);
+  text-decoration: none;
+  transition: background 0.15s ease;
 }
 
-.help-card p {
+.forma:hover {
+  background: #f8faf8;
+}
+
+.forma:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: -3px;
+}
+
+.forma-icono {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-soft);
+  color: var(--primary-strong);
+}
+
+.forma-texto {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+}
+
+.forma-titulo {
+  font-family: var(--font-titulos);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.forma-descripcion {
   color: var(--muted);
+  font-size: 15px;
 }
 
-@media (max-width: 980px) {
-  .help-grid {
-    grid-template-columns: 1fr;
+.forma-accion {
+  flex-shrink: 0;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+@media (max-width: 600px) {
+  .forma {
+    flex-wrap: wrap;
+    padding: 18px;
+  }
+
+  .forma-accion {
+    width: 100%;
+    padding-left: 64px;
   }
 }

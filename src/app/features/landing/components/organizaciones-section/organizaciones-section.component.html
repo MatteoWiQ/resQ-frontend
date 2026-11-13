@@ -1,0 +1,23 @@
+<section class="orgs seccion" id="orgs" aria-labelledby="orgs-titulo">
+  <div class="orgs-caja" [class.con-lista]="organizaciones().length > 0">
+    <div class="orgs-texto">
+      <h2 id="orgs-titulo">{{ 'inicio.organizaciones.titulo' | translate }}</h2>
+      <p>{{ 'inicio.organizaciones.subtitulo' | translate }}</p>
+      <a routerLink="/organizaciones/registro" class="orgs-unete">{{ 'inicio.organizaciones.unete' | translate }}</a>
+    </div>
+
+    @if (organizaciones().length > 0) {
+      <ul class="orgs-lista">
+        @for (org of organizaciones(); track org.idOrganizacion) {
+          <li class="org">
+            @if (org.logoUrl) {
+              <img [src]="org.logoUrl" [alt]="'inicio.organizaciones.logoAlt' | translate: { nombre: org.nombre }" loading="lazy" />
+            } @else {
+              <span class="org-nombre">{{ org.nombre }}</span>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>

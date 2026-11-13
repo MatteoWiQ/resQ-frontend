@@ -56,7 +56,9 @@ export function metaCaso(
   t: (clave: string, params?: Record<string, string | number>) => string,
   ahora: Date = new Date(),
 ): string {
-  const tipo = t(`shared.tiposCaso.${reporte.tipoCaso}`);
+  const clave = `shared.tiposCaso.${reporte.tipoCaso}`;
+  const traducido = t(clave);
+  const tipo = traducido === clave ? reporte.tipoCaso : traducido;
   const tiempo = haceCuanto(reporte.fechaCreacion, ahora);
   return `${tipo} · ${t(tiempo.clave, { n: tiempo.n })}`;
 }

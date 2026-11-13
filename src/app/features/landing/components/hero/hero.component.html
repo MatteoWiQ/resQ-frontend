@@ -1,34 +1,103 @@
 <section class="hero">
-  <div class="hero-copy">
-    <span class="eyebrow">{{ 'landing.hero.eyebrow' | translate }}</span>
-    <h1>{{ 'landing.hero.tituloAntes' | translate }}<span class="accent">{{ 'landing.hero.tituloAccento' | translate }}</span>{{ 'landing.hero.tituloDespues' | translate }}</h1>
-    <p>
-      {{ 'landing.hero.descripcion' | translate }}
-    </p>
+  <div class="hero-texto">
+    <h1>{{ 'inicio.hero.titulo' | translate }}</h1>
+    <p class="hero-descripcion">{{ 'inicio.hero.descripcion' | translate }}</p>
 
-    <div class="hero-actions">
-      <a routerLink="/login" class="primary-btn">{{ 'landing.hero.acciones.ayudar' | translate }}</a>
-      <button class="secondary-btn" type="button">{{ 'landing.hero.acciones.verCasos' | translate }}</button>
-    </div>
+    <div class="puertas">
+      <a class="puerta puerta-reportar" [routerLink]="rutaReportar()">
+        <span class="puerta-icono" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" />
+          </svg>
+        </span>
+        <span class="puerta-titulo">{{ 'inicio.hero.reportar.titulo' | translate }}</span>
+        <span class="puerta-descripcion">{{ 'inicio.hero.reportar.descripcion' | translate }}</span>
+        <span class="puerta-accion">{{ 'inicio.hero.reportar.accion' | translate }} <span aria-hidden="true">→</span></span>
+      </a>
 
-    <div class="stats" [attr.aria-label]="'landing.hero.estadisticas.ariaLabel' | translate">
-      <div class="stat">
-
-        <span>{{ 'landing.hero.estadisticas.rescatados' | translate }}</span>
-      </div>
-      <div class="stat">
-
-        <span>{{ 'landing.hero.estadisticas.voluntarios' | translate }}</span>
-      </div>
-      <div class="stat">
-
-        <span>{{ 'landing.hero.estadisticas.casosSemana' | translate }}</span>
-      </div>
+      <a class="puerta puerta-ayudar" routerLink="/mapa">
+        <span class="puerta-icono" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
+          </svg>
+        </span>
+        <span class="puerta-titulo">{{ 'inicio.hero.ayudar.titulo' | translate }}</span>
+        <span class="puerta-descripcion">{{ 'inicio.hero.ayudar.descripcion' | translate }}</span>
+        <span class="puerta-accion">{{ 'inicio.hero.ayudar.accion' | translate }} <span aria-hidden="true">→</span></span>
+      </a>
     </div>
   </div>
 
-  <div class="hero-visual" [attr.aria-label]="'landing.hero.imagenAriaLabel' | translate">
+  @if (casos().length > 0) {
+    <div
+      class="carrusel"
+      role="region"
+      aria-roledescription="carrusel"
+      [attr.aria-label]="'inicio.carrusel.ariaLabel' | translate"
+      [class.con-flechas]="encima()"
+      [class.tactil]="tactil()"
+      (mouseenter)="alEntrar()"
+      (mouseleave)="alSalir()"
+      (focusin)="alEntrar()"
+      (focusout)="alPerderFoco($event)"
+      (touchstart)="alTocar($event)"
+      (touchend)="alSoltar($event)"
+    >
+      @for (caso of casos(); track caso.idReporte; let i = $index) {
+        <!-- Todavia no abre el detalle: se conecta cuando exista la pagina del caso. -->
+        <article
+          class="diapositiva"
+          [class.activa]="i === indice()"
+          aria-roledescription="diapositiva"
+          [attr.aria-hidden]="i !== indice()"
+          [attr.aria-label]="'inicio.carrusel.posicion' | translate: { n: i + 1, total: casos().length }"
+        >
+          @if (caso.fotoUrl) {
+            <img class="diapositiva-foto" [src]="caso.fotoUrl" alt="" [attr.loading]="i === 0 ? 'eager' : 'lazy'" />
+          } @else {
+            <span class="diapositiva-foto sin-foto">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="5.5" cy="10" r="2" /><circle cx="9" cy="5.5" r="2" /><circle cx="15" cy="5.5" r="2" />
+                <circle cx="18.5" cy="10" r="2" />
+                <path d="M12 12c-3 0-5.5 3.5-5.5 6 0 1.5 1.2 2.5 2.7 2.5 1.2 0 1.8-.6 2.8-.6s1.6.6 2.8.6c1.5 0 2.7-1 2.7-2.5 0-2.5-2.5-6-5.5-6z" />
+              </svg>
+              <span class="visually-hidden">{{ 'inicio.carrusel.sinFoto' | translate }}</span>
+            </span>
+          }
+          <div class="diapositiva-info">
+            <div>
+              <p class="diapositiva-titulo">{{ caso.descripcion }}</p>
+              <p class="diapositiva-meta">{{ meta(caso) }}</p>
+            </div>
+            <span [class]="'insignia ' + urgencia(caso)">{{ etiquetaUrgencia(caso) }}</span>
+          </div>
+        </article>
+      }
 
-
-  </div>
+      @if (casos().length > 1) {
+        <button type="button" class="flecha flecha-anterior" (click)="anterior()"
+                [attr.aria-label]="'inicio.carrusel.anterior' | translate">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+        </button>
+        <button type="button" class="flecha flecha-siguiente" (click)="siguiente()"
+                [attr.aria-label]="'inicio.carrusel.siguiente' | translate">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+        </button>
+        <div class="puntos" aria-hidden="true">
+          @for (caso of casos(); track caso.idReporte; let i = $index) {
+            <span class="punto" [class.activo]="i === indice()"></span>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="carrusel carrusel-vacio">
+      <p>{{ 'inicio.carrusel.vacio' | translate }}</p>
+    </div>
+  }
 </section>

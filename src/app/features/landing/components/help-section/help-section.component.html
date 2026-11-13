@@ -1,32 +1,41 @@
-<section class="help section-block" id="ayudar">
-  <div class="section-heading">
-    <span class="eyebrow">{{ 'landing.help.eyebrow' | translate }}</span>
-    <h2>{{ 'landing.help.titulo' | translate }}</h2>
+<section class="ayudar seccion" id="ayudar" aria-labelledby="ayudar-titulo">
+  <div class="seccion-cabecera">
+    <div>
+      <h2 id="ayudar-titulo">{{ 'inicio.ayudar.titulo' | translate }}</h2>
+      <p>{{ 'inicio.ayudar.subtitulo' | translate }}</p>
+    </div>
   </div>
 
-  <div class="help-grid">
-    <article class="help-card">
-      <div class="icon" aria-hidden="true"></div>
-      <h3>{{ 'landing.help.transporte.titulo' | translate }}</h3>
-      <p>{{ 'landing.help.transporte.descripcion' | translate }}</p>
-    </article>
-
-    <article class="help-card">
-      <div class="icon" aria-hidden="true"></div>
-      <h3>{{ 'landing.help.hogarTemporal.titulo' | translate }}</h3>
-      <p>{{ 'landing.help.hogarTemporal.descripcion' | translate }}</p>
-    </article>
-
-    <article class="help-card">
-      <div class="icon" aria-hidden="true"></div>
-      <h3>{{ 'landing.help.alimento.titulo' | translate }}</h3>
-      <p>{{ 'landing.help.alimento.descripcion' | translate }}</p>
-    </article>
-
-    <article class="help-card">
-      <div class="icon" aria-hidden="true"></div>
-      <h3>{{ 'landing.help.rescate.titulo' | translate }}</h3>
-      <p>{{ 'landing.help.rescate.descripcion' | translate }}</p>
-    </article>
-  </div>
+  <ul class="formas">
+    @for (forma of formas; track forma.clave) {
+      <li>
+        <a routerLink="/mapa" class="forma">
+          <span class="forma-icono" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              @switch (forma.clave) {
+                @case ('transporte') {
+                  <path d="M3 16V8h11v8M14 11h4l3 3v2h-7" /><circle cx="7" cy="17" r="2" /><circle cx="17" cy="17" r="2" />
+                }
+                @case ('hogar') {
+                  <path d="M4 11l8-7 8 7v9H4z" /><path d="M10 20v-5h4v5" />
+                }
+                @case ('alimento') {
+                  <path d="M5 11h14l-1.5 9h-11z" /><path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                }
+                @default {
+                  <path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z" /><path d="M9 12l2 2 4-4" />
+                }
+              }
+            </svg>
+          </span>
+          <span class="forma-texto">
+            <span class="forma-titulo">{{ forma.titulo | translate }}</span>
+            <span class="forma-descripcion">{{ forma.descripcion | translate }}</span>
+          </span>
+          <span class="forma-accion">{{ 'inicio.ayudar.verCasos' | translate }} <span aria-hidden="true">→</span></span>
+        </a>
+      </li>
+    }
+  </ul>
 </section>
