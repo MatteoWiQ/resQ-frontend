@@ -9,7 +9,7 @@ import { metaCaso, urgenciaDe } from '../../casos-inicio';
 
 /**
  * Inicio: "Casos que necesitan ayuda ahora". Tarjetas con foto, insignia y tiempo.
- * Todavia no abren el detalle del caso (pagina pendiente). Sin casos no se muestra.
+ * Cada tarjeta abre el detalle del caso. Sin casos no se muestra.
  */
 @Component({
   selector: 'app-landing-cases',

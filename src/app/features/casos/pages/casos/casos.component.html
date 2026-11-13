@@ -119,13 +119,11 @@
         <ul class="tarjetas-casos">
           @for (caso of visibles(); track caso.idReporte) {
             <li>
-              <!-- Todavia no abre el detalle: lo muestra en el mapa. Se conecta cuando exista la pagina del caso. -->
-              <button
-                type="button"
+              <!-- La tarjeta abre el detalle; pasar el mouse o el foco resalta su punto en el mapa. -->
+              <a
                 class="tarjeta-caso"
+                [routerLink]="['/casos', caso.idReporte]"
                 [class.seleccionada]="seleccionado() === caso.idReporte"
-                [attr.aria-pressed]="seleccionado() === caso.idReporte"
-                (click)="seleccionar(caso)"
                 (mouseenter)="resaltar(caso.idReporte)"
                 (mouseleave)="resaltar(null)"
                 (focus)="resaltar(caso.idReporte)"
@@ -152,7 +150,7 @@
                     <span class="tarjeta-caso-nota">{{ 'casos.mapa.sinUbicacion' | translate }}</span>
                   }
                 </span>
-              </button>
+              </a>
             </li>
           }
         </ul>

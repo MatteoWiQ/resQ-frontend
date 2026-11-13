@@ -165,18 +165,30 @@ describe('CasosComponent: lista + mapa (rediseño)', () => {
     expect(dom().textContent).toContain('Este caso no tiene ubicación en el mapa.');
   });
 
-  it('al tocar una tarjeta se selecciona y se abre la vista previa en el mapa', async () => {
+  it('cada tarjeta abre el detalle del caso y al pasar el mouse resalta su punto', async () => {
+    await crear();
+    responder([caso(1)]);
+
+    const tarjeta = dom().querySelector<HTMLAnchorElement>('a.tarjeta-caso')!;
+    expect(tarjeta.getAttribute('href')).toBe('/casos/1');
+
+    tarjeta.dispatchEvent(new MouseEvent('mouseenter'));
+    fixture.detectChanges();
+    expect(dom().querySelector('.punto-caso.resaltado')).not.toBeNull();
+  });
+
+  it('al tocar un punto se abre la vista previa con "Ver caso", sin interpretar HTML del texto', async () => {
     await crear();
     responder([caso(1, { descripcion: '<b>Perro</b> herido' })]);
 
-    dom().querySelector<HTMLButtonElement>('.tarjeta-caso')!.click();
+    dom().querySelector<HTMLElement>('.leaflet-marker-icon')!.click();
     fixture.detectChanges();
 
-    expect(dom().querySelector('.tarjeta-caso')?.getAttribute('aria-pressed')).toBe('true');
     const vista = dom().querySelector('.vista-previa-titulo');
     expect(vista?.textContent).toBe('<b>Perro</b> herido');
     expect(vista?.querySelector('b')).toBeNull();
     expect(dom().querySelector('.punto-caso.seleccionado')).not.toBeNull();
+    expect(dom().querySelector('.vista-previa-enlace')?.getAttribute('href')).toBe('/casos/1');
   });
 
   it('"Buscar en esta zona" limita la lista a lo visible en el mapa', async () => {

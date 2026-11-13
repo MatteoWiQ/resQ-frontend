@@ -46,13 +46,15 @@
       (touchend)="alSoltar($event)"
     >
       @for (caso of casos(); track caso.idReporte; let i = $index) {
-        <!-- Todavia no abre el detalle: se conecta cuando exista la pagina del caso. -->
-        <article
+        <!-- Toda la diapositiva es un enlace al detalle del caso. -->
+        <a
           class="diapositiva"
+          [routerLink]="['/casos', caso.idReporte]"
           [class.activa]="i === indice()"
           aria-roledescription="diapositiva"
           [attr.aria-hidden]="i !== indice()"
-          [attr.aria-label]="'inicio.carrusel.posicion' | translate: { n: i + 1, total: casos().length }"
+          [attr.tabindex]="i === indice() ? 0 : -1"
+          [attr.aria-label]="('inicio.carrusel.posicion' | translate: { n: i + 1, total: casos().length }) + ': ' + caso.descripcion"
         >
           @if (caso.fotoUrl) {
             <img class="diapositiva-foto" [src]="caso.fotoUrl" alt="" [attr.loading]="i === 0 ? 'eager' : 'lazy'" />
@@ -74,7 +76,7 @@
             </div>
             <span [class]="'insignia ' + urgencia(caso)">{{ etiquetaUrgencia(caso) }}</span>
           </div>
-        </article>
+        </a>
       }
 
       @if (casos().length > 1) {

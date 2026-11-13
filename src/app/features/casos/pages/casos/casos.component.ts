@@ -15,6 +15,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, catchError, debounceTime, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import * as L from 'leaflet';
 
+import { Router, RouterLink } from '@angular/router';
+
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
@@ -62,14 +64,14 @@ const INSIGNIAS_LEYENDA: Insignia[] = ['urgente', 'activo', 'resuelto'];
  *   estado (con leyenda) y al tocarlos se abre una vista previa con foto.
  * - Animal y Necesita quedan visibles pero deshabilitados hasta que el backend
  *   tenga esos datos.
- * - Todavia no abre el detalle del caso: esa pagina se hace en otro paso.
+ * - Las tarjetas y el "Ver caso" de la vista previa abren el detalle (/casos/:id).
  *
  * Reemplaza a la pagina /mapa (HU-15): /mapa redirige aca.
  */
 @Component({
   selector: 'app-casos',
   standalone: true,
-  imports: [AppHeaderComponent, TranslatePipe],
+  imports: [AppHeaderComponent, RouterLink, TranslatePipe],
   templateUrl: './casos.component.html',
   styleUrl: './casos.component.css',
   // Leaflet crea los puntos y la vista previa fuera de la plantilla: los estilos
@@ -81,6 +83,7 @@ export class CasosComponent implements OnInit, AfterViewInit {
   private readonly geo = inject(GeolocalizacionService);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
   private readonly contenedorMapa = viewChild<ElementRef<HTMLDivElement>>('mapa');
 
@@ -283,15 +286,6 @@ export class CasosComponent implements OnInit, AfterViewInit {
 
   // ============================================================ lista
 
-  seleccionar(caso: Reporte): void {
-    this.seleccionado.set(caso.idReporte);
-    if (this.mapa && tieneUbicacion(caso)) {
-      this.ajusteProgramatico = true;
-      this.mapa.panTo([caso.latitud, caso.longitud]);
-      this.abrirVistaPrevia(caso);
-    }
-  }
-
   resaltar(idReporte: number | null): void {
     this.resaltado.set(idReporte);
   }
@@ -441,9 +435,17 @@ export class CasosComponent implements OnInit, AfterViewInit {
     const meta = document.createElement('p');
     meta.className = 'vista-previa-meta';
     meta.textContent = this.meta(caso);
+    const verCaso = document.createElement('a');
+    verCaso.className = 'vista-previa-enlace';
+    verCaso.href = `/casos/${caso.idReporte}`;
+    verCaso.textContent = this.translate.t('casos.mapa.verCaso');
+    verCaso.addEventListener('click', (evento) => {
+      evento.preventDefault();
+      void this.router.navigate(['/casos', caso.idReporte]);
+    });
     const texto = document.createElement('div');
     texto.className = 'vista-previa-texto';
-    texto.append(etiqueta, titulo, meta);
+    texto.append(etiqueta, titulo, meta, verCaso);
     tarjeta.appendChild(texto);
 
     this.ajusteProgramatico = true;

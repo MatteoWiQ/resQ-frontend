@@ -51,6 +51,7 @@ export const casosEs = {
   mapa: {
     ariaLabel: 'Mapa de casos',
     leyenda: 'Leyenda',
+    verCaso: 'Ver caso →',
     buscarEnZona: 'Buscar en esta zona',
     sinUbicacion: 'Este caso no tiene ubicación en el mapa.',
     marcador: 'Caso: {{titulo}} ({{estado}})',

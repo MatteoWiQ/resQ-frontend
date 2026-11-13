@@ -12,8 +12,7 @@
 
     <div class="tarjetas">
       @for (caso of casos(); track caso.idReporte) {
-        <!-- Todavia no abre el detalle: se conecta cuando exista la pagina del caso. -->
-        <article class="tarjeta">
+        <a class="tarjeta" [routerLink]="['/casos', caso.idReporte]">
           <div class="tarjeta-foto">
             @if (caso.fotoUrl) {
               <img [src]="caso.fotoUrl" alt="" loading="lazy" />
@@ -31,7 +30,7 @@
             <h3>{{ caso.descripcion }}</h3>
             <p>{{ meta(caso) }}</p>
           </div>
-        </article>
+        </a>
       }
     </div>
   </section>

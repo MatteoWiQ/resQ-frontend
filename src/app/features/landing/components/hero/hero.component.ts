@@ -29,7 +29,7 @@ const UMBRAL_DESLIZAR_PX = 40;
  *
  * El carrusel cambia cada 5 s, se pausa con el mouse encima o con el foco dentro,
  * se puede deslizar en movil y no avanza solo si el usuario pidio menos movimiento.
- * Todavia no abre el detalle del caso: esa pagina se hace en otro paso.
+ * Cada diapositiva abre el detalle del caso (/casos/:id).
  */
 @Component({
   selector: 'app-landing-hero',

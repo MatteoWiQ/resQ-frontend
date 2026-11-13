@@ -219,6 +219,8 @@
 
 .casos-page .tarjeta-caso {
   width: 100%;
+  box-sizing: border-box;
+  text-decoration: none;
   display: flex;
   gap: 14px;
   padding: 12px;
@@ -484,6 +486,18 @@
   font-weight: 700;
   line-height: 1.3;
   color: var(--text);
+}
+
+.casos-page .vista-previa-enlace {
+  margin-top: 6px;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.casos-page .vista-previa-enlace:hover {
+  text-decoration: underline;
 }
 
 .casos-page .vista-previa-meta {
