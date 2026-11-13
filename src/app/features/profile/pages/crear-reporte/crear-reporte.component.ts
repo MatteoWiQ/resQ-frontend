@@ -12,7 +12,17 @@ import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { TranslationKey } from '../../../../core/i18n/strings';
 import { FOTO_ACCEPT, validarFoto } from '../../../../shared/constants/foto';
-import { Reporte } from '../../../../shared/models/reporte.model';
+import {
+  EDADES,
+  ESPECIES,
+  EdadAnimal,
+  Especie,
+  Reporte,
+  TAMANOS,
+  TIPOS_NECESIDAD,
+  TamanoAnimal,
+  TipoNecesidad,
+} from '../../../../shared/models/reporte.model';
 import { Usuario } from '../../../../shared/models/usuario.model';
 import { SelectorUbicacionComponent } from '../../../../shared/components/selector-ubicacion/selector-ubicacion.component';
 import { TIPOS_CASO } from '../../../../shared/constants/tipos-caso';
@@ -26,6 +36,10 @@ export const CLAVE_BORRADOR = 'resq_borrador_reporte';
 interface Borrador {
   paso: PasoReporte;
   tipoCaso: string;
+  especie?: Especie | null;
+  edad?: EdadAnimal | null;
+  tamano?: TamanoAnimal | null;
+  necesidades?: TipoNecesidad[];
   descripcion: string;
   referencia: string;
   latitud: number | null;
@@ -39,9 +53,8 @@ interface Borrador {
  * (Foto → Ubicacion → Situacion → Contacto), sin el menu del sitio.
  *
  * - Foto: opcional, con "Continuar sin foto".
- * - Ubicacion: pin arrastrable (HU-16) y una referencia en texto, que se agrega
- *   a la descripcion porque el backend todavia no tiene un campo para ella.
- * - Situacion: tipo de caso y lo que vio.
+ * - Ubicacion: pin arrastrable (HU-16) y una referencia en texto.
+ * - Situacion: tipo de caso, datos del animal, que necesita y lo que vio.
  * - Contacto: mostrar el telefono de la cuenta y/u otro solo para el caso; si
  *   la cuenta no tiene telefono se puede agregar ahi mismo.
  * - "Guardar y salir" deja un borrador en este navegador.
@@ -58,6 +71,10 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
   // El catalogo canonico vive en shared/constants/tipos-caso.ts; el valor
   // interno va al backend y la etiqueta visible sale de shared.tiposCaso.
   readonly tiposCaso = TIPOS_CASO;
+  readonly especies = ESPECIES;
+  readonly edades = EDADES;
+  readonly tamanos = TAMANOS;
+  readonly tiposNecesidad = TIPOS_NECESIDAD;
   readonly pasos: { numero: PasoReporte; clave: TranslationKey }[] = [
     { numero: 1, clave: 'reportarCaso.pasos.foto' },
     { numero: 2, clave: 'reportarCaso.pasos.ubicacion' },
@@ -67,6 +84,10 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
 
   readonly form = {
     tipoCaso: '',
+    especie: null as Especie | null,
+    edad: null as EdadAnimal | null,
+    tamano: null as TamanoAnimal | null,
+    necesidades: [] as TipoNecesidad[],
     descripcion: '',
     referencia: '',
     latitud: null as number | null,
@@ -160,6 +181,10 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
   empezarDeNuevo(): void {
     this.borrarBorrador();
     this.form.tipoCaso = '';
+    this.form.especie = null;
+    this.form.edad = null;
+    this.form.tamano = null;
+    this.form.necesidades = [];
     this.form.descripcion = '';
     this.form.referencia = '';
     this.form.latitud = null;
@@ -213,6 +238,35 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
     return this.translate.t(`shared.tiposCaso.${tipo}` as TranslationKey);
   }
 
+  /** Tocar de nuevo una opcion elegida la quita (los datos del animal son opcionales). */
+  elegirEspecie(especie: Especie): void {
+    this.form.especie = this.form.especie === especie ? null : especie;
+  }
+
+  elegirEdad(edad: EdadAnimal): void {
+    this.form.edad = this.form.edad === edad ? null : edad;
+  }
+
+  elegirTamano(tamano: TamanoAnimal): void {
+    this.form.tamano = this.form.tamano === tamano ? null : tamano;
+  }
+
+  alternarNecesidad(tipo: TipoNecesidad): void {
+    this.form.necesidades = this.form.necesidades.includes(tipo)
+      ? this.form.necesidades.filter((t) => t !== tipo)
+      : [...this.form.necesidades, tipo];
+  }
+
+  etiqueta(catalogo: 'especies' | 'edades' | 'tamanos' | 'necesidades', valor: string): string {
+    return this.translate.t(`shared.${catalogo}.${valor}` as TranslationKey);
+  }
+
+  resumenNecesidades(): string {
+    return this.form.necesidades.length
+      ? this.form.necesidades.map((n) => this.etiqueta('necesidades', n)).join(', ')
+      : this.translate.t('reportarCaso.contacto.resumenNada');
+  }
+
   descripcionValida(): boolean {
     return this.form.descripcion.trim().length > 0;
   }
@@ -250,15 +304,6 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
     return this.translate.t('reportarCaso.contacto.mostrarCuenta', { telefono: this.telefonoCuenta() ?? '' });
   }
 
-  /** Lo que llega al backend: la referencia va al final de la descripcion. */
-  descripcionFinal(): string {
-    const descripcion = this.form.descripcion.trim();
-    const referencia = this.form.referencia.trim();
-    return referencia
-      ? `${descripcion}\n\n${this.translate.t('reportarCaso.referenciaEnDescripcion', { texto: referencia })}`
-      : descripcion;
-  }
-
   // ============================================================ enviar
 
   crearReporte(): void {
@@ -286,7 +331,12 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
       this.reporteService.crearReporte({
         idUsuario,
         tipoCaso: this.form.tipoCaso,
-        descripcion: this.descripcionFinal(),
+        descripcion: this.form.descripcion.trim(),
+        referencia: this.form.referencia.trim() || null,
+        especie: this.form.especie,
+        edad: this.form.edad,
+        tamano: this.form.tamano,
+        necesidades: this.form.necesidades,
         fotoUrl,
         latitud: this.form.latitud,
         longitud: this.form.longitud,
@@ -354,6 +404,10 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
     const borrador: Borrador = {
       paso: this.paso(),
       tipoCaso: this.form.tipoCaso,
+      especie: this.form.especie,
+      edad: this.form.edad,
+      tamano: this.form.tamano,
+      necesidades: this.form.necesidades,
       descripcion: this.form.descripcion,
       referencia: this.form.referencia,
       latitud: this.form.latitud,
@@ -380,6 +434,12 @@ export class CrearReporteComponent implements OnInit, OnDestroy {
       return;
     }
     this.form.tipoCaso = borrador.tipoCaso ?? '';
+    this.form.especie = ESPECIES.find((e) => e === borrador?.especie) ?? null;
+    this.form.edad = EDADES.find((e) => e === borrador?.edad) ?? null;
+    this.form.tamano = TAMANOS.find((t) => t === borrador?.tamano) ?? null;
+    this.form.necesidades = (borrador.necesidades ?? []).filter((n): n is TipoNecesidad =>
+      (TIPOS_NECESIDAD as readonly string[]).includes(n),
+    );
     this.form.descripcion = borrador.descripcion ?? '';
     this.form.referencia = borrador.referencia ?? '';
     this.form.latitud = typeof borrador.latitud === 'number' ? borrador.latitud : null;

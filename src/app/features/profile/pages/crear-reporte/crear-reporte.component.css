@@ -322,6 +322,58 @@
   color: var(--primary-strong);
 }
 
+.opciones-animal {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.opciones-animal legend {
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.fila-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.fila-etiqueta {
+  width: 70px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.opcion {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1.5px solid #c9d3cd;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.opcion.elegida {
+  border-color: var(--primary-strong);
+  background: var(--panel-soft);
+  color: var(--primary-strong);
+}
+
+.opcion:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
 /* ---------------------------------------------------------------- contacto */
 
 .tarjeta {

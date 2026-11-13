@@ -140,6 +140,44 @@
                 }
               </fieldset>
 
+              <fieldset class="opciones-animal">
+                <legend>{{ 'reportarCaso.situacion.animal' | translate }}</legend>
+                <div class="fila-opciones" role="group" [attr.aria-label]="'reportarCaso.situacion.especie' | translate">
+                  <span class="fila-etiqueta">{{ 'reportarCaso.situacion.especie' | translate }}</span>
+                  @for (e of especies; track e) {
+                    <button type="button" class="opcion" [class.elegida]="form.especie === e" [attr.aria-pressed]="form.especie === e"
+                            (click)="elegirEspecie(e)">{{ etiqueta('especies', e) }}</button>
+                  }
+                </div>
+                <div class="fila-opciones" role="group" [attr.aria-label]="'reportarCaso.situacion.edad' | translate">
+                  <span class="fila-etiqueta">{{ 'reportarCaso.situacion.edad' | translate }}</span>
+                  @for (e of edades; track e) {
+                    <button type="button" class="opcion" [class.elegida]="form.edad === e" [attr.aria-pressed]="form.edad === e"
+                            (click)="elegirEdad(e)">{{ etiqueta('edades', e) }}</button>
+                  }
+                </div>
+                <div class="fila-opciones" role="group" [attr.aria-label]="'reportarCaso.situacion.tamano' | translate">
+                  <span class="fila-etiqueta">{{ 'reportarCaso.situacion.tamano' | translate }}</span>
+                  @for (t of tamanos; track t) {
+                    <button type="button" class="opcion" [class.elegida]="form.tamano === t" [attr.aria-pressed]="form.tamano === t"
+                            (click)="elegirTamano(t)">{{ etiqueta('tamanos', t) }}</button>
+                  }
+                </div>
+              </fieldset>
+
+              <fieldset class="opciones-animal">
+                <legend>{{ 'reportarCaso.situacion.necesita' | translate }}</legend>
+                <p class="texto-suave">{{ 'reportarCaso.situacion.necesitaAyuda' | translate }}</p>
+                <div class="fila-opciones">
+                  @for (n of tiposNecesidad; track n) {
+                    <button type="button" class="opcion" [class.elegida]="form.necesidades.includes(n)"
+                            [attr.aria-pressed]="form.necesidades.includes(n)" (click)="alternarNecesidad(n)">
+                      {{ form.necesidades.includes(n) ? '✓ ' : '' }}{{ etiqueta('necesidades', n) }}
+                    </button>
+                  }
+                </div>
+              </fieldset>
+
               <label class="campo">
                 <span>{{ 'reportarCaso.situacion.descripcion' | translate }}</span>
                 <textarea id="descripcion" name="descripcion" rows="6" maxlength="2000" [(ngModel)]="form.descripcion"
@@ -220,13 +258,25 @@
                     <dd>{{ (form.latitud != null ? 'reportarCaso.contacto.resumenConUbicacion' : 'reportarCaso.contacto.resumenSinUbicacion') | translate }}</dd>
                     <button type="button" class="enlace-boton" (click)="irA(2)">{{ 'reportarCaso.contacto.editar' | translate }}</button>
                   </div>
+                  @if (form.referencia.trim()) {
+                    <div>
+                      <dt>{{ 'reportarCaso.contacto.resumenReferencia' | translate }}</dt>
+                      <dd>{{ form.referencia }}</dd>
+                      <button type="button" class="enlace-boton" (click)="irA(2)">{{ 'reportarCaso.contacto.editar' | translate }}</button>
+                    </div>
+                  }
                   <div>
                     <dt>{{ 'reportarCaso.contacto.resumenTipo' | translate }}</dt>
                     <dd>{{ form.tipoCaso ? etiquetaTipoCaso(form.tipoCaso) : '—' }}</dd>
                     <button type="button" class="enlace-boton" (click)="irA(3)">{{ 'reportarCaso.contacto.editar' | translate }}</button>
                   </div>
+                  <div>
+                    <dt>{{ 'reportarCaso.contacto.resumenNecesita' | translate }}</dt>
+                    <dd>{{ resumenNecesidades() }}</dd>
+                    <button type="button" class="enlace-boton" (click)="irA(3)">{{ 'reportarCaso.contacto.editar' | translate }}</button>
+                  </div>
                 </dl>
-                <p class="resumen-descripcion">{{ descripcionFinal() }}</p>
+                <p class="resumen-descripcion">{{ form.descripcion.trim() }}</p>
               </div>
 
               @if (message()) {

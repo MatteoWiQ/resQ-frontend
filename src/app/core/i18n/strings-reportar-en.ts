@@ -100,5 +100,4 @@ export const reportarEn = {
     sar: 'SAR Cochabamba',
     zoonosis: 'Zoonosis',
   },
-  referenciaEnDescripcion: 'Landmark: {{texto}}',
 };
