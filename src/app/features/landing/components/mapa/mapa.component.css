@@ -24,7 +24,7 @@
 }
 
 .header-content h2 {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: clamp(1.6rem, 2.6vw, 2.2rem);
   letter-spacing: -0.03em;
   color: var(--text);
@@ -48,7 +48,7 @@
 }
 
 .stat-value {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.9rem;
   font-weight: 700;
   color: var(--primary);
@@ -210,7 +210,7 @@
 .panel-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(88, 19, 37, 0.32);
+  background: rgba(9, 48, 40, 0.32);
   z-index: 900;
 }
 
@@ -254,7 +254,7 @@
 
 .detalle-header h3 {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.05rem;
   color: var(--text);
 }
