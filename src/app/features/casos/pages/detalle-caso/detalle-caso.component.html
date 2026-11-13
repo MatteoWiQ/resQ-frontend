@@ -1,0 +1,161 @@
+<div class="detalle-page">
+  <app-header />
+
+  @if (cargando()) {
+    <p class="detalle-estado" role="status">{{ 'detalleCaso.cargando' | translate }}</p>
+  } @else if (noExiste()) {
+    <div class="detalle-estado">
+      <p>{{ 'detalleCaso.noExiste' | translate }}</p>
+      <a routerLink="/casos" class="boton-borde">{{ 'detalleCaso.volverACasos' | translate }}</a>
+    </div>
+  } @else if (error()) {
+    <div class="detalle-estado" role="alert">
+      <p>{{ 'detalleCaso.error' | translate }}</p>
+      <button type="button" class="boton-borde" (click)="cargar()">{{ 'detalleCaso.reintentar' | translate }}</button>
+    </div>
+  } @else if (caso(); as c) {
+    <nav class="migas" [attr.aria-label]="'detalleCaso.migas' | translate">
+      <a routerLink="/casos">{{ 'detalleCaso.casos' | translate }}</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ titulo() }}</span>
+    </nav>
+
+    <div class="detalle-columnas">
+      <!-- Columna principal -->
+      <main class="detalle-principal">
+        <div class="detalle-foto">
+          @if (c.fotoUrl) {
+            <img [src]="c.fotoUrl" [alt]="'detalleCaso.fotoAlt' | translate" />
+          } @else {
+            <div class="detalle-sin-foto">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="5.5" cy="10" r="2" /><circle cx="9" cy="5.5" r="2" /><circle cx="15" cy="5.5" r="2" />
+                <circle cx="18.5" cy="10" r="2" />
+                <path d="M12 12c-3 0-5.5 3.5-5.5 6 0 1.5 1.2 2.5 2.7 2.5 1.2 0 1.8-.6 2.8-.6s1.6.6 2.8.6c1.5 0 2.7-1 2.7-2.5 0-2.5-2.5-6-5.5-6z" />
+              </svg>
+              <p>{{ 'detalleCaso.sinFoto' | translate }}</p>
+            </div>
+          }
+        </div>
+
+        <header class="detalle-cabecera">
+          <div class="detalle-chips">
+            <span [class]="'insignia-caso ' + insignia()">{{ etiquetaInsignia() }}</span>
+            <span class="chip-tipo">{{ etiquetaTipo() }}</span>
+          </div>
+          <h1>{{ titulo() }}</h1>
+          <p class="detalle-meta">{{ textoReportado() }} · {{ textoEstado() }}</p>
+        </header>
+
+        <section class="detalle-bloque" aria-labelledby="lo-que-vio">
+          <h2 id="lo-que-vio">{{ 'detalleCaso.loQueVio' | translate }}</h2>
+          <blockquote class="relato">
+            <p>“{{ c.descripcion }}”</p>
+            <footer>{{ 'detalleCaso.quienReporto' | translate }}</footer>
+          </blockquote>
+        </section>
+
+        <section class="detalle-bloque" aria-labelledby="actualizaciones">
+          <h2 id="actualizaciones">{{ 'detalleCaso.actualizaciones' | translate }}</h2>
+          <ol class="linea-tiempo">
+            @for (evento of eventos(); track $index; let primero = $first) {
+              <li class="evento" [class.reciente]="primero">
+                <span class="evento-punto" aria-hidden="true"></span>
+                <time class="evento-fecha" [attr.datetime]="evento.fecha">{{ fecha(evento) }}</time>
+                <span class="evento-titulo">{{ tituloEvento(evento) }}</span>
+                @if (evento.tipo === 'revisado') {
+                  <span class="evento-nota">{{ 'detalleCaso.linea.revisadoDescripcion' | translate }}</span>
+                }
+                @if (evento.nota) {
+                  <span class="evento-nota">{{ evento.nota }}</span>
+                }
+                @if (evento.fotoUrl) {
+                  <img class="evento-foto" [src]="evento.fotoUrl" [alt]="'detalleCaso.linea.fotoSeguimiento' | translate"
+                       loading="lazy" />
+                }
+              </li>
+            }
+          </ol>
+        </section>
+      </main>
+
+      <!-- Columna lateral: una accion principal -->
+      <aside class="detalle-lateral">
+        <section class="tarjeta-lateral" aria-labelledby="ayuda-titulo">
+          <h2 id="ayuda-titulo">{{ 'detalleCaso.ayuda.titulo' | translate }}</h2>
+          @if (!abierto()) {
+            <p class="texto-suave">{{ 'detalleCaso.ayuda.cerrado' | translate }}</p>
+          } @else if (esMiReporte()) {
+            <p class="texto-suave">{{ 'detalleCaso.ayuda.tuCaso' | translate }}</p>
+          } @else {
+            <p class="texto-suave">
+              {{ (c.idOrganizacion != null ? 'detalleCaso.ayuda.descripcionOrganizacion' : 'detalleCaso.ayuda.descripcionReportante') | translate }}
+            </p>
+            <button type="button" class="boton-principal" [disabled]="abriendo()" (click)="ofrecerAyuda()">
+              {{ (haySesion() ? 'detalleCaso.ayuda.ofrecer' : 'detalleCaso.ayuda.ingresar') | translate }}
+            </button>
+          }
+          @if (participa()) {
+            <a class="boton-borde" [routerLink]="['/casos', c.idReporte, 'chat']">💬 {{ 'detalleCaso.ayuda.chatCaso' | translate }}</a>
+          }
+          <button type="button" class="boton-borde" (click)="compartir()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="18" cy="5" r="2.5" /><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="19" r="2.5" />
+              <path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4" />
+            </svg>
+            {{ (copiado() ? 'detalleCaso.ayuda.copiado' : 'detalleCaso.ayuda.compartir') | translate }}
+          </button>
+          @if (errorAyuda()) {
+            <p class="texto-error" role="alert">{{ errorAyuda() }}</p>
+          }
+        </section>
+
+        <section class="tarjeta-lateral tarjeta-mapa" [attr.aria-label]="'detalleCaso.ubicacion.titulo' | translate">
+          @if (tieneUbicacion()) {
+            <div class="mini-mapa" #miniMapa></div>
+            <div class="mapa-pie">
+              @if (distancia() !== null) {
+                <span>{{ textoDistancia() }}</span>
+              } @else if (errorDistancia()) {
+                <span class="texto-suave">{{ 'detalleCaso.ubicacion.sinPermiso' | translate }}</span>
+              } @else {
+                <button type="button" class="enlace-boton" [disabled]="calculandoDistancia()" (click)="calcularDistancia()">
+                  {{ (calculandoDistancia() ? 'detalleCaso.ubicacion.calculando' : 'detalleCaso.ubicacion.calcular') | translate }}
+                </button>
+              }
+              <a [href]="comoLlegar()" target="_blank" rel="noopener">{{ 'detalleCaso.ubicacion.comoLlegar' | translate }}</a>
+            </div>
+          } @else {
+            <p class="texto-suave sin-ubicacion">{{ 'detalleCaso.ubicacion.sinUbicacion' | translate }}</p>
+          }
+        </section>
+
+        <section class="tarjeta-lateral tarjeta-org">
+          @if (c.idOrganizacion != null) {
+            <span class="org-logo" aria-hidden="true">
+              @if (organizacion()?.logoUrl) {
+                <img [src]="organizacion()!.logoUrl" alt="" />
+              } @else {
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9H4z" /><path d="M10 20v-5h4v5" /></svg>
+              }
+            </span>
+            <span class="org-texto">
+              <span class="texto-suave">{{ 'detalleCaso.organizacion.gestionadoPor' | translate }}</span>
+              <strong>{{ organizacion()?.nombre ?? ('detalleCaso.organizacion.unaOrganizacion' | translate) }}</strong>
+            </span>
+            @if (haySesion() && !participa()) {
+              <button type="button" class="enlace-boton org-contactar" [disabled]="abriendo()" (click)="contactarOrganizacion()">
+                {{ 'detalleCaso.organizacion.contactar' | translate }}
+              </button>
+            }
+          } @else {
+            <p class="texto-suave">{{ 'detalleCaso.organizacion.sinOrganizacion' | translate }}</p>
+          }
+        </section>
+      </aside>
+    </div>
+  }
+</div>
