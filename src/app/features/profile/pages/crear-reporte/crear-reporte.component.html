@@ -1,111 +1,280 @@
-<main class="crear-reporte-page">
-  <app-back-button />
-
-  <section class="crear-reporte-card">
-    <div class="brand">
-      <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
-      <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
+<div class="reportar-page">
+  <!-- Cabecera enfocada: sin el menu del sitio mientras se reporta -->
+  <header class="reportar-cabecera">
+    <div class="reportar-cabecera-interior">
+      <a routerLink="/" class="marca" [attr.aria-label]="'reportarCaso.irAlInicio' | translate">
+        <span class="marca-icono" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="5.5" cy="10" r="2" /><circle cx="9" cy="5.5" r="2" /><circle cx="15" cy="5.5" r="2" />
+            <circle cx="18.5" cy="10" r="2" />
+            <path d="M12 12c-3 0-5.5 3.5-5.5 6 0 1.5 1.2 2.5 2.7 2.5 1.2 0 1.8-.6 2.8-.6s1.6.6 2.8.6c1.5 0 2.7-1 2.7-2.5 0-2.5-2.5-6-5.5-6z" />
+          </svg>
+        </span>
+        <span class="marca-nombre">{{ 'shared.brand.nombre' | translate }}</span>
+      </a>
+      @if (haySesion()) {
+        <button type="button" class="guardar-salir" (click)="guardarYSalir()">{{ 'reportarCaso.guardarYSalir' | translate }}</button>
+      }
     </div>
+  </header>
 
-    <h1>{{ 'reportes.nuevo.titulo' | translate }}</h1>
-    <p class="subtitle">{{ 'reportes.nuevo.subtitle' | translate }}</p>
-
-    @if (message()) {
-      <p class="message">{{ message() }}</p>
-    }
-
-    <div class="progreso" aria-hidden="true">
-      <div class="segmento" [class.activo]="paso() >= 1">
-        <span class="numero">1</span>
-        <span class="etiqueta">{{ 'reportes.nuevo.paso1' | translate }}</span>
-      </div>
-      <div class="linea"></div>
-      <div class="segmento" [class.activo]="paso() >= 2">
-        <span class="numero">2</span>
-        <span class="etiqueta">{{ 'reportes.nuevo.paso2' | translate }}</span>
-      </div>
-    </div>
-
-    @if (paso() === 1) {
-      <div class="tipo-caso">
-        @for (tipo of tiposCaso; track tipo) {
-          <button
-            type="button"
-            class="tipo-card"
-            [class.seleccionado]="form.tipoCaso === tipo"
-            (click)="seleccionarTipo(tipo)"
-          >
-            <strong>{{ etiquetaTipoCaso(tipo) }}</strong>
-          </button>
+  <main class="reportar-cuerpo">
+    @if (!haySesion()) {
+      <section class="sin-sesion">
+        <h1>{{ 'reportarCaso.sinSesion.titulo' | translate }}</h1>
+        <p>{{ 'reportarCaso.sinSesion.texto' | translate }}</p>
+        <a routerLink="/login" class="boton-principal">{{ 'reportarCaso.sinSesion.accion' | translate }}</a>
+      </section>
+    } @else {
+      <ol class="pasos" [attr.aria-label]="'reportarCaso.pasos.ariaLabel' | translate">
+        @for (p of pasos; track p.numero) {
+          <li [class.hecho]="p.numero < paso()" [class.actual]="p.numero === paso()"
+              [attr.aria-current]="p.numero === paso() ? 'step' : null">
+            @if (p.numero < paso()) {
+              <button type="button" class="paso-boton" (click)="irA(p.numero)">
+                <span class="paso-barra" aria-hidden="true"></span>
+                <span class="paso-texto">{{ p.numero }} · {{ p.clave | translate }} ✓
+                  <span class="visually-hidden">({{ 'reportarCaso.pasos.hecho' | translate }})</span></span>
+              </button>
+            } @else {
+              <span class="paso-barra" aria-hidden="true"></span>
+              <span class="paso-texto">{{ p.numero }} · {{ p.clave | translate }}</span>
+            }
+          </li>
         }
-      </div>
+      </ol>
 
-      <button type="button" class="btn-accion" (click)="continuar()">{{ 'reportes.nuevo.continuar' | translate }}</button>
-    }
-
-    @if (paso() === 2) {
-      <form (ngSubmit)="crearReporte()">
-        <p class="tipo-elegido">
-          {{ 'reportes.nuevo.tipoElegido' | translate }}<strong>{{ etiquetaTipoCaso(form.tipoCaso) }}</strong>
+      @if (borradorRecuperado()) {
+        <p class="aviso" role="status">
+          {{ 'reportarCaso.borrador.recuperado' | translate }} {{ 'reportarCaso.borrador.sinFoto' | translate }}
+          <button type="button" class="enlace-boton" (click)="empezarDeNuevo()">{{ 'reportarCaso.borrador.empezarDeNuevo' | translate }}</button>
         </p>
+      }
 
-        <label for="descripcion">{{ 'reportes.nuevo.descripcion' | translate }}</label>
-        <textarea
-          id="descripcion"
-          name="descripcion"
-          [(ngModel)]="form.descripcion"
-          [placeholder]="'reportes.nuevo.descripcionPlaceholder' | translate"
-          rows="5"
-          required
-        ></textarea>
+      <div class="reportar-columnas">
+        <section class="paso-contenido">
+          @switch (paso()) {
+            <!-- ================================================= 1 · Foto -->
+            @case (1) {
+              <div class="paso-titulo">
+                <h1>{{ 'reportarCaso.foto.titulo' | translate }}</h1>
+                <p>{{ 'reportarCaso.foto.texto' | translate }}</p>
+              </div>
 
-        <span class="etiqueta-campo">{{ 'reportes.nuevo.foto' | translate }}</span>
-        <div class="foto-campo">
-          <input
-            #fotoInput
-            id="foto"
-            type="file"
-            name="foto"
-            class="foto-input"
-            [attr.accept]="fotoAccept"
-            (change)="seleccionarFoto($event)"
-          />
+              <input #fotoInput id="foto" type="file" name="foto" class="foto-input" [attr.accept]="fotoAccept"
+                     (change)="seleccionarFoto($event)" />
 
+              @if (vistaPrevia(); as src) {
+                <div class="foto-elegida">
+                  <img [src]="src" [alt]="'reportarCaso.foto.vistaPreviaAlt' | translate" />
+                  <div class="foto-acciones">
+                    <button type="button" class="boton-borde" (click)="fotoInput.click()">{{ 'reportarCaso.foto.cambiar' | translate }}</button>
+                    <button type="button" class="boton-borde" (click)="quitarFoto()">{{ 'reportarCaso.foto.quitar' | translate }}</button>
+                  </div>
+                </div>
+              } @else {
+                <button type="button" class="zona-foto" (click)="fotoInput.click()">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" />
+                  </svg>
+                  <span class="zona-foto-titulo">{{ 'reportarCaso.foto.elegir' | translate }}</span>
+                  <span class="zona-foto-ayuda">{{ 'reportarCaso.foto.ayuda' | translate }}</span>
+                </button>
+              }
+              @if (errorFoto()) {
+                <p class="error" role="alert">{{ errorFoto() }}</p>
+              }
+
+              <div class="navegacion">
+                <span></span>
+                @if (foto()) {
+                  <button type="button" class="boton-principal" (click)="continuar()">
+                    {{ 'reportarCaso.continuar' | translate }} <span aria-hidden="true">→</span>
+                  </button>
+                } @else {
+                  <button type="button" class="boton-borde" (click)="continuar()">{{ 'reportarCaso.foto.sinFoto' | translate }}</button>
+                }
+              </div>
+            }
+
+            <!-- ================================================= 2 · Ubicacion -->
+            @case (2) {
+              <div class="paso-titulo">
+                <h1>{{ 'reportarCaso.ubicacion.titulo' | translate }}</h1>
+                <p>{{ 'reportarCaso.ubicacion.texto' | translate }}</p>
+              </div>
+
+              <label class="campo">
+                <span>{{ 'reportarCaso.ubicacion.referencia' | translate }}</span>
+                <input type="text" name="referencia" maxlength="200" [(ngModel)]="form.referencia"
+                       [placeholder]="'reportarCaso.ubicacion.referenciaPlaceholder' | translate" />
+                <small>{{ 'reportarCaso.ubicacion.referenciaAyuda' | translate }}</small>
+              </label>
+
+              <app-selector-ubicacion class="selector-grande" [(latitud)]="form.latitud" [(longitud)]="form.longitud" />
+
+              <div class="navegacion">
+                <button type="button" class="boton-borde" (click)="atras()">{{ 'reportarCaso.atras' | translate }}</button>
+                <button type="button" class="boton-principal" (click)="continuar()">
+                  {{ 'reportarCaso.continuar' | translate }} <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            }
+
+            <!-- ================================================= 3 · Situacion -->
+            @case (3) {
+              <div class="paso-titulo">
+                <h1>{{ 'reportarCaso.situacion.titulo' | translate }}</h1>
+                <p>{{ 'reportarCaso.situacion.texto' | translate }}</p>
+              </div>
+
+              <fieldset class="tipos">
+                <legend>{{ 'reportarCaso.situacion.tipo' | translate }}</legend>
+                @for (tipo of tiposCaso; track tipo) {
+                  <button type="button" class="tipo-card" [class.seleccionado]="form.tipoCaso === tipo"
+                          [attr.aria-pressed]="form.tipoCaso === tipo" (click)="seleccionarTipo(tipo)">
+                    {{ etiquetaTipoCaso(tipo) }}
+                  </button>
+                }
+              </fieldset>
+
+              <label class="campo">
+                <span>{{ 'reportarCaso.situacion.descripcion' | translate }}</span>
+                <textarea id="descripcion" name="descripcion" rows="6" maxlength="2000" [(ngModel)]="form.descripcion"
+                          [placeholder]="'reportarCaso.situacion.descripcionPlaceholder' | translate"></textarea>
+                <small>{{ 'reportarCaso.situacion.descripcionAyuda' | translate }}</small>
+              </label>
+
+              @if (message()) {
+                <p class="error" role="alert">{{ message() }}</p>
+              }
+
+              <div class="navegacion">
+                <button type="button" class="boton-borde" (click)="atras()">{{ 'reportarCaso.atras' | translate }}</button>
+                <button type="button" class="boton-principal" (click)="continuar()">
+                  {{ 'reportarCaso.continuar' | translate }} <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            }
+
+            <!-- ================================================= 4 · Contacto -->
+            @case (4) {
+              <div class="paso-titulo">
+                <h1>{{ 'reportarCaso.contacto.titulo' | translate }}</h1>
+                <p>{{ 'reportarCaso.contacto.texto' | translate }}</p>
+              </div>
+
+              <div class="tarjeta">
+                <p class="tarjeta-etiqueta">{{ 'reportarCaso.contacto.tuCuenta' | translate }}</p>
+                <p class="cuenta-nombre">{{ usuario()?.nombre }}</p>
+                <p class="texto-suave">{{ usuario()?.email }}</p>
+
+                @if (telefonoCuenta(); as telefono) {
+                  <label class="casilla">
+                    <input type="checkbox" name="compartirTelefonoCuenta" [(ngModel)]="form.compartirTelefonoCuenta" />
+                    <span>{{ textoMostrarCuenta() }}</span>
+                  </label>
+                } @else if (usuario()) {
+                  <p class="texto-suave">{{ 'reportarCaso.contacto.sinTelefono' | translate }}</p>
+                  <div class="fila-telefono">
+                    <label class="campo">
+                      <span>{{ 'reportarCaso.contacto.telefonoCuenta' | translate }}</span>
+                      <input type="tel" name="telefonoNuevo" inputmode="tel" autocomplete="tel"
+                             [(ngModel)]="form.telefonoNuevo" [placeholder]="'reportarCaso.contacto.otroPlaceholder' | translate" />
+                    </label>
+                    <button type="button" class="boton-borde" [disabled]="guardandoTelefono()" (click)="guardarTelefonoCuenta()">
+                      {{ (guardandoTelefono() ? 'reportarCaso.contacto.guardando' : 'reportarCaso.contacto.agregarTelefono') | translate }}
+                    </button>
+                  </div>
+                  @if (errorTelefono()) {
+                    <p class="error" role="alert">{{ errorTelefono() }}</p>
+                  }
+                }
+
+                <label class="campo">
+                  <span>{{ 'reportarCaso.contacto.otroTelefono' | translate }}</span>
+                  <input type="tel" name="telefonoContacto" inputmode="tel" maxlength="25" [(ngModel)]="form.telefonoContacto"
+                         [placeholder]="'reportarCaso.contacto.otroPlaceholder' | translate"
+                         [attr.aria-invalid]="otroTelefonoInvalido()" />
+                </label>
+                @if (otroTelefonoInvalido()) {
+                  <p class="error">{{ 'reportarCaso.errores.telefono' | translate }}</p>
+                }
+                <p class="texto-suave nota">{{ 'reportarCaso.contacto.soloConSesion' | translate }}</p>
+              </div>
+
+              <p class="aviso-estafas">{{ 'reportarCaso.contacto.estafas' | translate }}</p>
+
+              <div class="tarjeta resumen">
+                <h2>{{ 'reportarCaso.contacto.resumen' | translate }}</h2>
+                <dl>
+                  <div>
+                    <dt>{{ 'reportarCaso.contacto.resumenFoto' | translate }}</dt>
+                    <dd>{{ (foto() ? 'reportarCaso.lateral.fotoSubida' : 'reportarCaso.contacto.resumenSinFoto') | translate }}</dd>
+                    <button type="button" class="enlace-boton" (click)="irA(1)">{{ 'reportarCaso.contacto.editar' | translate }}</button>
+                  </div>
+                  <div>
+                    <dt>{{ 'reportarCaso.contacto.resumenUbicacion' | translate }}</dt>
+                    <dd>{{ (form.latitud != null ? 'reportarCaso.contacto.resumenConUbicacion' : 'reportarCaso.contacto.resumenSinUbicacion') | translate }}</dd>
+                    <button type="button" class="enlace-boton" (click)="irA(2)">{{ 'reportarCaso.contacto.editar' | translate }}</button>
+                  </div>
+                  <div>
+                    <dt>{{ 'reportarCaso.contacto.resumenTipo' | translate }}</dt>
+                    <dd>{{ form.tipoCaso ? etiquetaTipoCaso(form.tipoCaso) : '—' }}</dd>
+                    <button type="button" class="enlace-boton" (click)="irA(3)">{{ 'reportarCaso.contacto.editar' | translate }}</button>
+                  </div>
+                </dl>
+                <p class="resumen-descripcion">{{ descripcionFinal() }}</p>
+              </div>
+
+              @if (message()) {
+                <p class="error" role="alert">{{ message() }}</p>
+              }
+
+              <div class="navegacion">
+                <button type="button" class="boton-borde" (click)="atras()">{{ 'reportarCaso.atras' | translate }}</button>
+                <button type="button" class="boton-principal" [disabled]="enviando() || otroTelefonoInvalido()" (click)="crearReporte()">
+                  {{ (enviando() ? 'reportarCaso.enviando' : 'reportarCaso.enviar') | translate }}
+                </button>
+              </div>
+            }
+          }
+        </section>
+
+        <!-- Lateral: resumen de la foto y la guia para reportar -->
+        <aside class="reportar-lateral">
           @if (vistaPrevia(); as src) {
-            <img class="foto-preview" [src]="src" [alt]="'reportes.nuevo.fotoVistaPreviaAlt' | translate" />
-            <p class="foto-nombre">{{ foto()?.name }}</p>
+            <div class="tarjeta foto-resumen">
+              <img [src]="src" alt="" />
+              <span>
+                <strong>{{ 'reportarCaso.lateral.fotoSubida' | translate }}</strong>
+                <button type="button" class="enlace-boton" (click)="irA(1)">{{ 'reportarCaso.lateral.cambiar' | translate }}</button>
+              </span>
+            </div>
           }
 
-          <div class="foto-acciones">
-            <button type="button" class="btn-volver" (click)="fotoInput.click()">
-              {{ (foto() ? 'reportes.nuevo.fotoCambiar' : 'reportes.nuevo.fotoSeleccionar') | translate }}
-            </button>
-            @if (foto()) {
-              <button type="button" class="btn-volver" (click)="quitarFoto()">
-                {{ 'reportes.nuevo.fotoQuitar' | translate }}
-              </button>
-            }
+          <div class="consejos">
+            <h2>{{ 'reportarCaso.lateral.mientrasEsperas' | translate }}</h2>
+            <ul>
+              <li>{{ 'reportarCaso.lateral.consejo1' | translate }}</li>
+              <li>{{ 'reportarCaso.lateral.consejo2' | translate }}</li>
+              <li>{{ 'reportarCaso.lateral.consejo3' | translate }}</li>
+            </ul>
+            <a routerLink="/guia-reporte" target="_blank">{{ 'reportarCaso.lateral.guia' | translate }} <span aria-hidden="true">→</span></a>
           </div>
 
-          <p class="foto-ayuda">{{ 'reportes.nuevo.fotoAyuda' | translate }}</p>
-          @if (errorFoto()) {
-            <p class="foto-error" role="alert">{{ errorFoto() }}</p>
-          }
-        </div>
-
-        <span class="etiqueta-campo">{{ 'reportes.nuevo.ubicacion' | translate }}</span>
-        <app-selector-ubicacion
-          [(latitud)]="form.latitud"
-          [(longitud)]="form.longitud"
-        />
-
-        <div class="acciones">
-          <button type="button" class="btn-volver" (click)="atras()">{{ 'reportes.nuevo.atras' | translate }}</button>
-          <button type="submit" class="btn-accion" [disabled]="enviando()">
-            {{ enviando() ? ('reportes.nuevo.creando' | translate) : ('reportes.nuevo.crear' | translate) }}
-          </button>
-        </div>
-      </form>
+          <div class="emergencia">
+            <strong>{{ 'reportarCaso.lateral.emergencia' | translate }}</strong>
+            {{ 'reportarCaso.lateral.emergenciaTexto' | translate }}
+            <ul>
+              <li><a href="tel:123">{{ 'reportarCaso.lateral.sar' | translate }}: 123</a></li>
+              <li><a href="tel:4493355">{{ 'reportarCaso.lateral.zoonosis' | translate }}: 4493355</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     }
-  </section>
-</main>
+  </main>
+</div>
