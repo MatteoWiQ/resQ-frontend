@@ -26,7 +26,8 @@ import { OrganizacionService } from '../../../../core/services/organizacion.serv
 import { ReporteService } from '../../../../core/services/reporte.service';
 import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
 import { Organizacion } from '../../../../shared/models/organizacion.model';
-import { Reporte, SeguimientoCaso } from '../../../../shared/models/reporte.model';
+import { ContactoReporte, Reporte, SeguimientoCaso } from '../../../../shared/models/reporte.model';
+import { enlaceLlamada, enlaceWhatsapp, formatearTelefono } from '../../../../shared/utils/telefonos';
 import {
   COLOR_INSIGNIA,
   Insignia,
@@ -86,6 +87,9 @@ export class DetalleCasoComponent implements OnInit {
   readonly copiado = signal(false);
   readonly distancia = signal<number | null>(null);
   readonly calculandoDistancia = signal(false);
+  // Contacto de quien reporto: se pide recien al tocar "Ver telefono".
+  readonly contacto = signal<ContactoReporte | null>(null);
+  readonly estadoContacto = signal<'oculto' | 'cargando' | 'listo' | 'sinContacto' | 'error'>('oculto');
   readonly errorDistancia = signal(false);
 
   readonly haySesion = computed(() => this.auth.usuarioActual() !== null);
@@ -116,6 +120,8 @@ export class DetalleCasoComponent implements OnInit {
       (caso.idOrganizacion != null && caso.idOrganizacion === this.miOrganizacion())
     );
   });
+  /** Se ofrece el contacto si quien reporto lo compartio, el caso sigue abierto y no es tu reporte. */
+  readonly ofreceContacto = computed(() => !!this.caso()?.tieneContacto && this.abierto() && !this.esMiReporte());
   readonly esMiReporte = computed(() => this.caso()?.idUsuario === this.auth.usuarioActual()?.idUsuario);
 
   private idCaso = 0;
@@ -284,6 +290,37 @@ export class DetalleCasoComponent implements OnInit {
     }
   }
 
+  verContacto(): void {
+    const caso = this.caso();
+    if (!caso || this.estadoContacto() === 'cargando') {
+      return;
+    }
+    this.estadoContacto.set('cargando');
+    this.reporteService.obtenerContacto(caso.idReporte).subscribe({
+      next: (contacto) => {
+        this.contacto.set(contacto);
+        this.estadoContacto.set(contacto && contacto.telefonos.length > 0 ? 'listo' : 'sinContacto');
+      },
+      error: () => this.estadoContacto.set('error'),
+    });
+  }
+
+  etiquetaInsigniaContacto(insignia: 'VOLUNTARIO' | 'ORGANIZACION'): string {
+    return this.translate.t(`detalleCaso.contacto.insignias.${insignia}`);
+  }
+
+  telefonoVisible(numero: string): string {
+    return formatearTelefono(numero);
+  }
+
+  llamar(numero: string): string {
+    return enlaceLlamada(numero);
+  }
+
+  whatsapp(numero: string): string {
+    return enlaceWhatsapp(numero);
+  }
+
   calcularDistancia(): void {
     const caso = this.caso();
     if (!caso || !tieneUbicacion(caso)) {
@@ -309,6 +346,8 @@ export class DetalleCasoComponent implements OnInit {
   private cargarComplementos(caso: Reporte): void {
     this.seguimientos.set([]);
     this.organizacion.set(null);
+    this.contacto.set(null);
+    this.estadoContacto.set('oculto');
     if (caso.idOrganizacion != null) {
       this.reporteService
         .obtenerSeguimientos(caso.idReporte)

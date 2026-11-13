@@ -112,6 +112,57 @@
           }
         </section>
 
+        @if (ofreceContacto()) {
+          <section class="tarjeta-lateral tarjeta-contacto" aria-labelledby="contacto-titulo">
+            <h2 id="contacto-titulo">{{ 'detalleCaso.contacto.titulo' | translate }}</h2>
+            @if (!haySesion()) {
+              <a routerLink="/login" class="boton-borde">{{ 'detalleCaso.contacto.ingresar' | translate }}</a>
+            } @else {
+              @switch (estadoContacto()) {
+                @case ('listo') {
+                  @if (contacto(); as ct) {
+                    <p class="contacto-nombre">
+                      {{ ct.nombre }}
+                      @if (ct.insignia) {
+                        <span class="chip-insignia">{{ etiquetaInsigniaContacto(ct.insignia) }}</span>
+                      }
+                    </p>
+                    <ul class="telefonos">
+                      @for (tel of ct.telefonos; track tel.numero) {
+                        <li>
+                          <span class="telefono-numero">{{ telefonoVisible(tel.numero) }}</span>
+                          <span class="texto-suave">
+                            {{ (tel.origen === 'CASO' ? 'detalleCaso.contacto.delCaso' : 'detalleCaso.contacto.deCuenta') | translate }}
+                          </span>
+                          <span class="telefono-acciones">
+                            <a class="boton-borde boton-chico" [href]="llamar(tel.numero)">{{ 'detalleCaso.contacto.llamar' | translate }}</a>
+                            <a class="boton-borde boton-chico" [href]="whatsapp(tel.numero)" target="_blank" rel="noopener">
+                              {{ 'detalleCaso.contacto.whatsapp' | translate }}
+                            </a>
+                          </span>
+                        </li>
+                      }
+                    </ul>
+                  }
+                }
+                @case ('sinContacto') {
+                  <p class="texto-suave">{{ 'detalleCaso.contacto.noDisponible' | translate }}</p>
+                }
+                @case ('error') {
+                  <p class="texto-error" role="alert">{{ 'detalleCaso.contacto.error' | translate }}</p>
+                  <button type="button" class="boton-borde" (click)="verContacto()">{{ 'detalleCaso.reintentar' | translate }}</button>
+                }
+                @default {
+                  <button type="button" class="boton-borde" [disabled]="estadoContacto() === 'cargando'" (click)="verContacto()">
+                    {{ (estadoContacto() === 'cargando' ? 'detalleCaso.contacto.cargando' : 'detalleCaso.contacto.verTelefono') | translate }}
+                  </button>
+                }
+              }
+            }
+            <p class="aviso-estafas">{{ 'detalleCaso.contacto.estafas' | translate }}</p>
+          </section>
+        }
+
         <section class="tarjeta-lateral tarjeta-mapa" [attr.aria-label]="'detalleCaso.ubicacion.titulo' | translate">
           @if (tieneUbicacion()) {
             <div class="mini-mapa" #miniMapa></div>

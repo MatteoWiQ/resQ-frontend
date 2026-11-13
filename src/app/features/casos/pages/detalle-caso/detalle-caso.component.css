@@ -423,6 +423,68 @@
   margin-left: auto;
 }
 
+/* Contacto de quien reporto */
+.detalle-page .contacto-nombre {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.detalle-page .chip-insignia {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--panel-soft);
+  color: #1b6146;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.detalle-page .telefonos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detalle-page .telefonos li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detalle-page .telefono-numero {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.detalle-page .telefono-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.detalle-page .boton-chico {
+  flex: 1;
+  min-height: 42px;
+  font-size: 14px;
+}
+
+.detalle-page .aviso-estafas {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--urgente-fondo);
+  color: var(--urgente-texto);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 /* ---------------------------------------------------------------- movil */
 
 @media (max-width: 960px) {
