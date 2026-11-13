@@ -17,6 +17,8 @@ export interface Reporte {
   estadoRevision?: EstadoRevision | null;
   notaRevision?: string | null;
   fechaRevision?: string | null;
+  // HU-19/HU-22: voluntario que reviso el reporte (participa del chat del caso).
+  idRevisor?: number | null;
   // HU-21: la organización que tomó el caso, o null mientras nadie lo ha aceptado.
   // Lo controla el backend (ver PATCH /api/reportes/{id}/aceptar); nunca se manda al crear o editar.
   idOrganizacion?: number | null;

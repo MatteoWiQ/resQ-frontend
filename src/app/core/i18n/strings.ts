@@ -10,6 +10,8 @@ import { inicioEs } from './strings-inicio';
 import { inicioEn } from './strings-inicio-en';
 import { casosEs } from './strings-casos';
 import { casosEn } from './strings-casos-en';
+import { detalleCasoEs } from './strings-detalle-caso';
+import { detalleCasoEn } from './strings-detalle-caso-en';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
@@ -23,6 +25,8 @@ export const es = {
   inicio: inicioEs,
   // Rediseño: página Casos, lista + mapa (textos en strings-casos.ts)
   casos: casosEs,
+  // Rediseño: detalle de un caso (textos en strings-detalle-caso.ts)
+  detalleCaso: detalleCasoEs,
   shared: {
     brand: {
       marca: 'R',
@@ -559,6 +563,7 @@ export const en = {
   chatCaso: chatCasoEn,
   inicio: inicioEn,
   casos: casosEn,
+  detalleCaso: detalleCasoEn,
   shared: {
     brand: {
       marca: 'R',

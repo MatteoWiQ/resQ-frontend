@@ -81,6 +81,11 @@ export class OrganizacionService {
     return this.http.get<Organizacion[]>(this.baseUrl, { params });
   }
 
+  /** Rediseño (detalle del caso): datos de una organización. Hoy el backend pide sesión. */
+  obtener(idOrganizacion: number): Observable<Organizacion> {
+    return this.http.get<Organizacion>(`${this.baseUrl}/${idOrganizacion}`);
+  }
+
   /** Organización que representa el usuario, o null si todavía no registró ninguna. */
   obtenerDeRepresentante(idUsuario: number): Observable<Organizacion | null> {
     return this.http.get<Organizacion>(`${this.baseUrl}/representante/${idUsuario}`).pipe(
