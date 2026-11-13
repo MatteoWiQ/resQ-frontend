@@ -25,7 +25,7 @@ import { GeolocalizacionService } from '../../../../core/services/geolocalizacio
 import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
 import { CENTRO_CIUDAD, ZOOM_CIUDAD } from '../../../../shared/constants/geo';
 import { TIPOS_CASO } from '../../../../shared/constants/tipos-caso';
-import { Reporte } from '../../../../shared/models/reporte.model';
+import { ESPECIES, Reporte, TIPOS_NECESIDAD, TipoNecesidad } from '../../../../shared/models/reporte.model';
 import {
   COLOR_INSIGNIA,
   Insignia,
@@ -62,8 +62,7 @@ const INSIGNIAS_LEYENDA: Insignia[] = ['urgente', 'activo', 'resuelto'];
  *   distancia y "buscar en esta zona" se aplican en el navegador.
  * - Lista a la izquierda y mapa a la derecha. Los puntos tienen el color de su
  *   estado (con leyenda) y al tocarlos se abre una vista previa con foto.
- * - Animal y Necesita quedan visibles pero deshabilitados hasta que el backend
- *   tenga esos datos.
+ * - Animal (especie del reporte) y Necesita (casos que todavia buscan esa ayuda).
  * - Las tarjetas y el "Ver caso" de la vista previa abren el detalle (/casos/:id).
  *
  * Reemplaza a la pagina /mapa (HU-15): /mapa redirige aca.
@@ -89,6 +88,8 @@ export class CasosComponent implements OnInit, AfterViewInit {
 
   readonly clavesEstado = CLAVES_ESTADO;
   readonly tipos = TIPOS_CASO;
+  readonly especies = ESPECIES;
+  readonly tiposNecesidad = TIPOS_NECESIDAD;
   readonly distancias = DISTANCIAS_KM;
   readonly insigniasLeyenda = INSIGNIAS_LEYENDA;
   readonly colores = COLOR_INSIGNIA;
@@ -97,6 +98,8 @@ export class CasosComponent implements OnInit, AfterViewInit {
   readonly estado = signal<ClaveEstado>(ESTADO_POR_DEFECTO);
   readonly busqueda = signal('');
   readonly tipo = signal<string | null>(null);
+  readonly especie = signal<string | null>(null);
+  readonly necesidad = signal<TipoNecesidad | null>(null);
   readonly distanciaMaxKm = signal<number | null>(null);
   readonly orden = signal<Orden>('URGENTES');
   readonly zona = signal<Zona | null>(null);
@@ -117,6 +120,7 @@ export class CasosComponent implements OnInit, AfterViewInit {
     ordenar(
       aplicarFiltros(this.casos(), {
         tipo: this.tipo(),
+        especie: this.especie(),
         distanciaMaxKm: this.distanciaMaxKm(),
         posicion: this.posicion(),
         zona: this.zona(),
@@ -131,6 +135,8 @@ export class CasosComponent implements OnInit, AfterViewInit {
       this.estado() !== ESTADO_POR_DEFECTO ||
       this.busqueda().trim() !== '' ||
       this.tipo() !== null ||
+      this.especie() !== null ||
+      this.necesidad() !== null ||
       this.distanciaMaxKm() !== null ||
       this.zona() !== null,
   );
@@ -140,7 +146,7 @@ export class CasosComponent implements OnInit, AfterViewInit {
     return n === 1 ? this.translate.t('casos.resultados.uno') : this.translate.t('casos.resultados.varios', { n });
   });
 
-  private readonly consultas = new Subject<{ clave: ClaveEstado; texto: string; intento: number }>();
+  private readonly consultas = new Subject<{ clave: ClaveEstado; texto: string; necesidad: TipoNecesidad | null; intento: number }>();
   private intento = 0;
   private mapa: L.Map | null = null;
   private capaPuntos: L.LayerGroup | null = null;
@@ -170,13 +176,15 @@ export class CasosComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.consultas
       .pipe(
-        distinctUntilChanged((a, b) => a.clave === b.clave && a.texto === b.texto && a.intento === b.intento),
+        distinctUntilChanged(
+          (a, b) => a.clave === b.clave && a.texto === b.texto && a.necesidad === b.necesidad && a.intento === b.intento,
+        ),
         tap(() => {
           this.cargando.set(true);
           this.error.set(false);
         }),
-        switchMap(({ clave, texto }) =>
-          this.reporteService.obtenerTodos(ESTADOS_POR_CLAVE[clave], { busqueda: texto }).pipe(
+        switchMap(({ clave, texto, necesidad }) =>
+          this.reporteService.obtenerTodos(ESTADOS_POR_CLAVE[clave], { busqueda: texto, necesidad }).pipe(
             map((casos) => ({ casos, error: false })),
             catchError(() => of({ casos: [] as Reporte[], error: true })),
           ),
@@ -226,6 +234,24 @@ export class CasosComponent implements OnInit, AfterViewInit {
     this.tipo.set(tipo || null);
   }
 
+  cambiarEspecie(especie: string): void {
+    this.especie.set(especie || null);
+  }
+
+  /** "Necesita" lo filtra el backend: casos que todavia buscan esa ayuda. */
+  cambiarNecesidad(necesidad: string): void {
+    this.necesidad.set((necesidad || null) as TipoNecesidad | null);
+    this.consultar();
+  }
+
+  etiquetaEspecie(especie: string): string {
+    return this.translate.t(`shared.especies.${especie}` as TranslationKey);
+  }
+
+  etiquetaNecesidad(necesidad: string): string {
+    return this.translate.t(`shared.necesidades.${necesidad}` as TranslationKey);
+  }
+
   cambiarDistancia(valor: string): void {
     const km = valor ? Number(valor) : null;
     if (km === null) {
@@ -253,6 +279,8 @@ export class CasosComponent implements OnInit, AfterViewInit {
   limpiarFiltros(): void {
     this.busqueda.set('');
     this.tipo.set(null);
+    this.especie.set(null);
+    this.necesidad.set(null);
     this.distanciaMaxKm.set(null);
     this.zona.set(null);
     this.estado.set(ESTADO_POR_DEFECTO);
@@ -458,7 +486,12 @@ export class CasosComponent implements OnInit, AfterViewInit {
   // ============================================================ apoyo
 
   private consultar(): void {
-    this.consultas.next({ clave: this.estado(), texto: this.busqueda().trim(), intento: this.intento });
+    this.consultas.next({
+      clave: this.estado(),
+      texto: this.busqueda().trim(),
+      necesidad: this.necesidad(),
+      intento: this.intento,
+    });
   }
 
   /** Pide la ubicacion una sola vez; si no se puede, deshace el filtro elegido. */

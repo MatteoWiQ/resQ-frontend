@@ -49,13 +49,25 @@
       </select>
     </label>
 
-    <!-- El backend todavia no guarda el animal ni lo que necesita cada caso. -->
-    <button type="button" class="filtro-proximamente" disabled [attr.title]="'casos.filtros.proximamente' | translate">
-      {{ 'casos.filtros.animal' | translate }} <small>{{ 'casos.filtros.pronto' | translate }}</small>
-    </button>
-    <button type="button" class="filtro-proximamente" disabled [attr.title]="'casos.filtros.proximamente' | translate">
-      {{ 'casos.filtros.necesita' | translate }} <small>{{ 'casos.filtros.pronto' | translate }}</small>
-    </button>
+    <label class="filtro-select">
+      <span class="visually-hidden">{{ 'casos.filtros.animal' | translate }}</span>
+      <select name="especie" (change)="cambiarEspecie($any($event.target).value)">
+        <option value="" [selected]="especie() === null">{{ 'casos.filtros.animalTodos' | translate }}</option>
+        @for (e of especies; track e) {
+          <option [value]="e" [selected]="e === especie()">{{ etiquetaEspecie(e) }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="filtro-select">
+      <span class="visually-hidden">{{ 'casos.filtros.necesita' | translate }}</span>
+      <select name="necesidad" (change)="cambiarNecesidad($any($event.target).value)">
+        <option value="" [selected]="necesidad() === null">{{ 'casos.filtros.necesitaTodos' | translate }}</option>
+        @for (n of tiposNecesidad; track n) {
+          <option [value]="n" [selected]="n === necesidad()">{{ 'casos.filtros.necesita' | translate }}: {{ etiquetaNecesidad(n) }}</option>
+        }
+      </select>
+    </label>
 
     <div class="selector-vista" role="group" [attr.aria-label]="'casos.vista.ariaLabel' | translate">
       <button type="button" [attr.aria-pressed]="vista() === 'lista'" (click)="cambiarVista('lista')">

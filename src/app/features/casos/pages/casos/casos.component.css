@@ -71,27 +71,6 @@
   outline-offset: 2px;
 }
 
-.casos-page .filtro-proximamente {
-  height: 46px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px dashed #c9d3cd;
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  font-size: 15px;
-  cursor: not-allowed;
-}
-
-.casos-page .filtro-proximamente small {
-  margin-left: 4px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  background: #e6ece8;
-  font-size: 11px;
-  font-weight: 600;
-}
-
 .casos-page .selector-vista {
   display: flex;
   padding: 4px;
@@ -556,11 +535,6 @@
     width: 100%;
     font-size: 14px;
     padding-right: 30px;
-  }
-
-  /* Animal y Necesita todavia no hacen nada: en el telefono no ocupan lugar. */
-  .casos-page .filtro-proximamente {
-    display: none;
   }
 
   .casos-page .selector-vista {

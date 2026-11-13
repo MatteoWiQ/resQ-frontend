@@ -5,9 +5,9 @@ import { Posicion, distanciaKm, tieneUbicacion } from '../../shared/utils/casos'
 /**
  * Rediseño: una sola barra de filtros para Casos.
  *
- * El estado y el texto los filtra el backend (GET /api/reportes?estado=&busqueda=).
- * El tipo de caso, la distancia y "buscar en esta zona" se filtran en el navegador
- * sobre lo que llego, porque el backend no los conoce.
+ * El estado, el texto y la necesidad los filtra el backend
+ * (GET /api/reportes?estado=&busqueda=&necesidad=). El tipo de caso, el animal, la
+ * distancia y "buscar en esta zona" se filtran en el navegador sobre lo que llego.
  */
 export type ClaveEstado = 'ABIERTOS' | 'URGENTES' | 'EN_PROCESO' | 'RESUELTOS' | 'TODOS';
 
@@ -36,6 +36,8 @@ export interface Zona {
 
 export interface FiltrosLocales {
   tipo: string | null;
+  /** Rediseño: PERRO, GATO u OTRO (dato opcional del reporte). */
+  especie?: string | null;
   distanciaMaxKm: number | null;
   posicion: Posicion | null;
   zona: Zona | null;
@@ -44,6 +46,9 @@ export interface FiltrosLocales {
 export function aplicarFiltros(casos: Reporte[], filtros: FiltrosLocales): Reporte[] {
   return casos.filter((caso) => {
     if (filtros.tipo && normalizarTipoCaso(caso.tipoCaso) !== filtros.tipo) {
+      return false;
+    }
+    if (filtros.especie && caso.especie !== filtros.especie) {
       return false;
     }
     if (filtros.distanciaMaxKm != null && filtros.posicion) {
