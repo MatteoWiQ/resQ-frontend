@@ -5,6 +5,7 @@ import { Observable, catchError, of, throwError } from 'rxjs';
 import {
   FormularioOrganizacion,
   Organizacion,
+  OrganizacionPublica,
   OrganizacionRegistrada,
 } from '../../shared/models/organizacion.model';
 
@@ -81,9 +82,14 @@ export class OrganizacionService {
     return this.http.get<Organizacion[]>(this.baseUrl, { params });
   }
 
-  /** Rediseño (detalle del caso): datos de una organización. Hoy el backend pide sesión. */
-  obtener(idOrganizacion: number): Observable<Organizacion> {
-    return this.http.get<Organizacion>(`${this.baseUrl}/${idOrganizacion}`);
+  /** Rediseño: organizaciones verificadas, sin sesion (red del Inicio). */
+  listarPublicas(): Observable<OrganizacionPublica[]> {
+    return this.http.get<OrganizacionPublica[]>(`${this.baseUrl}/publicas`);
+  }
+
+  /** Rediseño: nombre y logo de una organizacion verificada, sin sesion (detalle del caso). */
+  obtenerPublica(idOrganizacion: number): Observable<OrganizacionPublica> {
+    return this.http.get<OrganizacionPublica>(`${this.baseUrl}/publicas/${idOrganizacion}`);
   }
 
   /** Organización que representa el usuario, o null si todavía no registró ninguna. */

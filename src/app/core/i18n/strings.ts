@@ -75,6 +75,17 @@ export const es = {
       VOLUNTARIO: 'Voluntario',
       ADMIN: 'Administrador',
     },
+    // Rediseño: catalogos del animal y de las necesidades del caso.
+    especies: { PERRO: 'Perro', GATO: 'Gato', OTRO: 'Otro animal' },
+    edades: { CACHORRO: 'Cachorro', ADULTO: 'Adulto', MAYOR: 'Mayor' },
+    tamanos: { PEQUENO: 'Pequeño', MEDIANO: 'Mediano', GRANDE: 'Grande' },
+    necesidades: {
+      TRANSPORTE: 'Transporte',
+      VETERINARIO: 'Veterinario',
+      HOGAR_TEMPORAL: 'Hogar temporal',
+      ALIMENTO: 'Alimento',
+      RESCATE: 'Rescate',
+    },
     tiposCaso: {
       PERDIDA: 'Perdida',
       ENCONTRADA: 'Encontrada',
@@ -606,6 +617,16 @@ export const en = {
       USUARIO: 'User',
       VOLUNTARIO: 'Volunteer',
       ADMIN: 'Admin',
+    },
+    especies: { PERRO: 'Dog', GATO: 'Cat', OTRO: 'Other animal' },
+    edades: { CACHORRO: 'Young', ADULTO: 'Adult', MAYOR: 'Senior' },
+    tamanos: { PEQUENO: 'Small', MEDIANO: 'Medium', GRANDE: 'Large' },
+    necesidades: {
+      TRANSPORTE: 'Transport',
+      VETERINARIO: 'Vet',
+      HOGAR_TEMPORAL: 'Foster home',
+      ALIMENTO: 'Food',
+      RESCATE: 'Rescue',
     },
     tiposCaso: {
       PERDIDA: 'Loss',

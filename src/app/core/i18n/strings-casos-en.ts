@@ -12,6 +12,8 @@ export const casosEn = {
     distanciaCualquiera: 'Any distance',
     distanciaMenos: 'Within {{km}} km',
     animal: 'Animal',
+    animalTodos: 'All animals',
+    necesitaTodos: 'Any need',
     necesita: 'Needs',
     proximamente: 'Coming soon',
     pronto: 'Soon',
