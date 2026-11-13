@@ -1,79 +1,114 @@
 <header class="topbar">
-  <div class="brand-wrap">
-    <div class="brand-mark">{{ 'shared.brand.marca' | translate }}</div>
-    <span class="brand-name">{{ 'shared.brand.nombre' | translate }}</span>
-  </div>
-
-  <app-language-switcher appFeatureToggle="enableLanguageInHeader"></app-language-switcher>
-
-  <button
-    type="button"
-    class="menu-toggle"
-    (click)="alternarMenu()"
-    [attr.aria-expanded]="menuAbierto()"
-    aria-controls="header-panel"
-    [attr.aria-label]="menuAbierto() ? ('shared.cerrarMenu' | translate) : ('shared.abrirMenu' | translate)"
-  >
-    <span aria-hidden="true">{{ menuAbierto() ? '✕' : '☰' }}</span>
-  </button>
+  <a routerLink="/" class="marca" [attr.aria-label]="'shared.nav.irAlInicio' | translate" (click)="cerrarTodo()">
+    <span class="marca-icono" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="5.5" cy="10" r="2" /><circle cx="9" cy="5.5" r="2" /><circle cx="15" cy="5.5" r="2" />
+        <circle cx="18.5" cy="10" r="2" />
+        <path d="M12 12c-3 0-5.5 3.5-5.5 6 0 1.5 1.2 2.5 2.7 2.5 1.2 0 1.8-.6 2.8-.6s1.6.6 2.8.6c1.5 0 2.7-1 2.7-2.5 0-2.5-2.5-6-5.5-6z" />
+      </svg>
+    </span>
+    <span class="marca-nombre">{{ 'shared.brand.nombre' | translate }}</span>
+  </a>
 
   <div id="header-panel" class="header-panel" [class.abierto]="menuAbierto()">
-    <nav
-      class="nav"
-      [attr.aria-label]="'landing.topbar.ariaLabel' | translate"
-      (click)="cerrarMenu()"
-    >
-      @if (variante() === 'landing') {
-        <a href="#inicio">{{ 'landing.topbar.inicio' | translate }}</a>
-        <a href="#mapa">{{ 'landing.topbar.mapa' | translate }}</a>
-        <a href="#casos">{{ 'landing.topbar.casos' | translate }}</a>
-        <a href="#ayudar">{{ 'landing.topbar.ayudar' | translate }}</a>
-      }
-      <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
-      <a routerLink="/organizaciones/registro">{{ 'organizaciones.enlaceTopbar' | translate }}</a>
-      @if (haySesion()) {
-        <a routerLink="/chat">{{ 'mensajes.bandejaTitulo' | translate }}</a>
-        <a routerLink="/notificaciones">{{ 'landing.header.notificaciones' | translate }}</a>
-        <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
+    <nav class="nav" [attr.aria-label]="'landing.topbar.ariaLabel' | translate" (click)="cerrarMenu()">
+      <a routerLink="/mapa" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ 'shared.nav.casos' | translate }}</a>
+      <a routerLink="/organizaciones/registro" routerLinkActive="activo" ariaCurrentWhenActive="page">
+        {{ 'shared.nav.organizaciones' | translate }}
+      </a>
+      <a routerLink="/" fragment="ayudar">{{ 'shared.nav.comoAyudar' | translate }}</a>
+      @if (!haySesion()) {
+        <a routerLink="/login" class="nav-ingresar">{{ 'shared.nav.ingresar' | translate }}</a>
       }
     </nav>
+  </div>
 
-    <div class="acciones">
-      @if (haySesion()) {
-        <a
-          routerLink="/chat"
-          class="notif-btn chat-btn"
-          title="Mis mensajes"
-          aria-label="Mis mensajes"
-        >
-          <span aria-hidden="true">&#9993;</span>
-        </a>
+  <div class="acciones">
+    @if (haySesion()) {
+      <a routerLink="/chat" class="icono-btn" [attr.aria-label]="'shared.nav.mensajes' | translate"
+         [attr.title]="'shared.nav.mensajes' | translate">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3.5" y="6" width="17" height="12" rx="2" /><path d="M4 7l8 6 8-6" />
+        </svg>
+      </a>
 
-        <a
-          routerLink="/notificaciones"
-          class="notif-btn bell-btn"
-          [attr.aria-label]="'landing.header.notificaciones' | translate"
-          [attr.title]="'landing.header.notificaciones' | translate"
-        >
-          <span aria-hidden="true">&#128276;</span>
-          @if (sinLeer() > 0) {
-            <span class="notif-badge" aria-hidden="true">{{ sinLeer() }}</span>
-          }
-        </a>
-
-        @if (esAdmin()) {
-          <a routerLink="/admin" class="secondary-btn" (click)="cerrarMenu()">
-            {{ 'landing.topbar.panelAdmin' | translate }}
-          </a>
+      <a routerLink="/notificaciones" class="icono-btn"
+         [attr.aria-label]="sinLeer() > 0
+           ? ('shared.nav.notificacionesNuevas' | translate: { n: sinLeer() })
+           : ('landing.header.notificaciones' | translate)"
+         [attr.title]="'landing.header.notificaciones' | translate">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" /><path d="M10 20a2 2 0 0 0 4 0" />
+        </svg>
+        @if (sinLeer() > 0) {
+          <span class="notif-badge" aria-hidden="true">{{ sinLeer() }}</span>
         }
-        <button type="button" class="logout-btn" (click)="cerrarSesion()">
-          {{ 'landing.header.cerrarSesion' | translate }}
-        </button>
-      } @else {
-        <a routerLink="/login" class="primary-btn" (click)="cerrarMenu()">
-          {{ 'landing.topbar.reportar' | translate }}
-        </a>
+      </a>
+
+      @if (esAdmin()) {
+        <a routerLink="/admin" class="secundario-btn admin-btn">{{ 'landing.topbar.panelAdmin' | translate }}</a>
       }
-    </div>
+
+      <div class="cuenta">
+        <button type="button" class="avatar-btn" (click)="alternarCuenta()" [attr.aria-expanded]="cuentaAbierta()"
+                aria-haspopup="menu" aria-controls="menu-cuenta" [attr.aria-label]="'shared.nav.tuCuenta' | translate">
+          <span class="avatar" aria-hidden="true">{{ iniciales() }}</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </button>
+
+        @if (cuentaAbierta()) {
+          <div id="menu-cuenta" class="menu-cuenta" role="menu" (click)="cerrarTodo()">
+            <p class="menu-cuenta-email">{{ email() }}</p>
+            <a role="menuitem" routerLink="/perfil">{{ 'shared.nav.miPerfil' | translate }}</a>
+            <a role="menuitem" [routerLink]="rutaMisCasos()">{{ 'shared.nav.misCasos' | translate }}</a>
+            @if (esRevisor()) {
+              <a role="menuitem" routerLink="/voluntario/solicitudes">{{ 'shared.nav.solicitudes' | translate }}</a>
+            }
+            <div class="menu-cuenta-idioma" role="group" [attr.aria-label]="'shared.nav.idioma' | translate"
+                 (click)="$event.stopPropagation()">
+              <span>{{ 'shared.nav.idioma' | translate }}</span>
+              <button type="button" [class.activo]="idioma() === 'es'" [attr.aria-pressed]="idioma() === 'es'"
+                      (click)="cambiarIdioma('es')">ES</button>
+              <button type="button" [class.activo]="idioma() === 'en'" [attr.aria-pressed]="idioma() === 'en'"
+                      (click)="cambiarIdioma('en')">EN</button>
+            </div>
+            <button type="button" role="menuitem" class="menu-cuenta-salir" (click)="cerrarSesion()">
+              {{ 'landing.header.cerrarSesion' | translate }}
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="idioma-suelto" role="group" [attr.aria-label]="'shared.nav.idioma' | translate">
+        <button type="button" [class.activo]="idioma() === 'es'" [attr.aria-pressed]="idioma() === 'es'"
+                (click)="cambiarIdioma('es')">ES</button>
+        <button type="button" [class.activo]="idioma() === 'en'" [attr.aria-pressed]="idioma() === 'en'"
+                (click)="cambiarIdioma('en')">EN</button>
+      </div>
+    }
+
+    <a [routerLink]="rutaReportar()" class="reportar-btn">{{ 'shared.nav.reportar' | translate }}</a>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      (click)="alternarMenu()"
+      [attr.aria-expanded]="menuAbierto()"
+      aria-controls="header-panel"
+      [attr.aria-label]="menuAbierto() ? ('shared.cerrarMenu' | translate) : ('shared.abrirMenu' | translate)"
+    >
+      <span aria-hidden="true">{{ menuAbierto() ? '✕' : '☰' }}</span>
+    </button>
   </div>
 </header>
+
+<!-- En movil "Reportar un caso" queda fijo abajo, siempre a mano. -->
+@if (mostrarReportarFijo()) {
+  <div class="reportar-fijo">
+    <a [routerLink]="rutaReportar()" class="reportar-btn">{{ 'shared.nav.reportar' | translate }}</a>
+  </div>
+}
