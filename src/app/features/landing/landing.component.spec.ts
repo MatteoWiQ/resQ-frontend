@@ -47,10 +47,11 @@ describe('LandingComponent (rediseño del Inicio)', () => {
     fixture.detectChanges();
   }
 
-  function responder(reportes: Reporte[]): void {
+  function responder(reportes: Reporte[], organizaciones: unknown[] = []): void {
     const req = httpMock.expectOne((r) => r.url === '/api/reportes');
     expect(req.request.params.get('estado')).toBe('PENDIENTE,EN_PROCESO');
     req.flush(reportes);
+    httpMock.expectOne('/api/organizaciones/publicas').flush(organizaciones);
     fixture.detectChanges();
   }
 
@@ -110,17 +111,31 @@ describe('LandingComponent (rediseño del Inicio)', () => {
   it('si falla la carga no rompe el Inicio', async () => {
     await crear();
     httpMock.expectOne((r) => r.url === '/api/reportes').flush({}, { status: 500, statusText: 'Error' });
+    httpMock.expectOne('/api/organizaciones/publicas').flush({}, { status: 500, statusText: 'Error' });
     fixture.detectChanges();
 
     expect(dom().querySelector('.carrusel-vacio')).not.toBeNull();
     expect(dom().querySelector('#ayudar')).not.toBeNull();
   });
 
-  it('la seccion de organizaciones invita a unirse y no lista nada hasta conectar el backend', async () => {
+  it('la seccion de organizaciones invita a unirse y muestra las de la red', async () => {
+    await crear();
+    responder([], [
+      { idOrganizacion: 3, nombre: 'Refugio Patitas', tipo: 'REFUGIO', logoUrl: null, zonasCobertura: null },
+      { idOrganizacion: 4, nombre: 'Vet Amigos', tipo: 'VETERINARIA', logoUrl: '/logos/vet.png', zonasCobertura: null },
+    ]);
+
+    expect(dom().querySelector('.orgs-unete')?.getAttribute('href')).toBe('/organizaciones/registro');
+    const orgs = dom().querySelectorAll('.orgs-lista .org');
+    expect(orgs.length).toBe(2);
+    expect(orgs[0].textContent).toContain('Refugio Patitas');
+    expect(orgs[1].querySelector('img')?.getAttribute('alt')).toBe('Logo de Vet Amigos');
+  });
+
+  it('sin organizaciones queda solo la invitacion', async () => {
     await crear();
     responder([]);
 
-    expect(dom().querySelector('.orgs-unete')?.getAttribute('href')).toBe('/organizaciones/registro');
     expect(dom().querySelector('.orgs-lista')).toBeNull();
   });
 });

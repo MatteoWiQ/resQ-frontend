@@ -138,7 +138,7 @@ describe('CrearReporteComponent: Reportar en 4 pasos (rediseño)', () => {
     expect(titulo()).toBe('¿Qué está pasando?');
   });
 
-  it('envia el reporte con la referencia al final de la descripcion y abre el caso nuevo', async () => {
+  it('envia el reporte con la referencia en su campo y abre el caso nuevo', async () => {
     await crear();
     boton('Continuar sin foto').click();
     fixture.detectChanges();
@@ -153,10 +153,35 @@ describe('CrearReporteComponent: Reportar en 4 pasos (rediseño)', () => {
     boton('Enviar reporte').click();
 
     expect(enviados[0].tipoCaso).toBe('ABANDONADA');
-    expect(enviados[0].descripcion).toBe('Perro herido\n\nReferencia: Frente a la farmacia');
+    expect(enviados[0].descripcion).toBe('Perro herido');
+    expect(enviados[0].referencia).toBe('Frente a la farmacia');
+    expect(enviados[0].necesidades).toEqual([]);
     expect(enviados[0].compartirTelefonoCuenta).toBe(false);
     expect(enviados[0].telefonoContacto).toBeNull();
     expect(navegar).toHaveBeenCalledWith(['/casos', 42]);
+  });
+
+  it('en Situacion se eligen los datos del animal y lo que necesita, y viajan al backend', async () => {
+    await crear();
+    hasta(3);
+
+    boton('Perro').click();
+    boton('Adulto').click();
+    boton('Mediano').click();
+    boton('Veterinario').click();
+    boton('Transporte').click();
+    boton('Transporte').click();
+    fixture.detectChanges();
+    expect(boton('Perro').getAttribute('aria-pressed')).toBe('true');
+
+    component.seleccionarTipo('ABANDONADA');
+    component.form.descripcion = 'Perro herido';
+    boton('Continuar').click();
+    fixture.detectChanges();
+    expect(dom().querySelector('.resumen')?.textContent).toContain('Veterinario');
+
+    boton('Enviar reporte').click();
+    expect(enviados[0]).toMatchObject({ especie: 'PERRO', edad: 'ADULTO', tamano: 'MEDIANO', necesidades: ['VETERINARIO'] });
   });
 
   it('en Contacto se puede mostrar el telefono de la cuenta y otro para el caso', async () => {

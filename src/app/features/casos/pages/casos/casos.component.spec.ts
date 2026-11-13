@@ -83,14 +83,38 @@ describe('CasosComponent: lista + mapa (rediseño)', () => {
     expect(dom().querySelector('.lista-total')?.textContent).toContain('2 casos');
   });
 
-  it('una sola barra de filtros, con Animal y Necesita deshabilitados', async () => {
+  it('una sola barra de filtros, ya sin botones "Pronto"', async () => {
     await crear();
     responder([]);
 
     expect(dom().querySelectorAll('form.barra-filtros').length).toBe(1);
-    const proximamente = dom().querySelectorAll<HTMLButtonElement>('.filtro-proximamente');
-    expect(proximamente.length).toBe(2);
-    expect(Array.from(proximamente).every((b) => b.disabled)).toBe(true);
+    expect(dom().querySelector('.filtro-proximamente')).toBeNull();
+    expect(dom().querySelector('select[name="especie"]')).not.toBeNull();
+    expect(dom().querySelector('select[name="necesidad"]')).not.toBeNull();
+  });
+
+  it('el filtro Animal usa la especie del reporte sin volver a pedir', async () => {
+    await crear();
+    responder([caso(1, { especie: 'PERRO' }), caso(2, { especie: 'GATO' }), caso(3)]);
+
+    component.cambiarEspecie('GATO');
+    fixture.detectChanges();
+
+    expect(titulos()).toEqual(['Caso 2']);
+  });
+
+  it('el filtro Necesita lo resuelve el backend', async () => {
+    await crear();
+    responder([]);
+
+    const select = dom().querySelector<HTMLSelectElement>('select[name="necesidad"]')!;
+    select.value = 'VETERINARIO';
+    select.dispatchEvent(new Event('change'));
+
+    const req = pedido();
+    expect(req.request.params.get('necesidad')).toBe('VETERINARIO');
+    expect(req.request.params.get('estado')).toBe('PENDIENTE,EN_PROCESO');
+    req.flush([]);
   });
 
   it('cambiar el estado vuelve a pedir al backend', async () => {

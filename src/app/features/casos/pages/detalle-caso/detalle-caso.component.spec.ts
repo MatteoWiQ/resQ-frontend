@@ -11,7 +11,7 @@ import { GeolocalizacionService } from '../../../../core/services/geolocalizacio
 import { MensajeService } from '../../../../core/services/mensaje.service';
 import { NotificacionService } from '../../../../core/services/notificacion.service';
 import { WebSocketService } from '../../../../core/services/websocket.service';
-import { Reporte } from '../../../../shared/models/reporte.model';
+import { NecesidadCaso, NovedadCaso, Reporte } from '../../../../shared/models/reporte.model';
 import { authServiceDoble, webSocketServiceDoble } from '../../../../shared/testing/test-doubles';
 
 const CASO: Reporte = {
@@ -57,9 +57,16 @@ describe('DetalleCasoComponent (rediseño)', () => {
     fixture.detectChanges();
   }
 
-  function responder(caso: Reporte = CASO): void {
+  /** El caso y lo que el detalle pide siempre: novedades y necesidades (publicas). */
+  function responder(caso: Reporte = CASO, necesidades: NecesidadCaso[] = [], novedades: NovedadCaso[] = []): void {
     httpMock.expectOne(`/api/reportes/${caso.idReporte}`).flush(caso);
+    httpMock.expectOne(`/api/reportes/${caso.idReporte}/novedades`).flush(novedades);
+    httpMock.expectOne(`/api/reportes/${caso.idReporte}/necesidades`).flush(necesidades);
     fixture.detectChanges();
+  }
+
+  function necesidad(id: number, tipo: NecesidadCaso['tipo'], estado: NecesidadCaso['estado'], idAyudante: number | null = null): NecesidadCaso {
+    return { idNecesidad: id, tipo, estado, idAyudante, nombreAyudante: idAyudante ? 'Jorge' : null };
   }
 
   const dom = () => fixture.nativeElement as HTMLElement;
@@ -89,30 +96,122 @@ describe('DetalleCasoComponent (rediseño)', () => {
     expect(eventos).toEqual(['Caso reportado']);
   });
 
-  it('si el caso tiene organizacion pide sus novedades y las agrega; si no puede verlas, sigue igual', async () => {
+  it('sin sesion muestra el nombre de la organizacion y las novedades publicas', async () => {
     await crear();
-    responder({ ...CASO, idOrganizacion: 3, estado: 'EN_PROCESO' });
-
-    httpMock.expectOne('/api/reportes/7/seguimientos').flush({}, { status: 403, statusText: 'Forbidden' });
-    fixture.detectChanges();
-
-    expect(dom().querySelectorAll('.evento').length).toBe(1);
-    expect(dom().querySelector('.tarjeta-org')?.textContent).toContain('Una organización de la red');
-  });
-
-  it('con sesion muestra el nombre de la organizacion y sus novedades', async () => {
-    await crear({ idUsuario: 9, email: 'ana@resq.com', rol: 'USUARIO' });
-    responder({ ...CASO, idOrganizacion: 3, estado: 'EN_PROCESO' });
-
-    httpMock.expectOne('/api/reportes/7/seguimientos').flush([
-      { idSeguimiento: 1, idReporte: 7, idOrganizacion: 3, nota: 'Lo llevamos al veterinario', fotoUrl: null, fechaCreacion: '2026-11-12T11:05:00' },
+    responder({ ...CASO, idOrganizacion: 3, estado: 'EN_PROCESO' }, [], [
+      { fechaCreacion: '2026-11-12T11:05:00', nota: 'Lo llevamos al veterinario', fotoUrl: null },
     ]);
-    httpMock.expectOne('/api/organizaciones/3').flush({ idOrganizacion: 3, nombre: 'Refugio Patitas', logoUrl: null });
-    httpMock.expectOne('/api/organizaciones/representante/9').flush({}, { status: 404, statusText: 'Not Found' });
+    httpMock.expectOne('/api/organizaciones/publicas/3').flush({ idOrganizacion: 3, nombre: 'Refugio Patitas', tipo: 'REFUGIO', logoUrl: null, zonasCobertura: null });
     fixture.detectChanges();
 
     expect(dom().querySelector('.evento-nota')?.textContent).toContain('Lo llevamos al veterinario');
     expect(dom().querySelector('.tarjeta-org strong')?.textContent).toContain('Refugio Patitas');
+  });
+
+  it('si la organizacion no responde, dice "Una organizacion de la red"', async () => {
+    await crear();
+    responder({ ...CASO, idOrganizacion: 3, estado: 'EN_PROCESO' });
+    httpMock.expectOne('/api/organizaciones/publicas/3').flush({}, { status: 404, statusText: 'Not Found' });
+    fixture.detectChanges();
+
+    expect(dom().querySelector('.tarjeta-org')?.textContent).toContain('Una organización de la red');
+  });
+
+  it('muestra los datos del animal y la referencia del lugar', async () => {
+    await crear();
+    responder({ ...CASO, especie: 'PERRO', edad: 'ADULTO', tamano: 'MEDIANO', referencia: 'frente a la farmacia' });
+
+    const chips = Array.from(dom().querySelectorAll('.chip-tipo')).map((c) => c.textContent?.trim());
+    expect(chips).toContain('Perro · adulto · mediano');
+    expect(dom().querySelector('.detalle-referencia')?.textContent).toContain('Referencia: frente a la farmacia');
+  });
+
+  // ---------------------------------------------------------------- que necesita
+
+  it('muestra que necesita el caso con su progreso', async () => {
+    await crear();
+    responder(CASO, [necesidad(1, 'TRANSPORTE', 'CUBIERTA', 5), necesidad(2, 'VETERINARIO', 'BUSCADA'), necesidad(3, 'HOGAR_TEMPORAL', 'OFRECIDA', 5)]);
+
+    const tarjeta = dom().querySelector('.tarjeta-necesidades')!;
+    expect(tarjeta.textContent).toContain('1 de 3 cubierto');
+    expect(tarjeta.querySelector('.barra-progreso')?.getAttribute('aria-valuenow')).toBe('33');
+    const estados = Array.from(tarjeta.querySelectorAll('.necesidad-estado')).map((e) => e.textContent?.trim());
+    expect(estados).toEqual(['Cubierto por Jorge', 'Se busca', 'Ofrecido por Jorge · falta confirmar']);
+  });
+
+  it('sin necesidades y sin poder gestionarlas no muestra la tarjeta', async () => {
+    await crear();
+    responder();
+
+    expect(dom().querySelector('.tarjeta-necesidades')).toBeNull();
+  });
+
+  it('con sesion "Me ofrezco" ofrece ayuda y actualiza la lista', async () => {
+    await crear({ idUsuario: 9, email: 'jorge@resq.com', rol: 'USUARIO' });
+    responder(CASO, [necesidad(2, 'VETERINARIO', 'BUSCADA')]);
+
+    dom().querySelector<HTMLButtonElement>('.necesidad .boton-mini.principal')!.click();
+    const req = httpMock.expectOne('/api/reportes/7/necesidades/2/ofrecer');
+    expect(req.request.method).toBe('POST');
+    req.flush([necesidad(2, 'VETERINARIO', 'OFRECIDA', 9)]);
+    fixture.detectChanges();
+
+    expect(dom().querySelector('.necesidad-estado')?.textContent).toContain('Ofrecido por Jorge');
+    expect(dom().querySelector('.necesidad .boton-mini')?.textContent).toContain('Retirar mi oferta');
+  });
+
+  it('sin sesion "Me ofrezco" lleva al login', async () => {
+    await crear();
+    responder(CASO, [necesidad(2, 'VETERINARIO', 'BUSCADA')]);
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    const boton = dom().querySelector<HTMLButtonElement>('.necesidad .boton-mini.principal')!;
+    expect(boton.textContent).toContain('Inicia sesión para ofrecerte');
+    boton.click();
+
+    expect(navegar).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('quien reporto confirma una oferta, agrega y quita necesidades', async () => {
+    await crear({ idUsuario: 2, email: 'rep@resq.com', rol: 'USUARIO' });
+    responder(CASO, [necesidad(1, 'TRANSPORTE', 'OFRECIDA', 9), necesidad(2, 'ALIMENTO', 'BUSCADA')]);
+
+    expect(Array.from(dom().querySelectorAll('.necesidad .boton-mini.principal')).map((b) => b.textContent?.trim())).toEqual(['Confirmar']);
+    dom().querySelector<HTMLButtonElement>('.necesidad .boton-mini.principal')!.click();
+    httpMock.expectOne('/api/reportes/7/necesidades/1/confirmar').flush([necesidad(1, 'TRANSPORTE', 'CUBIERTA', 9), necesidad(2, 'ALIMENTO', 'BUSCADA')]);
+    fixture.detectChanges();
+
+    dom().querySelector<HTMLButtonElement>('.boton-quitar')!.click();
+    const quitar = httpMock.expectOne('/api/reportes/7/necesidades/2');
+    expect(quitar.request.method).toBe('DELETE');
+    quitar.flush([necesidad(1, 'TRANSPORTE', 'CUBIERTA', 9)]);
+    fixture.detectChanges();
+
+    const select = dom().querySelector<HTMLSelectElement>('#necesidad-nueva')!;
+    select.value = 'VETERINARIO';
+    select.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    Array.from(dom().querySelectorAll<HTMLButtonElement>('.agregar-necesidad button'))[0].click();
+    const agregar = httpMock.expectOne((r) => r.url === '/api/reportes/7/necesidades' && r.method === 'POST');
+    expect(agregar.request.body).toEqual({ tipo: 'VETERINARIO' });
+    agregar.flush([necesidad(1, 'TRANSPORTE', 'CUBIERTA', 9), necesidad(4, 'VETERINARIO', 'BUSCADA')]);
+    fixture.detectChanges();
+
+    expect(dom().querySelectorAll('.necesidad').length).toBe(2);
+  });
+
+  it('si alguien se ofrecio antes, muestra el motivo y recarga la lista', async () => {
+    await crear({ idUsuario: 9, email: 'jorge@resq.com', rol: 'USUARIO' });
+    responder(CASO, [necesidad(2, 'VETERINARIO', 'BUSCADA')]);
+
+    dom().querySelector<HTMLButtonElement>('.necesidad .boton-mini.principal')!.click();
+    httpMock.expectOne('/api/reportes/7/necesidades/2/ofrecer')
+      .flush({ message: 'Alguien ya se ofreció para esta necesidad' }, { status: 409, statusText: 'Conflict' });
+    httpMock.expectOne('/api/reportes/7/necesidades').flush([necesidad(2, 'VETERINARIO', 'OFRECIDA', 5)]);
+    fixture.detectChanges();
+
+    expect(dom().querySelector('.tarjeta-necesidades .texto-error')?.textContent).toContain('Alguien ya se ofreció');
+    expect(dom().querySelector('.necesidad-estado')?.textContent).toContain('Ofrecido por Jorge');
   });
 
   it('sin sesion "Ofrecer ayuda" lleva a iniciar sesion', async () => {
