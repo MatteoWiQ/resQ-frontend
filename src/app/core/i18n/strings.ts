@@ -12,6 +12,8 @@ import { casosEs } from './strings-casos';
 import { casosEn } from './strings-casos-en';
 import { detalleCasoEs } from './strings-detalle-caso';
 import { detalleCasoEn } from './strings-detalle-caso-en';
+import { reportarEs } from './strings-reportar';
+import { reportarEn } from './strings-reportar-en';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
@@ -27,6 +29,8 @@ export const es = {
   casos: casosEs,
   // Rediseño: detalle de un caso (textos en strings-detalle-caso.ts)
   detalleCaso: detalleCasoEs,
+  // Rediseño: flujo para reportar un caso (textos en strings-reportar.ts)
+  reportarCaso: reportarEs,
   shared: {
     brand: {
       marca: 'R',
@@ -564,6 +568,7 @@ export const en = {
   inicio: inicioEn,
   casos: casosEn,
   detalleCaso: detalleCasoEn,
+  reportarCaso: reportarEn,
   shared: {
     brand: {
       marca: 'R',

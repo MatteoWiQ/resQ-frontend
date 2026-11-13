@@ -22,6 +22,17 @@ export interface Reporte {
   // HU-21: la organización que tomó el caso, o null mientras nadie lo ha aceptado.
   // Lo controla el backend (ver PATCH /api/reportes/{id}/aceptar); nunca se manda al crear o editar.
   idOrganizacion?: number | null;
+  // Contacto de quien reporta: el backend solo publica si hay contacto; los
+  // telefonos se piden con sesion en GET /api/reportes/{id}/contacto.
+  tieneContacto?: boolean;
+}
+
+/** Contacto de quien reporto un caso (solo con sesion y si lo compartio). */
+export interface ContactoReporte {
+  nombre: string | null;
+  /** VOLUNTARIO u ORGANIZACION verificada; null para una cuenta comun. */
+  insignia: 'VOLUNTARIO' | 'ORGANIZACION' | null;
+  telefonos: { numero: string; origen: 'CUENTA' | 'CASO' }[];
 }
 
 /** HU-21: una entrada del historial de seguimiento (nota + foto opcional) de un caso. */

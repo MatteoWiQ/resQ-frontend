@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 
-import { EstadoReporte, Reporte, SeguimientoCaso } from '../../shared/models/reporte.model';
+import { ContactoReporte, EstadoReporte, Reporte, SeguimientoCaso } from '../../shared/models/reporte.model';
 import { OrdenReporte } from '../../shared/constants/gestion-reportes';
 
 export interface ConsultaReportes {
@@ -79,6 +79,9 @@ export class ReporteService {
     fotoUrl: string | null;
     latitud?: number | null;
     longitud?: number | null;
+    // Contacto opcional: mostrar el telefono de la cuenta y/u otro solo para este caso.
+    compartirTelefonoCuenta?: boolean;
+    telefonoContacto?: string | null;
   }): Observable<Reporte> {
     return this.http.post<Reporte>(this.baseUrl, {
       ...reporte,
@@ -140,6 +143,11 @@ export class ReporteService {
   }
 
   /** Historial de seguimiento de un caso, más reciente primero. */
+  /** Contacto de quien reporto (exige sesion). null si no lo compartio o el caso esta cerrado (204). */
+  obtenerContacto(id: number): Observable<ContactoReporte | null> {
+    return this.http.get<ContactoReporte | null>(`${this.baseUrl}/${id}/contacto`).pipe(map((c) => c ?? null));
+  }
+
   obtenerSeguimientos(id: number): Observable<SeguimientoCaso[]> {
     return this.http.get<SeguimientoCaso[]>(`${this.baseUrl}/${id}/seguimientos`);
   }
