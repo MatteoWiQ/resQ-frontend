@@ -4,7 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppHeaderComponent } from '../../shared/components/app-header/app-header.component';
 import { ReporteService } from '../../core/services/reporte.service';
 import { Reporte } from '../../shared/models/reporte.model';
-import { Organizacion } from '../../shared/models/organizacion.model';
+import { OrganizacionPublica } from '../../shared/models/organizacion.model';
+import { OrganizacionService } from '../../core/services/organizacion.service';
 import { LandingHero } from './components/hero/hero.component';
 import { LandingSteps } from './components/steps/steps.component';
 import { LandingCasesSection } from './components/cases-section/cases-section.component';
@@ -35,17 +36,15 @@ import { CASOS_CARRUSEL, CASOS_URGENTES, casosAbiertos } from './casos-inicio';
 })
 export class LandingComponent implements OnInit {
   private readonly reporteService = inject(ReporteService);
+  private readonly organizacionService = inject(OrganizacionService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly casos = signal<Reporte[]>([]);
   readonly casosCarrusel = computed(() => this.casos().slice(0, CASOS_CARRUSEL));
   readonly casosUrgentes = computed(() => this.casos().slice(0, CASOS_URGENTES));
 
-  /**
-   * Organizaciones verificadas para la seccion de la red. Queda vacia hasta que el
-   * directorio del backend sea publico (hoy pide sesion).
-   */
-  readonly organizaciones = signal<Organizacion[]>([]);
+  /** Organizaciones verificadas para la seccion de la red (GET /api/organizaciones/publicas). */
+  readonly organizaciones = signal<OrganizacionPublica[]>([]);
 
   ngOnInit(): void {
     this.reporteService
@@ -55,6 +54,15 @@ export class LandingComponent implements OnInit {
         next: (reportes) => this.casos.set(casosAbiertos(reportes)),
         // Sin casos el carrusel muestra su mensaje y la seccion de urgentes se oculta.
         error: () => this.casos.set([]),
+      });
+
+    // Si no responde, la seccion muestra solo la invitacion a unirse.
+    this.organizacionService
+      .listarPublicas()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (organizaciones) => this.organizaciones.set(organizaciones),
+        error: () => this.organizaciones.set([]),
       });
   }
 }
