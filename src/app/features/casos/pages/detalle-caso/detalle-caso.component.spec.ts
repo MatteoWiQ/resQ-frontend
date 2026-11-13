@@ -224,4 +224,61 @@ describe('DetalleCasoComponent (rediseño)', () => {
 
     expect(dom().querySelector('h1')?.textContent).toBe('Perro herido en la plaza');
   });
+
+  // ---------------------------------------------------------------- contacto de quien reporto
+
+  it('si quien reporto compartio contacto, sin sesion pide iniciar sesion', async () => {
+    await crear();
+    responder({ ...CASO, tieneContacto: true });
+
+    expect(dom().querySelector('.tarjeta-contacto a')?.getAttribute('href')).toBe('/login');
+    expect(dom().querySelector('.tarjeta-contacto')?.textContent).toContain('ResQ nunca pide dinero');
+  });
+
+  it('con sesion "Ver telefono" muestra nombre, insignia y botones de llamar y WhatsApp', async () => {
+    await crear({ idUsuario: 9, email: 'ana@resq.com', rol: 'USUARIO' });
+    responder({ ...CASO, tieneContacto: true });
+
+    dom().querySelector<HTMLButtonElement>('.tarjeta-contacto button')!.click();
+    httpMock.expectOne('/api/reportes/7/contacto').flush({
+      nombre: 'Luis Meneses',
+      insignia: 'VOLUNTARIO',
+      telefonos: [{ numero: '71234567', origen: 'CUENTA' }, { numero: '60011122', origen: 'CASO' }],
+    });
+    fixture.detectChanges();
+
+    const tarjeta = dom().querySelector('.tarjeta-contacto')!;
+    expect(tarjeta.querySelector('.contacto-nombre')?.textContent).toContain('Luis Meneses');
+    expect(tarjeta.querySelector('.chip-insignia')?.textContent).toContain('Voluntario');
+    expect(tarjeta.querySelectorAll('.telefonos li').length).toBe(2);
+    const enlaces = Array.from(tarjeta.querySelectorAll('.telefonos li:first-child a')).map((a) => a.getAttribute('href'));
+    expect(enlaces).toEqual(['tel:71234567', 'https://wa.me/59171234567']);
+  });
+
+  it('si el contacto ya no esta disponible (204) lo dice', async () => {
+    await crear({ idUsuario: 9, email: 'ana@resq.com', rol: 'USUARIO' });
+    responder({ ...CASO, tieneContacto: true });
+
+    dom().querySelector<HTMLButtonElement>('.tarjeta-contacto button')!.click();
+    httpMock.expectOne('/api/reportes/7/contacto').flush(null, { status: 204, statusText: 'No Content' });
+    fixture.detectChanges();
+
+    expect(dom().querySelector('.tarjeta-contacto')?.textContent).toContain('no dejó un teléfono');
+  });
+
+  it('sin contacto compartido, en un caso cerrado o en tu propio reporte no hay tarjeta de contacto', async () => {
+    await crear({ idUsuario: 2, email: 'rep@resq.com', rol: 'USUARIO' });
+    responder({ ...CASO, tieneContacto: true });
+    expect(dom().querySelector('.tarjeta-contacto')).toBeNull();
+
+    TestBed.resetTestingModule();
+    await crear();
+    responder({ ...CASO, tieneContacto: true, estado: 'RESUELTO' });
+    expect(dom().querySelector('.tarjeta-contacto')).toBeNull();
+
+    TestBed.resetTestingModule();
+    await crear();
+    responder({ ...CASO, tieneContacto: false });
+    expect(dom().querySelector('.tarjeta-contacto')).toBeNull();
+  });
 });
