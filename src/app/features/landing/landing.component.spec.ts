@@ -69,7 +69,7 @@ describe('LandingComponent (rediseño del Inicio)', () => {
     const puertas = dom().querySelectorAll('.puerta');
     expect(puertas.length).toBe(2);
     expect(puertas[0].getAttribute('href')).toBe('/login');
-    expect(puertas[1].getAttribute('href')).toBe('/mapa');
+    expect(puertas[1].getAttribute('href')).toBe('/casos');
   });
 
   it('ya no muestra las estadisticas vacias ni el mapa', async () => {

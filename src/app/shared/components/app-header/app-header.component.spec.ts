@@ -86,7 +86,7 @@ describe('AppHeaderComponent (rediseño de la navegacion)', () => {
     expect(dom.querySelectorAll('nav').length).toBe(1);
     const enlaces = Array.from(dom.querySelectorAll('nav a')).map((a) => a.textContent?.trim());
     expect(enlaces).toEqual(['Casos', 'Organizaciones', 'Cómo ayudar', 'Iniciar sesión']);
-    expect(dom.querySelector('nav a[href="/mapa"]')).not.toBeNull();
+    expect(dom.querySelector('nav a[href="/casos"]')).not.toBeNull();
     expect(dom.querySelector('nav a[href="/#ayudar"]')).not.toBeNull();
   });
 
