@@ -1,0 +1,177 @@
+<div class="casos-page" [class.solo-lista]="vista() === 'lista'">
+  <app-header />
+
+  <h1 class="visually-hidden">{{ 'casos.tituloPagina' | translate }}</h1>
+
+  <!-- Una sola barra de filtros -->
+  <form class="barra-filtros" role="search" [attr.aria-label]="'casos.filtros.ariaLabel' | translate"
+        (submit)="$event.preventDefault()">
+    <label class="filtro-busqueda">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
+      </svg>
+      <span class="visually-hidden">{{ 'casos.filtros.buscar' | translate }}</span>
+      <input type="search" name="busqueda" [value]="busqueda()" (input)="alBuscar($any($event.target).value)"
+             [placeholder]="'casos.filtros.buscarPlaceholder' | translate" />
+    </label>
+
+    <label class="filtro-select">
+      <span class="visually-hidden">{{ 'casos.filtros.estado' | translate }}</span>
+      <select name="estado" [value]="estado()" (change)="cambiarEstado($any($event.target).value)">
+        @for (clave of clavesEstado; track clave) {
+          <option [value]="clave" [selected]="clave === estado()">
+            {{ 'casos.filtros.estado' | translate }}: {{ etiquetaEstado(clave) }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <label class="filtro-select">
+      <span class="visually-hidden">{{ 'casos.filtros.tipo' | translate }}</span>
+      <select name="tipo" (change)="cambiarTipo($any($event.target).value)">
+        <option value="" [selected]="tipo() === null">{{ 'casos.filtros.tipoTodos' | translate }}</option>
+        @for (t of tipos; track t) {
+          <option [value]="t" [selected]="t === tipo()">{{ etiquetaTipo(t) }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="filtro-select">
+      <span class="visually-hidden">{{ 'casos.filtros.distancia' | translate }}</span>
+      <select name="distancia" [disabled]="pidiendoUbicacion()" (change)="cambiarDistancia($any($event.target).value)">
+        <option value="" [selected]="distanciaMaxKm() === null">{{ 'casos.filtros.distanciaCualquiera' | translate }}</option>
+        @for (km of distancias; track km) {
+          <option [value]="km" [selected]="km === distanciaMaxKm()">
+            {{ 'casos.filtros.distanciaMenos' | translate: { km } }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <!-- El backend todavia no guarda el animal ni lo que necesita cada caso. -->
+    <button type="button" class="filtro-proximamente" disabled [attr.title]="'casos.filtros.proximamente' | translate">
+      {{ 'casos.filtros.animal' | translate }} <small>{{ 'casos.filtros.proximamente' | translate }}</small>
+    </button>
+    <button type="button" class="filtro-proximamente" disabled [attr.title]="'casos.filtros.proximamente' | translate">
+      {{ 'casos.filtros.necesita' | translate }} <small>{{ 'casos.filtros.proximamente' | translate }}</small>
+    </button>
+
+    <div class="selector-vista" role="group" [attr.aria-label]="'casos.vista.ariaLabel' | translate">
+      <button type="button" [attr.aria-pressed]="vista() === 'lista'" (click)="cambiarVista('lista')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" /></svg>
+        {{ 'casos.vista.lista' | translate }}
+      </button>
+      <button type="button" [attr.aria-pressed]="vista() === 'listaMapa'" (click)="cambiarVista('listaMapa')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z" /><path d="M9 4v14M15 6v14" />
+        </svg>
+        <span class="solo-escritorio">{{ 'casos.vista.listaMapa' | translate }}</span>
+        <span class="solo-movil">{{ 'casos.vista.mapa' | translate }}</span>
+      </button>
+    </div>
+  </form>
+
+  @if (pidiendoUbicacion()) {
+    <p class="aviso" role="status">{{ 'casos.ubicacion.pidiendo' | translate }}</p>
+  } @else if (errorUbicacion()) {
+    <p class="aviso aviso-error" role="alert">{{ errorUbicacion() }}</p>
+  }
+
+  <div class="casos-cuerpo">
+    <!-- Lista -->
+    <section class="casos-lista" [attr.aria-label]="'casos.tituloPagina' | translate">
+      <div class="lista-cabecera">
+        <p class="lista-total" role="status">
+          {{ textoResultados() }}
+          @if (zona()) {
+            <span>{{ 'casos.resultados.enZona' | translate }}</span>
+            <button type="button" class="enlace-boton" (click)="quitarZona()">{{ 'casos.resultados.quitarZona' | translate }}</button>
+          }
+        </p>
+        <label class="lista-orden">
+          {{ 'casos.orden.etiqueta' | translate }}:
+          <select name="orden" [disabled]="pidiendoUbicacion()" (change)="cambiarOrden($any($event.target).value)">
+            <option value="URGENTES" [selected]="orden() === 'URGENTES'">{{ 'casos.orden.URGENTES' | translate }}</option>
+            <option value="RECIENTES" [selected]="orden() === 'RECIENTES'">{{ 'casos.orden.RECIENTES' | translate }}</option>
+            <option value="CERCANOS" [selected]="orden() === 'CERCANOS'">{{ 'casos.orden.CERCANOS' | translate }}</option>
+          </select>
+        </label>
+      </div>
+
+      @if (cargando()) {
+        <p class="estado-lista">{{ 'casos.cargando' | translate }}</p>
+      } @else if (error()) {
+        <div class="estado-lista">
+          <p>{{ 'casos.error' | translate }}</p>
+          <button type="button" class="boton-secundario" (click)="reintentar()">{{ 'casos.reintentar' | translate }}</button>
+        </div>
+      } @else if (visibles().length === 0) {
+        <div class="estado-lista">
+          <p>{{ 'casos.vacio' | translate }}</p>
+          @if (hayFiltros()) {
+            <button type="button" class="boton-secundario" (click)="limpiarFiltros()">{{ 'casos.filtros.limpiar' | translate }}</button>
+          }
+        </div>
+      } @else {
+        <ul class="tarjetas-casos">
+          @for (caso of visibles(); track caso.idReporte) {
+            <li>
+              <!-- Todavia no abre el detalle: lo muestra en el mapa. Se conecta cuando exista la pagina del caso. -->
+              <button
+                type="button"
+                class="tarjeta-caso"
+                [class.seleccionada]="seleccionado() === caso.idReporte"
+                [attr.aria-pressed]="seleccionado() === caso.idReporte"
+                (click)="seleccionar(caso)"
+                (mouseenter)="resaltar(caso.idReporte)"
+                (mouseleave)="resaltar(null)"
+                (focus)="resaltar(caso.idReporte)"
+                (blur)="resaltar(null)"
+              >
+                <span class="tarjeta-caso-foto">
+                  @if (caso.fotoUrl) {
+                    <img [src]="caso.fotoUrl" alt="" loading="lazy" />
+                  } @else {
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="5.5" cy="10" r="2" /><circle cx="9" cy="5.5" r="2" /><circle cx="15" cy="5.5" r="2" />
+                      <circle cx="18.5" cy="10" r="2" />
+                      <path d="M12 12c-3 0-5.5 3.5-5.5 6 0 1.5 1.2 2.5 2.7 2.5 1.2 0 1.8-.6 2.8-.6s1.6.6 2.8.6c1.5 0 2.7-1 2.7-2.5 0-2.5-2.5-6-5.5-6z" />
+                    </svg>
+                    <span class="visually-hidden">{{ 'casos.sinFoto' | translate }}</span>
+                  }
+                </span>
+                <span class="tarjeta-caso-texto">
+                  <span [class]="'insignia-caso ' + insignia(caso)">{{ etiquetaInsignia(insignia(caso)) }}</span>
+                  <span class="tarjeta-caso-titulo">{{ caso.descripcion }}</span>
+                  <span class="tarjeta-caso-meta">{{ meta(caso) }}</span>
+                  @if (caso.latitud == null || caso.longitud == null) {
+                    <span class="tarjeta-caso-nota">{{ 'casos.mapa.sinUbicacion' | translate }}</span>
+                  }
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Mapa -->
+    <section class="casos-mapa" [attr.aria-label]="'casos.mapa.ariaLabel' | translate">
+      <div class="mapa-lienzo" #mapa></div>
+
+      @if (mapaMovido()) {
+        <button type="button" class="buscar-zona" (click)="buscarEnZona()">{{ 'casos.mapa.buscarEnZona' | translate }}</button>
+      }
+
+      <ul class="leyenda" [attr.aria-label]="'casos.mapa.leyenda' | translate">
+        @for (i of insigniasLeyenda; track i) {
+          <li><span class="leyenda-punto" [style.background]="colores[i]" aria-hidden="true"></span>{{ etiquetaInsignia(i) }}</li>
+        }
+      </ul>
+    </section>
+  </div>
+</div>
