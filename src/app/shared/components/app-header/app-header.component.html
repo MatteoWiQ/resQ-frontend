@@ -6,21 +6,6 @@
 
   <app-language-switcher appFeatureToggle="enableLanguageInHeader"></app-language-switcher>
 
-  <nav class="nav" [attr.aria-label]="'landing.topbar.ariaLabel' | translate">
-    @if (variante() === 'landing') {
-      <a href="#inicio">{{ 'landing.topbar.inicio' | translate }}</a>
-      <a href="#mapa">{{ 'landing.topbar.mapa' | translate }}</a>
-      <a href="#casos">{{ 'landing.topbar.casos' | translate }}</a>
-      <a href="#ayudar">{{ 'landing.topbar.ayudar' | translate }}</a>
-    }
-    <a routerLink="/guia-reporte" class="guide-link">{{ 'landing.topbar.guia' | translate }}</a>
-    <a routerLink="/organizaciones/registro">{{ 'organizaciones.enlaceTopbar' | translate }}</a>
-    @if (haySesion()) {
-      <a routerLink="/notificaciones">{{ 'landing.header.notificaciones' | translate }}</a>
-      <a routerLink="/perfil">{{ 'landing.topbar.perfil' | translate }}</a>
-    }
-  </nav>
-
   <button
     type="button"
     class="menu-toggle"
