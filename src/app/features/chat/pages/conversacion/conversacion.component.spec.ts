@@ -1,8 +1,8 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter, ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { computed, signal } from '@angular/core';
 
@@ -35,7 +35,12 @@ describe('ConversacionComponent (HU-27)', () => {
   let mensajeService: {
     obtenerMensajes: (id: number) => Observable<Mensaje[]>;
     obtenerConversaciones: () => Observable<unknown[]>;
-    enviarMensaje: (id: number, contenido: string, archivo?: File | null) => Observable<Mensaje>;
+    enviarMensaje: (
+      id: number,
+      contenido: string,
+      archivo?: File | null,
+      claveEnvio?: string | null,
+    ) => Observable<Mensaje>;
     eliminarMensaje: (id: number) => Observable<void>;
   };
 
@@ -155,9 +160,40 @@ describe('ConversacionComponent (HU-27)', () => {
     componente.borrador.set('Nos vemos');
     componente.enviar();
 
-    expect(mensajeService.enviarMensaje).toHaveBeenCalledWith(1, 'Nos vemos', null);
+    expect(mensajeService.enviarMensaje).toHaveBeenCalledWith(1, 'Nos vemos', null, expect.any(String));
     expect(componente.mensajes()[0].idMensaje).toBe(3);
     expect(componente.borrador()).toBe('');
+  });
+
+  it('reutiliza la clave de envio al reintentar y la renueva al confirmarse (TT-53)', () => {
+    fixture.detectChanges();
+    const servicio = mensajeService.enviarMensaje as unknown as ReturnType<typeof vi.fn>;
+    servicio.mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 503 })));
+
+    componente.borrador.set('Nos vemos');
+    componente.enviar();
+    const primeraClave = servicio.mock.calls[0][3] as string;
+
+    componente.enviar();
+    expect(servicio.mock.calls[1][3]).toBe(primeraClave);
+    expect(componente.mensajes()[0].idMensaje).toBe(3);
+
+    componente.borrador.set('Otra cosa');
+    componente.enviar();
+    expect(servicio.mock.calls[2][3]).not.toBe(primeraClave);
+  });
+
+  it('informa cuando la clave ya se uso en otra conversacion', () => {
+    fixture.detectChanges();
+    (mensajeService.enviarMensaje as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce(
+      throwError(() => new HttpErrorResponse({ status: 409 })),
+    );
+
+    componente.borrador.set('Nos vemos');
+    componente.enviar();
+    fixture.detectChanges();
+
+    expect(texto()).toContain('ya se envió en otra conversación');
   });
 
   it('adjunta un archivo y lo incluye al enviar', () => {
@@ -173,7 +209,7 @@ describe('ConversacionComponent (HU-27)', () => {
     componente.borrador.set('Te paso el informe');
     componente.enviar();
 
-    expect(mensajeService.enviarMensaje).toHaveBeenCalledWith(1, 'Te paso el informe', archivo);
+    expect(mensajeService.enviarMensaje).toHaveBeenCalledWith(1, 'Te paso el informe', archivo, expect.any(String));
   });
 
   it('permite quitar el adjunto elegido', () => {

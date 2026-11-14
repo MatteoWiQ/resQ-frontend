@@ -58,6 +58,8 @@ export class ConversacionComponent implements OnInit, OnDestroy {
 
   private idConversacion = 0;
   private idUsuario = 0;
+  /** TT-53: clave del envio en curso, para que los reintentos sean idempotentes. */
+  private readonly clavePendiente = signal<string | null>(null);
   private readonly suscripciones = new Subscription();
 
   get caracteres(): number {
@@ -175,27 +177,45 @@ export class ConversacionComponent implements OnInit, OnDestroy {
 
     this.enviando.set(true);
     this.error.set('');
+    // TT-53: la clave se conserva hasta que el envio se confirma, asi un reintento
+    // (doble clic, reconexion) no crea un mensaje duplicado en el backend.
+    const claveEnvio = this.clavePendiente() ?? this.nuevaClaveEnvio();
+    this.clavePendiente.set(claveEnvio);
     this.suscripciones.add(
       this.mensajeService
-        .enviarMensaje(this.idConversacion, contenido, this.adjunto())
+        .enviarMensaje(this.idConversacion, contenido, this.adjunto(), claveEnvio)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (mensaje) => {
             this.mensajes.update((lista) => [mensaje, ...lista]);
             this.borrador.set('');
             this.adjunto.set(null);
+            this.clavePendiente.set(null);
             this.enviando.set(false);
           },
           error: (err: HttpErrorResponse) => {
             this.enviando.set(false);
             this.error.set(
-              err.status === 400
-                ? (err.error?.message ?? this.translate.t('mensajes.errorDemasiadoLargo'))
-                : this.translate.t('mensajes.errorEnviar'),
+              err.status === 409
+                ? this.translate.t('mensajes.claveRepetida')
+                : err.status === 400
+                  ? (err.error?.message ?? this.translate.t('mensajes.errorDemasiadoLargo'))
+                  : this.translate.t('mensajes.errorEnviar'),
             );
           },
         }),
     );
+  }
+
+  private nuevaClaveEnvio(): string {
+    const cripto = globalThis.crypto;
+    if (typeof cripto?.randomUUID === 'function') {
+      return cripto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (caracter) => {
+      const azar = (Math.random() * 16) | 0;
+      return (caracter === 'x' ? azar : (azar & 0x3) | 0x8).toString(16);
+    });
   }
 
   eliminar(mensaje: Mensaje): void {
