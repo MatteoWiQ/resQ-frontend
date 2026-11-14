@@ -44,6 +44,9 @@ export class BandejaChatComponent implements OnInit {
   readonly errorBusqueda = signal('');
   readonly mostrarNueva = signal(false);
   readonly busqueda = signal('');
+  readonly busquedaConversaciones = signal('');
+  readonly verArchivadas = signal(false);
+  readonly accionando = signal<number | null>(null);
 
   private readonly suscripciones = new Subscription();
 
@@ -58,15 +61,55 @@ export class BandejaChatComponent implements OnInit {
 
   cargarConversaciones(): void {
     this.cargando.set(true);
+    this.error.set('');
     this.suscripciones.add(
-      this.mensajeService.obtenerConversaciones().subscribe({
-        next: (conversaciones) => {
-          this.conversaciones.set(conversaciones);
-          this.cargando.set(false);
+      this.mensajeService
+        .obtenerConversaciones({
+          busqueda: this.busquedaConversaciones() || undefined,
+          archivadas: this.verArchivadas(),
+        })
+        .subscribe({
+          next: (conversaciones) => {
+            this.conversaciones.set(conversaciones);
+            this.cargando.set(false);
+          },
+          error: () => {
+            this.error.set(this.translate.t('mensajes.errorCargar'));
+            this.cargando.set(false);
+          },
+        }),
+    );
+  }
+
+  /** TT-50: aplica el texto de búsqueda a la bandeja de conversaciones. */
+  buscarConversaciones(): void {
+    this.cargarConversaciones();
+  }
+
+  /** TT-50: alterna entre bandeja activa y archivadas. */
+  cambiarVista(archivadas: boolean): void {
+    if (this.verArchivadas() === archivadas) {
+      return;
+    }
+    this.verArchivadas.set(archivadas);
+    this.cargarConversaciones();
+  }
+
+  /** TT-50: archiva o desarchiva la conversación y recarga la bandeja. */
+  archivar(chat: Conversacion): void {
+    if (this.accionando() !== null) {
+      return;
+    }
+    this.accionando.set(chat.idConversacion);
+    this.suscripciones.add(
+      this.mensajeService.archivarConversacion(chat.idConversacion, !chat.archivada).subscribe({
+        next: () => {
+          this.accionando.set(null);
+          this.cargarConversaciones();
         },
         error: () => {
-          this.error.set(this.translate.t('mensajes.errorCargar'));
-          this.cargando.set(false);
+          this.accionando.set(null);
+          this.error.set(this.translate.t('mensajes.errorArchivar'));
         },
       }),
     );
