@@ -400,6 +400,7 @@ export const es = {
     enviando: 'Enviando...',
     errorCargar: 'No se pudieron cargar los mensajes.',
     errorEnviar: 'No se pudo enviar el mensaje. Inténtalo de nuevo.',
+    claveRepetida: 'Ese mensaje ya se envió en otra conversación.',
     errorEliminar: 'No se pudo eliminar el mensaje.',
     errorAbrir: 'No se pudo abrir la conversación.',
     errorDemasiadoLargo: 'El mensaje supera el límite de caracteres.',
