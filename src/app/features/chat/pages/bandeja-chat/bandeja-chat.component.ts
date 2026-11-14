@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MensajeService } from '../../../../core/services/mensaje.service';
 import { OrganizacionService } from '../../../../core/services/organizacion.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslateService } from '../../../../core/i18n/translate.service';
 import { BackButtonComponent } from '../../../../shared/components/back-button/back-button.component';
@@ -27,12 +28,15 @@ import { Organizacion } from '../../../../shared/models/organizacion.model';
   templateUrl: './bandeja-chat.component.html',
   styleUrl: './bandeja-chat.component.css',
 })
-export class BandejaChatComponent implements OnInit {
+export class BandejaChatComponent implements OnInit, OnDestroy {
+  private static readonly DEBOUNCE_RECARGA_MS = 300;
+
   private readonly mensajeService = inject(MensajeService);
   private readonly organizacionService = inject(OrganizacionService);
   private readonly authService = inject(AuthService);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
+  private readonly webSocket = inject(WebSocketService);
 
   readonly conversaciones = signal<Conversacion[]>([]);
   readonly organizaciones = signal<Organizacion[]>([]);
@@ -49,6 +53,24 @@ export class BandejaChatComponent implements OnInit {
   readonly accionando = signal<number | null>(null);
 
   private readonly suscripciones = new Subscription();
+  private recargaPendiente: ReturnType<typeof setTimeout> | null = null;
+  private conectadoAntes = false;
+  private conexiones = 0;
+
+  constructor() {
+    // TT-52: al recuperar la conexion se refresca la bandeja por si se
+    // perdieron eventos mientras el socket estaba caido.
+    effect(() => {
+      const conectado = this.webSocket.conectado();
+      if (conectado && !this.conectadoAntes) {
+        this.conexiones += 1;
+        if (this.conexiones > 1) {
+          this.programarRecarga();
+        }
+      }
+      this.conectadoAntes = conectado;
+    });
+  }
 
   ngOnInit(): void {
     if (this.authService.obtenerIdUsuarioActual() === null) {
@@ -57,6 +79,15 @@ export class BandejaChatComponent implements OnInit {
       return;
     }
     this.cargarConversaciones();
+    this.escucharEventos();
+  }
+
+  ngOnDestroy(): void {
+    if (this.recargaPendiente !== null) {
+      clearTimeout(this.recargaPendiente);
+      this.recargaPendiente = null;
+    }
+    this.suscripciones.unsubscribe();
   }
 
   cargarConversaciones(): void {
@@ -189,5 +220,29 @@ export class BandejaChatComponent implements OnInit {
         error: () => this.error.set(this.translate.t('mensajes.errorAbrir')),
       }),
     );
+  }
+
+  /**
+   * TT-52: los mensajes nuevos o eliminados llegan por el bus personal del
+   * socket; se agrupan en una sola recarga para no pedir la bandeja por cada
+   * evento de una rafaga.
+   */
+  private escucharEventos(): void {
+    this.suscripciones.add(
+      this.webSocket.enEvento('mensaje.nuevo').subscribe(() => this.programarRecarga()),
+    );
+    this.suscripciones.add(
+      this.webSocket.enEvento('mensaje.eliminado').subscribe(() => this.programarRecarga()),
+    );
+  }
+
+  private programarRecarga(): void {
+    if (this.recargaPendiente !== null) {
+      return;
+    }
+    this.recargaPendiente = setTimeout(() => {
+      this.recargaPendiente = null;
+      this.cargarConversaciones();
+    }, BandejaChatComponent.DEBOUNCE_RECARGA_MS);
   }
 }

@@ -1,12 +1,15 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { BandejaChatComponent } from './bandeja-chat.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MensajeService } from '../../../../core/services/mensaje.service';
 import { OrganizacionService } from '../../../../core/services/organizacion.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
+import { EventoWebSocket } from '../../../../shared/models/evento-websocket.model';
 import { DirectorioUsuario } from '../../../../shared/models/mensaje.model';
 import { Organizacion } from '../../../../shared/models/organizacion.model';
 
@@ -29,7 +32,16 @@ describe('BandejaChatComponent (TT-49)', () => {
     archivarConversacion: ReturnType<typeof vi.fn>;
   };
   let organizacionService: { listarDirectorio: ReturnType<typeof vi.fn> };
+  let conectado: ReturnType<typeof signal<boolean>>;
+  let mensajeNuevo$: Subject<EventoWebSocket>;
+  let mensajeEliminado$: Subject<EventoWebSocket>;
   let router: Router;
+
+  const evento = (tipo: 'mensaje.nuevo' | 'mensaje.eliminado'): EventoWebSocket => ({
+    tipo,
+    emitidoEn: '2026-11-14T10:00:00',
+    datos: { idConversacion: 3, idMensaje: 9 },
+  });
 
   beforeEach(() => {
     mensajeService = {
@@ -41,6 +53,9 @@ describe('BandejaChatComponent (TT-49)', () => {
     organizacionService = {
       listarDirectorio: vi.fn(() => of([organizacion(7, 'Patitas Felices')])),
     };
+    conectado = signal(false);
+    mensajeNuevo$ = new Subject<EventoWebSocket>();
+    mensajeEliminado$ = new Subject<EventoWebSocket>();
 
     TestBed.configureTestingModule({
       imports: [BandejaChatComponent],
@@ -58,6 +73,16 @@ describe('BandejaChatComponent (TT-49)', () => {
         },
         { provide: MensajeService, useValue: mensajeService },
         { provide: OrganizacionService, useValue: organizacionService },
+        {
+          provide: WebSocketService,
+          useValue: {
+            conectado,
+            enEvento: (tipo: string) =>
+              tipo === 'mensaje.nuevo'
+                ? mensajeNuevo$.asObservable()
+                : mensajeEliminado$.asObservable(),
+          },
+        },
       ],
     });
 
@@ -205,5 +230,55 @@ describe('BandejaChatComponent (TT-49)', () => {
 
     expect(componente.error()).not.toBe('');
     expect(componente.accionando()).toBeNull();
+  });
+
+  it('recarga la bandeja al recibir un mensaje nuevo, una sola vez por rafaga', () => {
+    vi.useFakeTimers();
+    try {
+      mensajeNuevo$.next(evento('mensaje.nuevo'));
+      mensajeNuevo$.next(evento('mensaje.nuevo'));
+      mensajeEliminado$.next(evento('mensaje.eliminado'));
+
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(300);
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('recarga la bandeja al recuperar la conexion', () => {
+    vi.useFakeTimers();
+    try {
+      conectado.set(true);
+      fixture.detectChanges();
+      vi.advanceTimersByTime(300);
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(1);
+
+      conectado.set(false);
+      fixture.detectChanges();
+      conectado.set(true);
+      fixture.detectChanges();
+      vi.advanceTimersByTime(300);
+
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('libera las suscripciones de mensajes al salir de la pantalla', () => {
+    vi.useFakeTimers();
+    try {
+      fixture.destroy();
+
+      expect(mensajeNuevo$.observed).toBe(false);
+      expect(mensajeEliminado$.observed).toBe(false);
+
+      vi.advanceTimersByTime(300);
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
