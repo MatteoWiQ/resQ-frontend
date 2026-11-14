@@ -16,41 +16,67 @@
 
     @if (mostrarNueva()) {
       <div class="nueva-conversacion">
-        <label for="buscar-org">{{ 'mensajes.buscarOrganizacion' | translate }}</label>
+        <label for="buscar-org">{{ 'mensajes.buscarPersona' | translate }}</label>
         <div class="fila">
           <input
             id="buscar-org"
             type="text"
-            [ngModel]="busquedaOrganizacion()"
-            (ngModelChange)="busquedaOrganizacion.set($event)"
-            (keyup.enter)="cargarOrganizaciones()"
-            [attr.placeholder]="'mensajes.buscarOrganizacion' | translate"
+            [ngModel]="busqueda()"
+            (ngModelChange)="busqueda.set($event)"
+            (keyup.enter)="buscar()"
+            [attr.placeholder]="'mensajes.buscarPersona' | translate"
           />
-          <button type="button" class="btn-buscar" (click)="cargarOrganizaciones()">
+          <button type="button" class="btn-buscar" (click)="buscar()">
             {{ 'mensajes.buscar' | translate }}
           </button>
         </div>
 
-        @if (cargandoOrganizaciones()) {
+        @if (errorBusqueda()) {
+          <p class="error" role="alert">{{ errorBusqueda() }}</p>
+        }
+
+        @if (cargandoOrganizaciones() || cargandoUsuarios()) {
           <p class="hint">{{ 'mensajes.cargando' | translate }}</p>
-        } @else if (organizaciones().length === 0) {
-          <p class="hint">{{ 'mensajes.sinOrganizaciones' | translate }}</p>
         } @else {
-          <ul class="lista-org">
-            @for (org of organizaciones(); track org.idOrganizacion) {
-              <li>
-                <span>{{ org.nombre }}</span>
-                <button
-                  type="button"
-                  class="btn-abrir"
-                  [attr.aria-label]="'mensajes.iniciarCon' | translate: { nombre: org.nombre }"
-                  (click)="iniciarConOrganizacion(org.idOrganizacion)"
-                >
-                  {{ 'mensajes.iniciar' | translate }}
-                </button>
-              </li>
-            }
-          </ul>
+          @if (usuarios().length > 0) {
+            <h2 class="grupo">{{ 'mensajes.usuarios' | translate }}</h2>
+            <ul class="lista-org">
+              @for (usuario of usuarios(); track usuario.idUsuario) {
+                <li>
+                  <span>{{ usuario.nombre }}</span>
+                  <button
+                    type="button"
+                    class="btn-abrir btn-usuario"
+                    [attr.aria-label]="'mensajes.iniciarCon' | translate: { nombre: usuario.nombre }"
+                    (click)="iniciarConUsuario(usuario.idUsuario)"
+                  >
+                    {{ 'mensajes.iniciar' | translate }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+
+          <h2 class="grupo">{{ 'mensajes.organizaciones' | translate }}</h2>
+          @if (organizaciones().length === 0) {
+            <p class="hint">{{ 'mensajes.sinOrganizaciones' | translate }}</p>
+          } @else {
+            <ul class="lista-org">
+              @for (org of organizaciones(); track org.idOrganizacion) {
+                <li>
+                  <span>{{ org.nombre }}</span>
+                  <button
+                    type="button"
+                    class="btn-abrir"
+                    [attr.aria-label]="'mensajes.iniciarCon' | translate: { nombre: org.nombre }"
+                    (click)="iniciarConOrganizacion(org.idOrganizacion)"
+                  >
+                    {{ 'mensajes.iniciar' | translate }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
         }
       </div>
     }

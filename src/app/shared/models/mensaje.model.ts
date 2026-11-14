@@ -31,3 +31,10 @@ export interface DestinatarioConversacion {
 
 /** Regla del backend: no se aceptan mensajes mas largos (Mensaje.MAX_CARACTERES). */
 export const MAX_CARACTERES_MENSAJE = 2000;
+
+/** TT-49: datos minimos de un usuario para iniciar una conversacion. */
+export interface DirectorioUsuario {
+  idUsuario: number;
+  nombre: string;
+  rol: string;
+}

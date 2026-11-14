@@ -69,14 +69,22 @@ export class OrganizacionService {
     return this.http.put<Organizacion>(`${this.baseUrl}/${idOrganizacion}`, datos);
   }
 
-  /** HU-27: directorio de organizaciones, para elegir con quién conversar. */
-  listarDirectorio(tipo?: string, zona?: string): Observable<Organizacion[]> {
+  /**
+   * HU-27: directorio de organizaciones, para elegir con quién conversar.
+   * TT-49: el texto de búsqueda va en `nombre`, nunca en `tipo`.
+   */
+  listarDirectorio(
+    filtros: { nombre?: string; tipo?: string; zona?: string } = {},
+  ): Observable<Organizacion[]> {
     let params = new HttpParams();
-    if (tipo) {
-      params = params.set('tipo', tipo);
+    if (filtros.nombre?.trim()) {
+      params = params.set('nombre', filtros.nombre.trim());
     }
-    if (zona) {
-      params = params.set('zona', zona);
+    if (filtros.tipo) {
+      params = params.set('tipo', filtros.tipo);
+    }
+    if (filtros.zona) {
+      params = params.set('zona', filtros.zona);
     }
     return this.http.get<Organizacion[]>(this.baseUrl, { params });
   }

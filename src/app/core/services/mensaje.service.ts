@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import {
   Conversacion,
   DestinatarioConversacion,
+  DirectorioUsuario,
   Mensaje,
 } from '../../shared/models/mensaje.model';
 
@@ -26,6 +27,13 @@ export class MensajeService {
 
   abrirConversacion(destino: DestinatarioConversacion): Observable<Conversacion> {
     return this.http.post<Conversacion>(this.baseUrl, destino);
+  }
+
+  /** TT-49: usuarios con los que se puede iniciar una conversacion. */
+  buscarUsuarios(nombre: string): Observable<DirectorioUsuario[]> {
+    return this.http.get<DirectorioUsuario[]>(`${this.baseUrl}/directorio`, {
+      params: { nombre },
+    });
   }
 
   obtenerMensajes(idConversacion: number): Observable<Mensaje[]> {
