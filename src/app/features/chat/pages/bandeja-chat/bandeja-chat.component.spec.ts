@@ -23,18 +23,20 @@ describe('BandejaChatComponent (TT-49)', () => {
   let fixture: ComponentFixture<BandejaChatComponent>;
   let componente: BandejaChatComponent;
   let mensajeService: {
-    obtenerConversaciones: () => Observable<unknown[]>;
+    obtenerConversaciones: ReturnType<typeof vi.fn>;
     buscarUsuarios: ReturnType<typeof vi.fn>;
     abrirConversacion: ReturnType<typeof vi.fn>;
+    archivarConversacion: ReturnType<typeof vi.fn>;
   };
   let organizacionService: { listarDirectorio: ReturnType<typeof vi.fn> };
   let router: Router;
 
   beforeEach(() => {
     mensajeService = {
-      obtenerConversaciones: () => of([]),
+      obtenerConversaciones: vi.fn(() => of([])),
       buscarUsuarios: vi.fn(() => of([usuario(5, 'Ana Torres')])),
       abrirConversacion: vi.fn(() => of({ idConversacion: 12 })),
+      archivarConversacion: vi.fn(() => of(undefined)),
     };
     organizacionService = {
       listarDirectorio: vi.fn(() => of([organizacion(7, 'Patitas Felices')])),
@@ -63,6 +65,7 @@ describe('BandejaChatComponent (TT-49)', () => {
     componente = fixture.componentInstance;
     router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -131,5 +134,76 @@ describe('BandejaChatComponent (TT-49)', () => {
 
     expect(componente.error()).not.toBe('');
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('pide la bandeja activa al iniciar y la archivada al cambiar de pestaña', () => {
+    expect(mensajeService.obtenerConversaciones).toHaveBeenCalledWith({
+      busqueda: undefined,
+      archivadas: false,
+    });
+
+    componente.cambiarVista(true);
+    expect(mensajeService.obtenerConversaciones).toHaveBeenLastCalledWith({
+      busqueda: undefined,
+      archivadas: true,
+    });
+  });
+
+  it('envía el texto de búsqueda de conversaciones al backend', () => {
+    componente.busquedaConversaciones.set('  refugio  ');
+    componente.buscarConversaciones();
+
+    expect(mensajeService.obtenerConversaciones).toHaveBeenLastCalledWith({
+      busqueda: '  refugio  ',
+      archivadas: false,
+    });
+  });
+
+  it('archiva la conversación y recarga la bandeja', () => {
+    const chat = {
+      idConversacion: 3,
+      idOtroUsuario: 3,
+      nombre: 'Luis',
+      esOrganizacion: false,
+      ultimoMensaje: 'hola',
+      fechaUltimoMensaje: null,
+      archivada: false,
+    };
+
+    componente.archivar(chat);
+
+    expect(mensajeService.archivarConversacion).toHaveBeenCalledWith(3, true);
+    expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(2);
+  });
+
+  it('desarchiva una conversación archivada', () => {
+    componente.archivar({
+      idConversacion: 4,
+      idOtroUsuario: 4,
+      nombre: 'Carla',
+      esOrganizacion: false,
+      ultimoMensaje: '',
+      fechaUltimoMensaje: null,
+      archivada: true,
+    });
+
+    expect(mensajeService.archivarConversacion).toHaveBeenCalledWith(4, false);
+  });
+
+  it('muestra un error si falla el archivado', () => {
+    mensajeService.archivarConversacion.mockReturnValue(throwError(() => new Error('500')));
+    componente.archivar({
+      idConversacion: 3,
+      idOtroUsuario: 3,
+      nombre: 'Luis',
+      esOrganizacion: false,
+      ultimoMensaje: '',
+      fechaUltimoMensaje: null,
+      archivada: false,
+    });
+    fixture.detectChanges();
+
+    expect(componente.error()).not.toBe('');
+    expect(componente.accionando()).toBeNull();
   });
 });
