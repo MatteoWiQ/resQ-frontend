@@ -727,6 +727,8 @@ export const en = {
     correo: 'Email',
     telefono: 'Phone',
     noRegistrado: 'Not registered',
+    sinSesion: 'There is no active session.',
+    errorCargarPerfil: 'Could not load your profile information.',
     etiquetaRol: {
       USUARIO: 'User',
       VOLUNTARIO: 'Volunteer',
