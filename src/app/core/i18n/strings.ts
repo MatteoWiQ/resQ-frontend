@@ -775,6 +775,11 @@ export const en = {
     eliminarReporte: 'Delete report',
     editarReporte: 'Edit report',
     compartirReporte: 'Share report',
+
+    revision: {
+    titulo: 'Review',
+    nota: 'Volunteer note',
+    },
   },
   voluntario: {
     boton: 'I want to help',
