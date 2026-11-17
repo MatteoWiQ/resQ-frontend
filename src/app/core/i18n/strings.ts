@@ -792,6 +792,7 @@ export const en = {
     solicitudEnviada: 'Request sent',
     errorVoluntario: 'There was an error with the volunteer request.',
     verSolicitudes: 'View requests',
+    
     modalVoluntario: {
       titulo: 'Volunteer request',
       subtitulo: 'Submit your availability',
