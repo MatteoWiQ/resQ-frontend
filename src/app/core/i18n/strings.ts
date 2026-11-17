@@ -739,9 +739,12 @@ export const en = {
     sinReportes: 'No reports yet.',
     crearNuevoReporte: 'Create new report',
     cargandoReportes: 'Loading reports...',
+    ver: 'View',
+    
     panelVoluntario: 'Volunteer panel',
     botonEditar: 'Edit',
     revisarSolicitudes: 'Review requests',
+
     tiposAyuda: {
       transporte: 'Transport',
       hogarTemporal: 'Temporary home',
@@ -755,12 +758,19 @@ export const en = {
     verSolicitudes: 'View requests',
     solicitudEnviada: 'Request sent',
     errorVoluntarioMostrar: 'Error with volunteer request',
+
     reportesSection: 'Reports',
     reportesHead: 'My reports',
     reportesNuevo: 'New report',
     reportesLista: 'Reports list',
     filtros: 'Filters',
-    estado: 'State',
+    estado: {
+      errorDistinto: 'Select a status different from the current one.',
+      errorBase: 'Could not update the status. ',
+      sinPermisos: 'You do not have permission to perform this action.',
+      reintentar: 'Please try again.',
+      ok: ' Status updated successfully.',
+    },
     verReporte: 'View report',
     eliminarReporte: 'Delete report',
     editarReporte: 'Edit report',
