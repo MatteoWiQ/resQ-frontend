@@ -324,12 +324,19 @@ export const es = {
     enviando: 'Enviando...',
     errorSeleccion: 'Selecciona al menos un tipo de ayuda.',
     errorGenerico: 'Ocurrió un error. Inténtalo de nuevo.',
+
     tipos: {
       TRANSPORTE: 'Transporte',
       HOGAR_TEMPORAL: 'Hogar temporal',
       ALIMENTO: 'Alimento',
       RESCATE: 'Rescate',
     },
+      tiposAyuda: {
+        transporte: 'Transport',
+        hogarTemporal: 'Temporary home',
+        alimento: 'Food',
+        rescate: 'Rescue',
+      },
   },
   // ============ HU-19: aceptar o rechazar solicitudes ============
   solicitudes: {
