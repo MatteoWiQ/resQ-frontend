@@ -233,6 +233,8 @@ export const es = {
     ver: 'Ver',
     panelAdmin: 'Panel administrativo',
     revisarSolicitudes: 'Revisar solicitudes',
+    mensajeSolicitud: 'Tu solicitud fue enviada y está pendiente de revisión por el administrador.',
+
     revision: {
       titulo: 'Revisión',
       nota: 'Nota del voluntario',
@@ -792,7 +794,7 @@ export const en = {
     solicitudEnviada: 'Request sent',
     errorVoluntario: 'There was an error with the volunteer request.',
     verSolicitudes: 'View requests',
-    
+
     modalVoluntario: {
       titulo: 'Volunteer request',
       subtitulo: 'Submit your availability',
