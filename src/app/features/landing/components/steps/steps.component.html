@@ -1,26 +1,31 @@
-<section class="steps section-block">
-  <div class="section-heading">
-    <span class="eyebrow">{{ 'landing.steps.eyebrow' | translate }}</span>
-    <h2>{{ 'landing.steps.titulo' | translate }}</h2>
-  </div>
+<section class="historia" aria-labelledby="historia-titulo">
+  <div class="historia-interior">
+    <div class="historia-cabecera">
+      <h2 id="historia-titulo">{{ 'inicio.historia.titulo' | translate }}</h2>
+      <p>{{ 'inicio.historia.subtitulo' | translate }}</p>
+    </div>
 
-  <div class="steps-grid">
-    <article class="step-card">
-      <div class="step-number">01</div>
-      <h3>{{ 'landing.steps.paso1.titulo' | translate }}</h3>
-      <p>{{ 'landing.steps.paso1.descripcion' | translate }}</p>
-    </article>
-
-    <article class="step-card">
-      <div class="step-number">02</div>
-      <h3>{{ 'landing.steps.paso2.titulo' | translate }}</h3>
-      <p>{{ 'landing.steps.paso2.descripcion' | translate }}</p>
-    </article>
-
-    <article class="step-card">
-      <div class="step-number">03</div>
-      <h3>{{ 'landing.steps.paso3.titulo' | translate }}</h3>
-      <p>{{ 'landing.steps.paso3.descripcion' | translate }}</p>
-    </article>
+    <ol class="linea">
+      <li class="paso">
+        <span class="paso-hora">{{ 'inicio.historia.paso1.hora' | translate }}</span>
+        <h3>{{ 'inicio.historia.paso1.titulo' | translate }}</h3>
+        <p>{{ 'inicio.historia.paso1.descripcion' | translate }}</p>
+      </li>
+      <li class="paso">
+        <span class="paso-hora">{{ 'inicio.historia.paso2.hora' | translate }}</span>
+        <h3>{{ 'inicio.historia.paso2.titulo' | translate }}</h3>
+        <p>{{ 'inicio.historia.paso2.descripcion' | translate }}</p>
+      </li>
+      <li class="paso">
+        <span class="paso-hora">{{ 'inicio.historia.paso3.hora' | translate }}</span>
+        <h3>{{ 'inicio.historia.paso3.titulo' | translate }}</h3>
+        <p>{{ 'inicio.historia.paso3.descripcion' | translate }}</p>
+      </li>
+      <li class="paso">
+        <span class="paso-hora">{{ 'inicio.historia.paso4.hora' | translate }}</span>
+        <h3>{{ 'inicio.historia.paso4.titulo' | translate }}</h3>
+        <p>{{ 'inicio.historia.paso4.descripcion' | translate }}</p>
+      </li>
+    </ol>
   </div>
 </section>

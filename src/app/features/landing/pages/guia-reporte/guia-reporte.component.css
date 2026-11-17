@@ -16,7 +16,7 @@
   max-width: 620px;
   margin-bottom: 16px;
   color: var(--text);
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: clamp(2.35rem, 5vw, 4.4rem);
   line-height: 1.04;
   letter-spacing: -0.04em;
@@ -49,7 +49,7 @@
 
 .step-number {
   color: var(--accent);
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.45rem;
   font-weight: 700;
   line-height: 1;
@@ -58,7 +58,7 @@
 .guide-step h2 {
   margin-bottom: 8px;
   color: var(--text);
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.35rem;
 }
 
@@ -94,7 +94,7 @@
 
 .guide-action h2 {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.5rem;
 }
 

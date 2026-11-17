@@ -18,7 +18,7 @@
 
 h1 {
   margin: 0 0 4px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   color: var(--text);
 }
 
@@ -105,7 +105,7 @@ input[type='date'] {
 .error {
   padding: 10px 14px;
   border-radius: 10px;
-  background: rgba(127, 42, 63, 0.08);
+  background: rgba(35, 122, 87, 0.08);
   color: var(--danger);
   font-weight: 600;
 }
@@ -134,7 +134,7 @@ input[type='date'] {
 }
 
 .indicador-valor {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 2rem;
   font-weight: 700;
   color: var(--text);
@@ -161,7 +161,7 @@ input[type='date'] {
 
 .seccion {
   margin: 24px 0 12px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.1rem;
   color: var(--text);
 }

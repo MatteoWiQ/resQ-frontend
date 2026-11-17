@@ -10,7 +10,7 @@ export const COLOR_POR_ESTADO: Record<EstadoReporte, string> = {
   CANCELADO: '#6b7280',
 };
 
-export const COLOR_FALLBACK = '#7f2a3f';
+export const COLOR_FALLBACK = '#237a57';
 
 export const ESTADOS: EstadoReporte[] = ['PENDIENTE', 'EN_PROCESO', 'RESUELTO', 'CANCELADO'];
 
