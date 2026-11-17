@@ -738,6 +738,7 @@ export const en = {
     misReportes: 'My reports',
     sinReportes: 'No reports yet.',
     crearNuevoReporte: 'Create new report',
+    cargandoReportes: 'Loading reports...',
     panelVoluntario: 'Volunteer panel',
     botonEditar: 'Edit',
     revisarSolicitudes: 'Review requests',
