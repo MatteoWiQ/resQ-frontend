@@ -794,6 +794,14 @@ export const en = {
   voluntario: {
     boton: 'I want to help',
     botonEditar: 'Edit help types',
+    modalTituloRegistro: 'I want to volunteer',
+    modalTituloEditar: 'Edit help types',
+    modalSubtitulo: 'Select the types of help you can offer:',
+    confirmar: 'Confirm',
+    enviando: 'Sending...',
+    errorSeleccion: 'Select at least one type of help.',
+    errorGenerico: 'An error occurred. Please try again.',
+    errorSolicitudDuplicada: 'You cannot submit another request yet.',
     tipos: {
       TRANSPORTE: 'Transport',
       HOGAR_TEMPORAL: 'Temporary home',
