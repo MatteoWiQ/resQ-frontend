@@ -897,6 +897,38 @@ export const en = {
     },
   },
 
+
+  solicitudes: {
+    titulo: 'Pending requests',
+    subtitulo: 'Review the information in cases reported by users.',
+    sinPermisos: 'You do not have permission to view this section.',
+    cargando: 'Loading requests...',
+    vacio: 'There are no pending requests to review.',
+    errorCargar: '❌ Could not load requests.',
+    reporteNumero: 'Report #{{id}}',
+    revisar: 'Review',
+    modalTitulo: 'Review request #{{id}}',
+    cerrarAria: 'Close',
+    tipoCaso: 'Case type',
+    descripcion: 'Description',
+    fecha: 'Report date',
+    ubicacion: 'Location',
+    sinUbicacion: 'No location available',
+    fotoAlt: 'Report photo',
+    nota: 'Note for the user',
+    notaAyuda: 'Required when rejecting, optional when approving.',
+    notaPlaceholder: 'Briefly explain your decision...',
+    aprobar: 'Approve',
+    rechazar: 'Reject',
+    enviando: 'Submitting...',
+    notaObligatoria: 'You must provide a reason for rejection.',
+    aprobada: '✅ Request #{{id}} approved. The user has been notified.',
+    rechazada: '✅ Request #{{id}} rejected. The user has been notified.',
+    errorDecidir: '❌ Could not save the decision. Please try again.',
+    errorSinPermiso: '❌ You do not have permission to review requests.',
+    errorYaRevisada: '❌ This request has already been reviewed. The list has been updated.',
+  },
+
   
   admin: {
     panelAdmin: 'Admin panel',
