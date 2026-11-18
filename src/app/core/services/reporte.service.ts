@@ -1,26 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 
-import {
-  ContactoReporte,
-  EdadAnimal,
-  Especie,
-  EstadoReporte,
-  NecesidadCaso,
-  NovedadCaso,
-  Reporte,
-  SeguimientoCaso,
-  TamanoAnimal,
-  TipoNecesidad,
-} from '../../shared/models/reporte.model';
+import { EstadoReporte, Reporte, SeguimientoCaso } from '../../shared/models/reporte.model';
 import { OrdenReporte } from '../../shared/constants/gestion-reportes';
 
 export interface ConsultaReportes {
   busqueda?: string;
   orden?: OrdenReporte | null;
-  /** Rediseño: casos que todavia buscan este tipo de ayuda (filtro "Necesita"). */
-  necesidad?: TipoNecesidad | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -64,10 +51,6 @@ export class ReporteService {
       params = params.set('orden', consulta.orden);
     }
 
-    if (consulta?.necesidad) {
-      params = params.set('necesidad', consulta.necesidad);
-    }
-
     return params;
   }
 
@@ -96,15 +79,6 @@ export class ReporteService {
     fotoUrl: string | null;
     latitud?: number | null;
     longitud?: number | null;
-    // Contacto opcional: mostrar el telefono de la cuenta y/u otro solo para este caso.
-    compartirTelefonoCuenta?: boolean;
-    telefonoContacto?: string | null;
-    // Rediseño: referencia del lugar, datos del animal y necesidades iniciales.
-    referencia?: string | null;
-    especie?: Especie | null;
-    edad?: EdadAnimal | null;
-    tamano?: TamanoAnimal | null;
-    necesidades?: TipoNecesidad[];
   }): Observable<Reporte> {
     return this.http.post<Reporte>(this.baseUrl, {
       ...reporte,
@@ -166,34 +140,6 @@ export class ReporteService {
   }
 
   /** Historial de seguimiento de un caso, más reciente primero. */
-  /** Rediseño: novedades publicas del caso (fecha, nota y foto). */
-  obtenerNovedades(id: number): Observable<NovedadCaso[]> {
-    return this.http.get<NovedadCaso[]>(`${this.baseUrl}/${id}/novedades`);
-  }
-
-  // ---- Rediseño: necesidades del caso. Cada accion devuelve la lista actualizada.
-
-  obtenerNecesidades(id: number): Observable<NecesidadCaso[]> {
-    return this.http.get<NecesidadCaso[]>(`${this.baseUrl}/${id}/necesidades`);
-  }
-
-  agregarNecesidad(id: number, tipo: TipoNecesidad): Observable<NecesidadCaso[]> {
-    return this.http.post<NecesidadCaso[]>(`${this.baseUrl}/${id}/necesidades`, { tipo });
-  }
-
-  quitarNecesidad(id: number, idNecesidad: number): Observable<NecesidadCaso[]> {
-    return this.http.delete<NecesidadCaso[]>(`${this.baseUrl}/${id}/necesidades/${idNecesidad}`);
-  }
-
-  accionNecesidad(id: number, idNecesidad: number, accion: 'ofrecer' | 'confirmar' | 'liberar'): Observable<NecesidadCaso[]> {
-    return this.http.post<NecesidadCaso[]>(`${this.baseUrl}/${id}/necesidades/${idNecesidad}/${accion}`, {});
-  }
-
-  /** Contacto de quien reporto (exige sesion). null si no lo compartio o el caso esta cerrado (204). */
-  obtenerContacto(id: number): Observable<ContactoReporte | null> {
-    return this.http.get<ContactoReporte | null>(`${this.baseUrl}/${id}/contacto`).pipe(map((c) => c ?? null));
-  }
-
   obtenerSeguimientos(id: number): Observable<SeguimientoCaso[]> {
     return this.http.get<SeguimientoCaso[]>(`${this.baseUrl}/${id}/seguimientos`);
   }

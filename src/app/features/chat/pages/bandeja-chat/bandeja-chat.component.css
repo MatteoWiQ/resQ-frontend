@@ -26,7 +26,7 @@
 
 .chat-head h1 {
   margin: 0;
-  font-family: var(--font-titulos);
+  font-family: 'Poppins', sans-serif;
   font-size: 1.4rem;
   color: var(--text);
 }

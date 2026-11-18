@@ -6,14 +6,6 @@ import { gestionCasosEn } from './strings-gestionar-casos-en';
 import { metricasEn } from './strings-metricas-en';
 import { chatCasoEs } from './strings-chat-caso';
 import { chatCasoEn } from './strings-chat-caso-en';
-import { inicioEs } from './strings-inicio';
-import { inicioEn } from './strings-inicio-en';
-import { casosEs } from './strings-casos';
-import { casosEn } from './strings-casos-en';
-import { detalleCasoEs } from './strings-detalle-caso';
-import { detalleCasoEn } from './strings-detalle-caso-en';
-import { reportarEs } from './strings-reportar';
-import { reportarEn } from './strings-reportar-en';
 
 export const es = {
   // HU-20: registro de organizaciones (textos en strings-organizaciones.ts)
@@ -23,36 +15,12 @@ export const es = {
   metricas: metricasEs,
   // HU-22: chat en vivo del caso (textos en strings-chat-caso.ts)
   chatCaso: chatCasoEs,
-  // Rediseño: página de Inicio (textos en strings-inicio.ts)
-  inicio: inicioEs,
-  // Rediseño: página Casos, lista + mapa (textos en strings-casos.ts)
-  casos: casosEs,
-  // Rediseño: detalle de un caso (textos en strings-detalle-caso.ts)
-  detalleCaso: detalleCasoEs,
-  // Rediseño: flujo para reportar un caso (textos en strings-reportar.ts)
-  reportarCaso: reportarEs,
   shared: {
     brand: {
       marca: 'R',
       nombre: 'ResQ',
     },
     volverAtras: 'Volver atrás',
-    // Rediseño: navegación principal de la cabecera.
-    nav: {
-      irAlInicio: 'ResQ, ir al inicio',
-      casos: 'Casos',
-      organizaciones: 'Organizaciones',
-      comoAyudar: 'Cómo ayudar',
-      reportar: 'Reportar un caso',
-      ingresar: 'Iniciar sesión',
-      mensajes: 'Mensajes',
-      notificacionesNuevas: 'Notificaciones, {{n}} sin leer',
-      tuCuenta: 'Tu cuenta: Mi perfil, Mis casos, Cerrar sesión',
-      miPerfil: 'Mi perfil',
-      misCasos: 'Mis casos',
-      solicitudes: 'Solicitudes por revisar',
-      idioma: 'Idioma',
-    },
     abrirMenu: 'Abrir menú',
     cerrarMenu: 'Cerrar menú',
     ubicacionSeleccionada: 'Ubicación seleccionada',
@@ -74,17 +42,6 @@ export const es = {
       USUARIO: 'Usuario',
       VOLUNTARIO: 'Voluntario',
       ADMIN: 'Administrador',
-    },
-    // Rediseño: catalogos del animal y de las necesidades del caso.
-    especies: { PERRO: 'Perro', GATO: 'Gato', OTRO: 'Otro animal' },
-    edades: { CACHORRO: 'Cachorro', ADULTO: 'Adulto', MAYOR: 'Mayor' },
-    tamanos: { PEQUENO: 'Pequeño', MEDIANO: 'Mediano', GRANDE: 'Grande' },
-    necesidades: {
-      TRANSPORTE: 'Transporte',
-      VETERINARIO: 'Veterinario',
-      HOGAR_TEMPORAL: 'Hogar temporal',
-      ALIMENTO: 'Alimento',
-      RESCATE: 'Rescate',
     },
     tiposCaso: {
       PERDIDA: 'Perdida',
@@ -576,31 +533,12 @@ export const en = {
   gestionCasos: gestionCasosEn,
   metricas: metricasEn,
   chatCaso: chatCasoEn,
-  inicio: inicioEn,
-  casos: casosEn,
-  detalleCaso: detalleCasoEn,
-  reportarCaso: reportarEn,
   shared: {
     brand: {
       marca: 'R',
       nombre: 'ResQ',
     },
     volverAtras: 'Back',
-    nav: {
-      irAlInicio: 'ResQ, go to home',
-      casos: 'Cases',
-      organizaciones: 'Organizations',
-      comoAyudar: 'How to help',
-      reportar: 'Report a case',
-      ingresar: 'Log in',
-      mensajes: 'Messages',
-      notificacionesNuevas: 'Notifications, {{n}} unread',
-      tuCuenta: 'Your account: My profile, My cases, Log out',
-      miPerfil: 'My profile',
-      misCasos: 'My cases',
-      solicitudes: 'Requests to review',
-      idioma: 'Language',
-    },
     ubicacionSeleccionada: 'Selected location',
     estados: {
       PENDIENTE: 'Pending',
@@ -617,16 +555,6 @@ export const en = {
       USUARIO: 'User',
       VOLUNTARIO: 'Volunteer',
       ADMIN: 'Admin',
-    },
-    especies: { PERRO: 'Dog', GATO: 'Cat', OTRO: 'Other animal' },
-    edades: { CACHORRO: 'Young', ADULTO: 'Adult', MAYOR: 'Senior' },
-    tamanos: { PEQUENO: 'Small', MEDIANO: 'Medium', GRANDE: 'Large' },
-    necesidades: {
-      TRANSPORTE: 'Transport',
-      VETERINARIO: 'Vet',
-      HOGAR_TEMPORAL: 'Foster home',
-      ALIMENTO: 'Food',
-      RESCATE: 'Rescue',
     },
     tiposCaso: {
       PERDIDA: 'Loss',
