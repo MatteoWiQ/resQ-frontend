@@ -324,6 +324,7 @@ export const es = {
     enviando: 'Enviando...',
     errorSeleccion: 'Selecciona al menos un tipo de ayuda.',
     errorGenerico: 'Ocurrió un error. Inténtalo de nuevo.',
+    errorSolicitudDuplicada: 'No puedes enviar una nueva solicitud todavía',
 
     tipos: {
       TRANSPORTE: 'Transporte',
