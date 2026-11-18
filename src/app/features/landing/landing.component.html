@@ -1,14 +1,11 @@
 <div class="page-shell">
   <app-header variante="landing" />
   <main class="landing-page" id="inicio">
-    <app-landing-hero />
+    <app-landing-hero [casos]="casosCarrusel()" />
+    <app-landing-cases [casos]="casosUrgentes()" />
     <app-landing-steps />
-
-    <section id="mapa" class="section-block">
-      <app-mapa [paginaCompleta]="false" />
-    </section>
-
-    <app-landing-cases />
     <app-landing-help />
+    <app-landing-organizaciones [organizaciones]="organizaciones()" />
   </main>
+  <app-landing-pie />
 </div>

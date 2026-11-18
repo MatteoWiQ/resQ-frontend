@@ -26,7 +26,7 @@
 
 .conversacion-head h1 {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.3rem;
   color: var(--text);
 }

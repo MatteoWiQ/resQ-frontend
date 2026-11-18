@@ -29,13 +29,13 @@
   color: #fff;
   display: grid;
   place-items: center;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-weight: 700;
   font-size: 1.2rem;
 }
 
 .brand-name {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-weight: 700;
   color: var(--text);
   font-size: 1.3rem;
@@ -43,7 +43,7 @@
 
 .detalle-card h1 {
   margin: 0 0 20px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   color: var(--text);
   letter-spacing: -0.02em;
 }
@@ -79,7 +79,7 @@
 }
 
 .cabecera .id {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--muted);
@@ -188,7 +188,7 @@
 
 .acciones-admin__titulo {
   margin: 0 0 12px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.05rem;
   color: var(--text);
 }
@@ -289,7 +289,7 @@
 
 .modal__titulo {
   margin: 0 0 8px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 1.05rem;
   color: var(--text);
 }
