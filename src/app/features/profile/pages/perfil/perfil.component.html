@@ -101,13 +101,29 @@
   </div>
 
   <!-- ============ HU-40: configuración de preferencias ============ -->
+
+<!-- HU-40: Configuración de preferencias -->
   @if (mostrarConfiguracion()) {
     <section class="configuracion-section">
-      <h3>{{ 'perfil.configuracion.titulo' | translate }}</h3>
-      <p>{{ 'perfil.configuracion.descripcion' | translate }}</p>
-      <app-language-switcher></app-language-switcher>
+
+      <div class="configuracion-encabezado">
+        <div class="configuracion-icono">
+          <span aria-hidden="true">⚙</span>
+        </div>
+
+        <div class="configuracion-textos">
+          <h3>{{ 'perfil.configuracion.titulo' | translate }}</h3>
+          <p>{{ 'perfil.configuracion.descripcion' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="configuracion-contenido">
+        <app-language-switcher></app-language-switcher>
+      </div>
+
     </section>
   }
+
 
   @if (reporteSeleccionado(); as r) {
     <div class="modal-overlay" (click)="cerrarDetalle()">
