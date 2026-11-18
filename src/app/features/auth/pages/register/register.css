@@ -28,7 +28,7 @@
 }
 
 h1 {
-  font-family: var(--font-titulos);
+  font-family: 'Poppins', sans-serif;
   letter-spacing: -0.03em;
   color: var(--text);
   margin: 0 0 8px;
