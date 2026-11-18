@@ -730,7 +730,7 @@ export const en = {
   },
   perfil: {
     configuracion: {
-      titulo: 'Configuration',
+      titulo: 'Settings',
       descripcion: 'Adjust your language and appearance preferences',
     },
     cargandoPerfil: 'Loading your profile...',
