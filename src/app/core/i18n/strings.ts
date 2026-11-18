@@ -423,6 +423,7 @@ export const es = {
   admin: {
     titulo: 'Panel administrativo',
     subtitle: 'Gestiona los reportes y usuarios de ResQ.',
+    revisarSolicitudesVoluntarios: 'Revisar solicitudes de voluntarios',
     usuarios: 'Usuarios',
     reportes: 'Reportes',
     filtrarPor: 'Filtrar por estado:',
