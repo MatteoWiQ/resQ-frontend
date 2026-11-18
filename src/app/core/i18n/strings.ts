@@ -834,6 +834,69 @@ export const en = {
       error: 'There was an error submitting the request.',
     },
   },
+
+  reportes: {
+    filtros: {
+      titulo: 'Filter cases by status',
+      TODOS: 'All',
+      URGENTES: 'Urgent',
+      ACTIVOS: 'Active',
+      RESUELTOS: 'Resolved',
+      CANCELADOS: 'Cancelled',
+    },
+
+    nuevo: {
+      titulo: 'Create new report',
+      subtitle: 'Help us report an animal in need.',
+      paso1: 'Report type',
+      paso2: 'Details',
+      continuar: 'Continue',
+      tipoElegido: 'Report type: ',
+      descripcion: 'Description',
+      descripcionPlaceholder:
+        'Describe the case: breed, color, name, location, time and distinguishing features...',
+
+      foto: 'Photo (optional)',
+      fotoAyuda: 'Allowed formats: JPG, PNG or WEBP. Maximum size: 5 MB.',
+      fotoSeleccionar: 'Select photo',
+      fotoCambiar: 'Change photo',
+      fotoQuitar: 'Remove photo',
+      fotoVistaPreviaAlt: 'Preview of the selected photo',
+      fotoErrorFormato: 'Invalid format. Use a JPG, PNG or WEBP image.',
+      fotoErrorTamano: 'The photo exceeds the maximum size of 5 MB.',
+      fotoErrorSubir: 'Could not upload the photo. Please try again.',
+
+      ubicacion: 'Location (optional)',
+      ubicacionAyuda: 'Click on the map to mark where the animal is located.',
+      ubicacionActual: 'Use my current location',
+      ubicacionObteniendo: 'Getting your location...',
+      ubicacionQuitar: 'Remove location',
+
+      ubicacionError: {
+        NO_SOPORTADA:
+          'This device does not support location services. Mark the location on the map.',
+        CONTEXTO_SEGURO:
+          'A secure connection (HTTPS) is required to access your location. Mark the location on the map.',
+        PERMISO_DENEGADO:
+          'You denied location access. Mark the location on the map.',
+        POSICION_NO_DISPONIBLE:
+          'Could not determine your location. Please try again or select a point on the map.',
+        TIEMPO_AGOTADO:
+          'Getting your location took too long. Please try again or select a point on the map.',
+        ERROR_DESCONOCIDO:
+          'Could not get your location. Please try again or select a point on the map.',
+      },
+
+      atras: 'Back',
+      creando: 'Creating...',
+      crear: 'Create report',
+      seleccionaTipo: 'Select a report type.',
+      sinSesion: 'There is no active session. Please sign in again.',
+      descripcionObligatoria: 'Description is required.',
+      errorCrear: 'Could not create the report. Please try again.',
+    },
+  },
+
   
   admin: {
     panelAdmin: 'Admin panel',
