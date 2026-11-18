@@ -790,7 +790,10 @@ export const en = {
     titulo: 'Review',
     nota: 'Volunteer note',
     },
+
   },
+  
+  
   voluntario: {
     boton: 'I want to help',
     botonEditar: 'Edit help types',
@@ -831,6 +834,7 @@ export const en = {
       error: 'There was an error submitting the request.',
     },
   },
+  
   admin: {
     panelAdmin: 'Admin panel',
     gestionCasos: 'Manage cases',
@@ -879,7 +883,18 @@ export const en = {
     },
   },
   // HU-19: notificaciones.
-  notificaciones: 'Notifications',
+  notificaciones: {
+  titulo: 'Notifications',
+  cargando: 'Loading notifications...',
+  vacio: 'You have no notifications.',
+  errorCargar: 'Could not load your notifications.',
+  errorAccion: 'Could not update the notification.',
+  sinLeer: '{{n}} unread',
+  marcarLeida: 'Mark as read',
+  marcarNoLeida: 'Mark as unread',
+  archivar: 'Archive',
+  abrir: 'Open notification',
+},
   // HU-19: bandeja.
   bandeja: 'Inbox',
   // HU-19: mensaje.
