@@ -793,6 +793,12 @@ export const en = {
   },
   voluntario: {
     boton: 'I want to help',
+    tipos: {
+      TRANSPORTE: 'Transport',
+      HOGAR_TEMPORAL: 'Temporary home',
+      ALIMENTO: 'Food',
+      RESCATE: 'Rescue',
+    },
     tiposAyuda: {
       transporte: 'Transport',
       hogarTemporal: 'Temporary home',
