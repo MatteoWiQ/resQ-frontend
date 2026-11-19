@@ -828,6 +828,11 @@ export const en = {
       correoPlaceholder: 'Your email',
       password: 'Password',
       passwordError: 'Password must have at least 8 characters.',
+      passwordPlaceholder: 'Your password',
+      errorEmailRegistrado:
+        'This email is already registered. Log in or use another email.',
+      errorDatosInvalidos:
+        'Please check your information. Some fields are incomplete or have an invalid format.',
       telefono: 'Phone',
       telefonoPlaceholder: 'Your phone',
       telefonoError: 'Phone is required.',
