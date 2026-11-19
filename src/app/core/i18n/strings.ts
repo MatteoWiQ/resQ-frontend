@@ -91,7 +91,8 @@ export const es = {
       PERDIDA: 'Perdida',
       ENCONTRADA: 'Encontrada',
       ABANDONADA: 'Abandonada',
-    },
+   },
+  },
   landing: {
     topbar: {
       ariaLabel: 'Navegación principal',
@@ -376,12 +377,14 @@ export const es = {
       ALIMENTO: 'Alimento',
       RESCATE: 'Rescate',
     },
-      tiposAyuda: {
-        transporte: 'Transport',
-        hogarTemporal: 'Temporary home',
-        alimento: 'Food',
-        rescate: 'Rescue',
-      },
+
+    tiposAyuda: {
+      transporte: 'Transporte',
+      hogarTemporal: 'Hogar temporal',
+      alimento: 'Alimento',
+      rescate: 'Rescate',
+    },
+
   },
   // ============ HU-19: aceptar o rechazar solicitudes ============
   solicitudes: {
@@ -567,8 +570,8 @@ export const es = {
     reporteEliminado: 'Reporte eliminado correctamente',
     errorEliminarReporte: 'Error al eliminar reporte: {{detalle}}',
   },
-} as const
-}
+} as const;
+
 /** Forma de referencia (catalogo es) de la que se derivan las claves validas. */
 export type CatalogShape = typeof es;
 
@@ -793,7 +796,9 @@ export const en = {
         descripcion:
           'Check that the information is correct and send the report. You need to log in to register the case in your profile.',
       },
-      paso4: {},
+      paso4: {
+        titulo: 'Publish',
+      },
       accion: {
         kicker: 'Ready to help?',
         titulo: 'Start your report',
