@@ -38,14 +38,26 @@
       </button>
     </div>
 
-    <p class="enlace-solicitudes">
-      <a routerLink="/admin/solicitudes-voluntarios">
-        {{ 'admin.revisarSolicitudesVoluntarios' | translate }}
-      </a>
-    </p>
-    <p class="enlace-solicitudes">
-      <a routerLink="/admin/metricas">{{ 'metricas.enlacePanel' | translate }}</a>
-    </p>
+
+<!-- Accesos rápidos del panel administrativo -->
+<div class="admin-accesos">
+
+  <a
+    routerLink="/admin/solicitudes-voluntarios"
+    class="admin-acceso admin-acceso-principal"
+  >
+    {{ 'admin.revisarSolicitudesVoluntarios' | translate }}
+  </a>
+
+  <a
+    routerLink="/admin/metricas"
+    class="admin-acceso admin-acceso-secundario"
+  >
+    {{ 'metricas.enlacePanel' | translate }}
+  </a>
+
+</div>
+
 
     <section id="seccion-usuarios" [hidden]="pestana() !== 'usuarios'">
       <h2 class="seccion">{{ 'admin.usuarios' | translate }}</h2>
