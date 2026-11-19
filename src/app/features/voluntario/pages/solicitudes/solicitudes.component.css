@@ -16,7 +16,7 @@
 
 .solicitudes-card h1 {
   margin: 0 0 4px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   letter-spacing: -0.02em;
   color: var(--text);
 }
@@ -135,7 +135,7 @@
 
 .modal-head h3 {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   color: var(--text);
 }
 

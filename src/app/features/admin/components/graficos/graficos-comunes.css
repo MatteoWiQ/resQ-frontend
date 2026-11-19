@@ -7,7 +7,7 @@
 
 .grafico-titulo {
   margin: 0 0 8px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-titulos);
   font-size: 0.95rem;
   color: var(--text);
 }
@@ -66,7 +66,7 @@ svg {
   border-radius: 8px;
   background: var(--panel);
   border: 1px solid var(--border);
-  box-shadow: 0 6px 16px rgba(88, 19, 37, 0.15);
+  box-shadow: 0 6px 16px rgba(9, 48, 40, 0.12);
   font-size: 0.8rem;
   color: var(--text);
   pointer-events: none;

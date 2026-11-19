@@ -37,3 +37,12 @@ export interface FormularioOrganizacion {
   horarios: string;
   zonasCobertura: string;
 }
+
+/** Rediseño: lo que cualquiera puede ver de una organizacion verificada. */
+export interface OrganizacionPublica {
+  idOrganizacion: number;
+  nombre: string;
+  tipo: string;
+  logoUrl: string | null;
+  zonasCobertura: string | null;
+}

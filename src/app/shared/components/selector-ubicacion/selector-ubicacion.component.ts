@@ -115,7 +115,7 @@ export class SelectorUbicacionComponent implements AfterViewInit, OnDestroy {
         title: this.translate.t('shared.ubicacionSeleccionada'),
         icon: L.divIcon({
           className: 'resq-marker',
-          html: '<span class="resq-marker__pin" style="background-color: #7f2a3f"></span>',
+          html: '<span class="resq-marker__pin" style="background-color: #237a57"></span>',
           iconSize: [28, 28],
           iconAnchor: [14, 28],
         }),

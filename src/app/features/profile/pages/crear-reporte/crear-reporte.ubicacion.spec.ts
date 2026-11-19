@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
 import { CrearReporteComponent } from './crear-reporte.component';
 import { SelectorUbicacionComponent } from '../../../../shared/components/selector-ubicacion/selector-ubicacion.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ReporteService } from '../../../../core/services/reporte.service';
+import { UsuarioService } from '../../../../core/services/usuario.service';
 import { Reporte } from '../../../../shared/models/reporte.model';
 
 const REPORTE_CREADO: Reporte = {
@@ -29,6 +30,7 @@ describe('CrearReporteComponent: enviar la ubicacion del reporte (HU-16)', () =>
 
   beforeEach(async () => {
     enviados = [];
+    localStorage.clear();
 
     await TestBed.configureTestingModule({
       imports: [CrearReporteComponent],
@@ -43,7 +45,9 @@ describe('CrearReporteComponent: enviar la ubicacion del reporte (HU-16)', () =>
             },
           },
         },
-        { provide: Router, useValue: { navigate: () => Promise.resolve(true) } },
+        // Rediseño: el formulario ahora tiene enlaces (RouterLink) y lee la cuenta para el paso de contacto.
+        provideRouter([{ path: '**', children: [] }]),
+        { provide: UsuarioService, useValue: { obtenerPorId: () => of({ idUsuario: 7, nombre: 'Ana', email: 'a@b.com', telefono: null }) } },
       ],
     }).compileComponents();
 
