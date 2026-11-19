@@ -675,7 +675,7 @@ export const en = {
       RESCATE: 'Rescue',
     },
     tiposCaso: {
-      PERDIDA: 'Loss',
+      PERDIDA: 'Lost',
       ENCONTRADA: 'Found',
       ABANDONADA: 'Abandoned',
     },
