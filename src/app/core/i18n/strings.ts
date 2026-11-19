@@ -911,6 +911,19 @@ export const en = {
     nota: 'Volunteer note',
     },
 
+    modal: {
+      cerrarAria: 'Close',
+      id: 'ID',
+      estado: 'Status',
+      descripcion: 'Description',
+      fechaCreacion: 'Creation date',
+      fotoAlt: 'Report photo',
+      cerrarBoton: 'Close',
+      etiquetaEstado: 'Update report status',
+      actualizarEstado: 'Update status',
+      guardando: 'Saving...',
+    },
+
   },
   
   
