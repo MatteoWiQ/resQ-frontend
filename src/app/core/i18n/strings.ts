@@ -464,6 +464,35 @@ export const es = {
       mono: 'Monoespaciado',
     },
   },
+
+
+  solicitudesVoluntarios: {
+    titulo: 'Solicitudes de voluntarios',
+    volver: 'Volver al panel',
+    cargando: 'Cargando solicitudes...',
+    sinSolicitudes: 'No hay solicitudes pendientes.',
+    sinTipoAyuda: 'Sin tipo de ayuda',
+    email: 'Correo electrónico',
+    telefono: 'Teléfono',
+    tipoAyuda: 'Tipo de ayuda',
+    mensaje: 'Mensaje',
+    fechaSolicitud: 'Solicitada',
+    aprobar: 'Aprobar',
+    rechazar: 'Rechazar',
+    cerrar: 'Cerrar',
+    motivoTitulo: 'Motivo del rechazo',
+    motivoPlaceholder: 'Indica el motivo (obligatorio)',
+    motivoError: 'El motivo debe tener entre 1 y 500 caracteres.',
+    confirmarRechazo: 'Confirmar rechazo',
+    cancelar: 'Cancelar',
+    errorCargar: 'No se pudieron cargar las solicitudes.',
+    errorDetalle: 'No se pudo cargar el detalle.',
+    aprobada: 'Solicitud aprobada. El usuario ahora es voluntario.',
+    rechazada: 'Solicitud rechazada. Se notificó al usuario.',
+    errorProcesar: 'No se pudo procesar la resolución.',
+  },
+
+
   admin: {
     titulo: 'Panel administrativo',
     subtitle: 'Gestiona los reportes y usuarios de ResQ.',
