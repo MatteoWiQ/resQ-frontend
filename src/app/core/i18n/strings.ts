@@ -767,6 +767,10 @@ export const en = {
         titulo: 'Rescue',
         descripcion: 'Coordinates interventions and immediate emergency support.',
       },
+      alimento: {
+        titulo: 'Food',
+        descripcion: 'Support animal rescue with donations of food and basic supplies.',
+      },
     },
     guia: {
       eyebrow: 'Guide to report',
