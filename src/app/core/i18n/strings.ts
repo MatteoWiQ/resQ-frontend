@@ -37,6 +37,7 @@ export const es = {
       nombre: 'ResQ',
     },
     volverAtras: 'Volver atrás',
+    
     // Rediseño: navegación principal de la cabecera.
     nav: {
       irAlInicio: 'ResQ, ir al inicio',
@@ -91,7 +92,6 @@ export const es = {
       ENCONTRADA: 'Encontrada',
       ABANDONADA: 'Abandonada',
     },
-  },
   landing: {
     topbar: {
       ariaLabel: 'Navegación principal',
@@ -567,8 +567,8 @@ export const es = {
     reporteEliminado: 'Reporte eliminado correctamente',
     errorEliminarReporte: 'Error al eliminar reporte: {{detalle}}',
   },
-} as const;
-
+} as const
+}
 /** Forma de referencia (catalogo es) de la que se derivan las claves validas. */
 export type CatalogShape = typeof es;
 
@@ -627,6 +627,8 @@ export const en = {
       nombre: 'ResQ',
     },
     volverAtras: 'Back',
+    abrirMenu: 'Open menu',
+  cerrarMenu: 'Close menu',
     nav: {
       irAlInicio: 'ResQ, go to home',
       casos: 'Cases',

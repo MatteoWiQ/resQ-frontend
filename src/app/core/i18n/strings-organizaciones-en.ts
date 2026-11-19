@@ -74,9 +74,35 @@ export const organizacionesEn = {
     quitarLogoActual: 'Remove current logo',
     logoQuitado: 'Current logo will be removed when saving changes.',
   },
+  
   estado: {
     titulo: 'Your organization',
     PENDIENTE_VERIFICACION: 'Verification pending',
     VERIFICADA: 'Verified',
+    RECHAZADA: 'Rejected',
+    avisoPendiente:
+      'An administrator will review your registration. Until your organization is verified, it cannot manage cases.',
+    avisoVerificada:
+      'Your organization is verified and can manage cases.',
+    avisoRechazada:
+      'Your registration was not approved. Your organization cannot manage cases.',
   },
+  confirmacion: {
+    registrada: '✅ Your organization has been registered.',
+    correoEnviado: 'We sent a confirmation email to {{email}}.',
+    correoNoEnviado:
+      'We could not send the confirmation email, but your registration was saved.',
+  },
+  detalle: {
+    tipo: 'Type',
+    direccion: 'Address',
+    telefono: 'Phone',
+    email: 'Email',
+    descripcion: 'Description',
+    horarios: 'Opening hours',
+    zonas: 'Coverage areas',
+    logoAlt: 'Organization logo',
+    volver: 'Back to profile',
+  }
+
 }

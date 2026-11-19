@@ -44,14 +44,21 @@ export class Register {
    * por el alta publica. Cualquier otro caso o una caida se trata como error de
    * conexion, para no mostrar un mensaje de "datos invalidos" que confunda.
    */
-  private traducirError(estado?: number): string {
-    switch (estado) {
-      case 409:
-        return this.translate.t('auth.register.errorEmailRegistrado');
-      case 400:
-        return this.translate.t('auth.register.errorDatosInvalidos');
-      default:
-        return this.translate.t('auth.register.errorDb');
-    }
+ 
+private traducirError(estado?: number): string {
+  switch (estado) {
+    case 409:
+      return this.translate.t('auth.register.errorEmailRegistrado');
+
+    case 400:
+      return this.translate.t('auth.register.errorDatosInvalidos');
+
+    case 403:
+      return this.translate.t('auth.register.errorNoAutorizado');
+
+    default:
+      return this.translate.t('auth.register.errorDb');
   }
+}
+
 }
