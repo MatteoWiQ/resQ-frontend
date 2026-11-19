@@ -1074,6 +1074,33 @@ mensajes: {
 },
 
 
+solicitudesVoluntarios: {
+  titulo: 'Volunteer applications',
+  volver: 'Back to admin panel',
+  cargando: 'Loading applications...',
+  sinSolicitudes: 'There are no pending applications.',
+  sinTipoAyuda: 'No type of help specified',
+  email: 'Email',
+  telefono: 'Phone',
+  tipoAyuda: 'Type of help',
+  mensaje: 'Message',
+  fechaSolicitud: 'Submitted',
+  aprobar: 'Approve',
+  rechazar: 'Reject',
+  cerrar: 'Close',
+  motivoTitulo: 'Reason for rejection',
+  motivoPlaceholder: 'Enter a reason (required)',
+  motivoError: 'The reason must be between 1 and 500 characters.',
+  confirmarRechazo: 'Confirm rejection',
+  cancelar: 'Cancel',
+  errorCargar: 'Could not load applications.',
+  errorDetalle: 'Could not load application details.',
+  aprobada: 'Application approved. The user is now a volunteer.',
+  rechazada: 'Application rejected. The user has been notified.',
+  errorProcesar: 'Could not process the application.',
+},
+
+
 admin: {
   titulo: 'Admin panel',
   subtitle: 'Manage ResQ reports and users.',
