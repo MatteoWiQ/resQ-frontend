@@ -489,3 +489,87 @@ dd {
     font-size: 1.15rem;
   }
 }
+
+/* Acciones del perfil */
+
+.perfil-acciones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.perfil-acciones .btn-voluntario,
+.perfil-acciones .btn-editar-voluntario,
+.perfil-acciones .btn-revisar {
+  margin: 0;
+}
+
+.btn-perfil-admin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.btn-perfil-admin:hover {
+  background: var(--panel-soft);
+}
+
+.btn-perfil-admin:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.perfil-acciones .tipos-ayuda-badges {
+  flex-basis: 100%;
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .perfil-acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .perfil-acciones > a,
+  .perfil-acciones > button {
+    text-align: center;
+  }
+}
+
+/* ==========================================
+   HU-40: Settings - Nueva paleta ResQ
+   ========================================== */
+
+.configuracion-section {
+  background: var(--panel, #ffffff);
+  border: 1px solid var(--border, #dfe7e1);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(10, 53, 42, 0.05);
+}
+
+.configuracion-icono {
+  background: #e4f0e9;
+  color: #145c45;
+}
+
+.configuracion-textos h3 {
+  color: var(--text, #103b30);
+}
+
+.configuracion-textos p {
+  color: var(--muted, #587268);
+}
+
+.configuracion-contenido {
+  border-top: 1px solid var(--border, #dfe7e1);
+}

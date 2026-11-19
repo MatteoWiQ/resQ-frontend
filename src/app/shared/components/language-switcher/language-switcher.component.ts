@@ -83,7 +83,7 @@ export type Language = typeof LANGUAGES[number];
       display: flex;
       align-items: center;
       gap: 5px;
-      background: #f8edea;
+      background: #e4f0e9;
       padding: 5px;
       border-radius: 50px;
     }
@@ -91,7 +91,7 @@ export type Language = typeof LANGUAGES[number];
     .idioma-btn {
       border: none;
       background: transparent;
-      color: #78233d;
+      color: #145c45;
       border-radius: 50px;
       padding: 10px 22px;
       font-size: 0.85rem;
@@ -101,19 +101,20 @@ export type Language = typeof LANGUAGES[number];
     }
 
     .idioma-btn:hover:not(.activo) {
-      background: #ead3d6;
+      background: #d0e4d8;
     }
 
     .idioma-btn.activo {
-      background: #78233d;
+      background: #145c45;
       color: #ffffff;
-      box-shadow: 0 3px 8px rgba(100, 33, 55, 0.2);
+      box-shadow: 0 3px 8px rgba(10, 53, 42, 0.18);
     }
 
     .idioma-btn:focus-visible {
-      outline: 2px solid #78233d;
+      outline: 2px solid #145c45;
       outline-offset: 3px;
     }
+
 
     @media (max-width: 600px) {
       .idioma-contenedor {
