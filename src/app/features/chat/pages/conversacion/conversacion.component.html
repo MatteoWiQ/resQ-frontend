@@ -35,13 +35,7 @@
                 }
                 @if (m.urlAdjunto) {
                   <figure class="adjunto">
-                    @if (esImagen(m)) {
-                      <img [src]="rutaAdjunto(m)!" [attr.alt]="m.nombreAdjunto ?? ''" />
-                    } @else {
-                      <a [href]="rutaAdjunto(m)!" target="_blank" rel="noopener">
-                        {{ m.nombreAdjunto ?? ('mensajes.archivo' | translate) }}
-                      </a>
-                    }
+                    <app-adjunto-privado [ruta]="m.urlAdjunto" [nombre]="m.nombreAdjunto ?? ('mensajes.archivo' | translate)" [imagen]="esImagen(m)" />
                   </figure>
                 }
               }
