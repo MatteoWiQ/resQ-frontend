@@ -37,6 +37,7 @@ export const es = {
       nombre: 'ResQ',
     },
     volverAtras: 'Volver atrás',
+    
     // Rediseño: navegación principal de la cabecera.
     nav: {
       irAlInicio: 'ResQ, ir al inicio',
@@ -90,7 +91,7 @@ export const es = {
       PERDIDA: 'Perdida',
       ENCONTRADA: 'Encontrada',
       ABANDONADA: 'Abandonada',
-    },
+   },
   },
   landing: {
     topbar: {
@@ -251,6 +252,7 @@ export const es = {
       rolVoluntario: 'Voluntario',
       boton: 'Registrarse',
       ok: 'Usuario registrado correctamente',
+      errorNoAutorizado: 'No tienes permisos para realizar este registro.',
       errorDb: 'No se pudo conectar con la base de datos. Inténtalo de nuevo más tarde.',
       errorEmailRegistrado: 'Ese correo ya tiene una cuenta. Inicia sesión o usa otro correo.',
       errorDatosInvalidos: 'Revisa los datos: hay campos incompletos o con formato inválido.',
@@ -276,6 +278,8 @@ export const es = {
     ver: 'Ver',
     panelAdmin: 'Panel administrativo',
     revisarSolicitudes: 'Revisar solicitudes',
+    mensajeSolicitud: 'Tu solicitud fue enviada y está pendiente de revisión por el administrador.',
+
     revision: {
       titulo: 'Revisión',
       nota: 'Nota del voluntario',
@@ -365,12 +369,22 @@ export const es = {
     enviando: 'Enviando...',
     errorSeleccion: 'Selecciona al menos un tipo de ayuda.',
     errorGenerico: 'Ocurrió un error. Inténtalo de nuevo.',
+    errorSolicitudDuplicada: 'No puedes enviar una nueva solicitud todavía',
+
     tipos: {
       TRANSPORTE: 'Transporte',
       HOGAR_TEMPORAL: 'Hogar temporal',
       ALIMENTO: 'Alimento',
       RESCATE: 'Rescate',
     },
+
+    tiposAyuda: {
+      transporte: 'Transporte',
+      hogarTemporal: 'Hogar temporal',
+      alimento: 'Alimento',
+      rescate: 'Rescate',
+    },
+
   },
   // ============ HU-19: aceptar o rechazar solicitudes ============
   solicitudes: {
@@ -453,9 +467,39 @@ export const es = {
       mono: 'Monoespaciado',
     },
   },
+
+
+  solicitudesVoluntarios: {
+    titulo: 'Solicitudes de voluntarios',
+    volver: 'Volver al panel',
+    cargando: 'Cargando solicitudes...',
+    sinSolicitudes: 'No hay solicitudes pendientes.',
+    sinTipoAyuda: 'Sin tipo de ayuda',
+    email: 'Correo electrónico',
+    telefono: 'Teléfono',
+    tipoAyuda: 'Tipo de ayuda',
+    mensaje: 'Mensaje',
+    fechaSolicitud: 'Solicitada',
+    aprobar: 'Aprobar',
+    rechazar: 'Rechazar',
+    cerrar: 'Cerrar',
+    motivoTitulo: 'Motivo del rechazo',
+    motivoPlaceholder: 'Indica el motivo (obligatorio)',
+    motivoError: 'El motivo debe tener entre 1 y 500 caracteres.',
+    confirmarRechazo: 'Confirmar rechazo',
+    cancelar: 'Cancelar',
+    errorCargar: 'No se pudieron cargar las solicitudes.',
+    errorDetalle: 'No se pudo cargar el detalle.',
+    aprobada: 'Solicitud aprobada. El usuario ahora es voluntario.',
+    rechazada: 'Solicitud rechazada. Se notificó al usuario.',
+    errorProcesar: 'No se pudo procesar la resolución.',
+  },
+
+
   admin: {
     titulo: 'Panel administrativo',
     subtitle: 'Gestiona los reportes y usuarios de ResQ.',
+    revisarSolicitudesVoluntarios: 'Revisar solicitudes de voluntarios',
     usuarios: 'Usuarios',
     reportes: 'Reportes',
     filtrarPor: 'Filtrar por estado:',
@@ -586,6 +630,8 @@ export const en = {
       nombre: 'ResQ',
     },
     volverAtras: 'Back',
+    abrirMenu: 'Open menu',
+  cerrarMenu: 'Close menu',
     nav: {
       irAlInicio: 'ResQ, go to home',
       casos: 'Cases',
@@ -629,7 +675,7 @@ export const en = {
       RESCATE: 'Rescue',
     },
     tiposCaso: {
-      PERDIDA: 'Loss',
+      PERDIDA: 'Lost',
       ENCONTRADA: 'Found',
       ABANDONADA: 'Abandoned',
     },
@@ -724,6 +770,10 @@ export const en = {
         titulo: 'Rescue',
         descripcion: 'Coordinates interventions and immediate emergency support.',
       },
+      alimento: {
+        titulo: 'Food',
+        descripcion: 'Support animal rescue with donations of food and basic supplies.',
+      },
     },
     guia: {
       eyebrow: 'Guide to report',
@@ -746,7 +796,9 @@ export const en = {
         descripcion:
           'Check that the information is correct and send the report. You need to log in to register the case in your profile.',
       },
-      paso4: {},
+      paso4: {
+        titulo: 'Publish',
+      },
       accion: {
         kicker: 'Ready to help?',
         titulo: 'Start your report',
@@ -776,6 +828,11 @@ export const en = {
       correoPlaceholder: 'Your email',
       password: 'Password',
       passwordError: 'Password must have at least 8 characters.',
+      passwordPlaceholder: 'Your password',
+      errorEmailRegistrado:
+        'This email is already registered. Log in or use another email.',
+      errorDatosInvalidos:
+        'Please check your information. Some fields are incomplete or have an invalid format.',
       telefono: 'Phone',
       telefonoPlaceholder: 'Your phone',
       telefonoError: 'Phone is required.',
@@ -784,6 +841,7 @@ export const en = {
       rolUsuario: 'User',
       rolVoluntario: 'Volunteer',
       boton: 'Register',
+      errorNoAutorizado: 'You do not have permission to complete this registration.',
       ok: 'User registered correctly',
       errorDb: 'Could not connect to the database. Try again later.',
       yaTienesCuenta: 'Already have an account?',
@@ -792,13 +850,15 @@ export const en = {
   },
   perfil: {
     configuracion: {
-      titulo: 'Configuration',
+      titulo: 'Settings',
       descripcion: 'Adjust your language and appearance preferences',
     },
     cargandoPerfil: 'Loading your profile...',
     correo: 'Email',
     telefono: 'Phone',
     noRegistrado: 'Not registered',
+    sinSesion: 'There is no active session.',
+    errorCargarPerfil: 'Could not load your profile information.',
     etiquetaRol: {
       USUARIO: 'User',
       VOLUNTARIO: 'Volunteer',
@@ -808,9 +868,13 @@ export const en = {
     misReportes: 'My reports',
     sinReportes: 'No reports yet.',
     crearNuevoReporte: 'Create new report',
+    cargandoReportes: 'Loading reports...',
+    ver: 'View',
+    
     panelVoluntario: 'Volunteer panel',
     botonEditar: 'Edit',
     revisarSolicitudes: 'Review requests',
+
     tiposAyuda: {
       transporte: 'Transport',
       hogarTemporal: 'Temporary home',
@@ -824,19 +888,62 @@ export const en = {
     verSolicitudes: 'View requests',
     solicitudEnviada: 'Request sent',
     errorVoluntarioMostrar: 'Error with volunteer request',
+
     reportesSection: 'Reports',
     reportesHead: 'My reports',
     reportesNuevo: 'New report',
     reportesLista: 'Reports list',
     filtros: 'Filters',
-    estado: 'State',
+    estado: {
+      errorDistinto: 'Select a status different from the current one.',
+      errorBase: 'Could not update the status. ',
+      sinPermisos: 'You do not have permission to perform this action.',
+      reintentar: 'Please try again.',
+      ok: ' Status updated successfully.',
+    },
     verReporte: 'View report',
     eliminarReporte: 'Delete report',
     editarReporte: 'Edit report',
     compartirReporte: 'Share report',
+
+    revision: {
+    titulo: 'Review',
+    nota: 'Volunteer note',
+    },
+
+    modal: {
+      cerrarAria: 'Close',
+      id: 'ID',
+      estado: 'Status',
+      descripcion: 'Description',
+      fechaCreacion: 'Creation date',
+      fotoAlt: 'Report photo',
+      cerrarBoton: 'Close',
+      etiquetaEstado: 'Update report status',
+      actualizarEstado: 'Update status',
+      guardando: 'Saving...',
+    },
+
   },
+  
+  
   voluntario: {
     boton: 'I want to help',
+    botonEditar: 'Edit help types',
+    modalTituloRegistro: 'I want to volunteer',
+    modalTituloEditar: 'Edit help types',
+    modalSubtitulo: 'Select the types of help you can offer:',
+    confirmar: 'Confirm',
+    enviando: 'Sending...',
+    errorSeleccion: 'Select at least one type of help.',
+    errorGenerico: 'An error occurred. Please try again.',
+    errorSolicitudDuplicada: 'You cannot submit another request yet.',
+    tipos: {
+      TRANSPORTE: 'Transport',
+      HOGAR_TEMPORAL: 'Temporary home',
+      ALIMENTO: 'Food',
+      RESCATE: 'Rescue',
+    },
     tiposAyuda: {
       transporte: 'Transport',
       hogarTemporal: 'Temporary home',
@@ -846,6 +953,7 @@ export const en = {
     solicitudEnviada: 'Request sent',
     errorVoluntario: 'There was an error with the volunteer request.',
     verSolicitudes: 'View requests',
+
     modalVoluntario: {
       titulo: 'Volunteer request',
       subtitulo: 'Submit your availability',
@@ -859,25 +967,268 @@ export const en = {
       error: 'There was an error submitting the request.',
     },
   },
-  admin: {
-    panelAdmin: 'Admin panel',
-    gestionCasos: 'Manage cases',
-    organizaciones: 'Organizations',
-    verDetalle: 'View detail',
-    eliminar: 'Delete',
-    editar: 'Edit',
-    crear: 'Create',
-    filtros: 'Filters',
-    estado: 'State',
-    verReporte: 'View report',
-    dashboard: 'Dashboard',
-    metricas: 'Metrics',
-    grafico: 'Graph',
-    metricasPorCaso: 'Metrics per case',
-    fecha: 'Date',
-    usuario: 'User',
-    accion: 'Action',
+
+  reportes: {
+    filtros: {
+      titulo: 'Filter cases by status',
+      TODOS: 'All',
+      URGENTES: 'Urgent',
+      ACTIVOS: 'Active',
+      RESUELTOS: 'Resolved',
+      CANCELADOS: 'Cancelled',
+    },
+
+    nuevo: {
+      titulo: 'Create new report',
+      subtitle: 'Help us report an animal in need.',
+      paso1: 'Report type',
+      paso2: 'Details',
+      continuar: 'Continue',
+      tipoElegido: 'Report type: ',
+      descripcion: 'Description',
+      descripcionPlaceholder:
+        'Describe the case: breed, color, name, location, time and distinguishing features...',
+
+      foto: 'Photo (optional)',
+      fotoAyuda: 'Allowed formats: JPG, PNG or WEBP. Maximum size: 5 MB.',
+      fotoSeleccionar: 'Select photo',
+      fotoCambiar: 'Change photo',
+      fotoQuitar: 'Remove photo',
+      fotoVistaPreviaAlt: 'Preview of the selected photo',
+      fotoErrorFormato: 'Invalid format. Use a JPG, PNG or WEBP image.',
+      fotoErrorTamano: 'The photo exceeds the maximum size of 5 MB.',
+      fotoErrorSubir: 'Could not upload the photo. Please try again.',
+
+      ubicacion: 'Location (optional)',
+      ubicacionAyuda: 'Click on the map to mark where the animal is located.',
+      ubicacionActual: 'Use my current location',
+      ubicacionObteniendo: 'Getting your location...',
+      ubicacionQuitar: 'Remove location',
+
+      ubicacionError: {
+        NO_SOPORTADA:
+          'This device does not support location services. Mark the location on the map.',
+        CONTEXTO_SEGURO:
+          'A secure connection (HTTPS) is required to access your location. Mark the location on the map.',
+        PERMISO_DENEGADO:
+          'You denied location access. Mark the location on the map.',
+        POSICION_NO_DISPONIBLE:
+          'Could not determine your location. Please try again or select a point on the map.',
+        TIEMPO_AGOTADO:
+          'Getting your location took too long. Please try again or select a point on the map.',
+        ERROR_DESCONOCIDO:
+          'Could not get your location. Please try again or select a point on the map.',
+      },
+
+      atras: 'Back',
+      creando: 'Creating...',
+      crear: 'Create report',
+      seleccionaTipo: 'Select a report type.',
+      sinSesion: 'There is no active session. Please sign in again.',
+      descripcionObligatoria: 'Description is required.',
+      errorCrear: 'Could not create the report. Please try again.',
+    },
   },
+
+
+  solicitudes: {
+    titulo: 'Pending requests',
+    subtitulo: 'Review the information in cases reported by users.',
+    sinPermisos: 'You do not have permission to view this section.',
+    cargando: 'Loading requests...',
+    vacio: 'There are no pending requests to review.',
+    errorCargar: '❌ Could not load requests.',
+    reporteNumero: 'Report #{{id}}',
+    revisar: 'Review',
+    modalTitulo: 'Review request #{{id}}',
+    cerrarAria: 'Close',
+    tipoCaso: 'Case type',
+    descripcion: 'Description',
+    fecha: 'Report date',
+    ubicacion: 'Location',
+    sinUbicacion: 'No location available',
+    fotoAlt: 'Report photo',
+    nota: 'Note for the user',
+    notaAyuda: 'Required when rejecting, optional when approving.',
+    notaPlaceholder: 'Briefly explain your decision...',
+    aprobar: 'Approve',
+    rechazar: 'Reject',
+    enviando: 'Submitting...',
+    notaObligatoria: 'You must provide a reason for rejection.',
+    aprobada: '✅ Request #{{id}} approved. The user has been notified.',
+    rechazada: '✅ Request #{{id}} rejected. The user has been notified.',
+    errorDecidir: '❌ Could not save the decision. Please try again.',
+    errorSinPermiso: '❌ You do not have permission to review requests.',
+    errorYaRevisada: '❌ This request has already been reviewed. The list has been updated.',
+  },
+
+  
+mensajes: {
+  bandejaTitulo: 'Messages',
+  nuevaConversacion: 'New conversation',
+  buscar: 'Search',
+  buscarOrganizacion: 'Search organization by name',
+  organizacion: 'Organization',
+  iniciar: 'Message',
+  iniciarCon: 'Start a conversation with {{nombre}}',
+  sinOrganizaciones: 'No organizations found.',
+  sinConversaciones: "You don't have any conversations yet.",
+  sinMensajes: 'There are no messages in this conversation yet.',
+  sinSesion: 'Sign in to use messages.',
+  conversacion: 'Conversation',
+  contador: '{{n}}/{{max}} characters',
+  cargando: 'Loading...',
+  yo: 'You',
+  escribir: 'Write a message...',
+  vacio: 'Write a message or attach a file.',
+  adjuntar: 'Attach image or file',
+  quitarAdjunto: 'Remove attachment',
+  archivo: 'Attached file',
+  eliminar: 'Delete',
+  eliminado: 'Message deleted',
+  enviar: 'Send',
+  enviando: 'Sending...',
+  errorCargar: 'Messages could not be loaded.',
+  errorEnviar: 'The message could not be sent. Please try again.',
+  errorEliminar: 'The message could not be deleted.',
+  errorAbrir: 'The conversation could not be opened.',
+  errorDemasiadoLargo: 'The message exceeds the character limit.',
+  errorSinPermiso: 'You cannot participate in this conversation.',
+
+  formato: {
+    negrita: 'Bold',
+    cursiva: 'Italic',
+    mono: 'Monospace',
+  },
+},
+
+
+solicitudesVoluntarios: {
+  titulo: 'Volunteer applications',
+  volver: 'Back to admin panel',
+  cargando: 'Loading applications...',
+  sinSolicitudes: 'There are no pending applications.',
+  sinTipoAyuda: 'No type of help specified',
+  email: 'Email',
+  telefono: 'Phone',
+  tipoAyuda: 'Type of help',
+  mensaje: 'Message',
+  fechaSolicitud: 'Submitted',
+  aprobar: 'Approve',
+  rechazar: 'Reject',
+  cerrar: 'Close',
+  motivoTitulo: 'Reason for rejection',
+  motivoPlaceholder: 'Enter a reason (required)',
+  motivoError: 'The reason must be between 1 and 500 characters.',
+  confirmarRechazo: 'Confirm rejection',
+  cancelar: 'Cancel',
+  errorCargar: 'Could not load applications.',
+  errorDetalle: 'Could not load application details.',
+  aprobada: 'Application approved. The user is now a volunteer.',
+  rechazada: 'Application rejected. The user has been notified.',
+  errorProcesar: 'Could not process the application.',
+},
+
+
+admin: {
+  titulo: 'Admin panel',
+  subtitle: 'Manage ResQ reports and users.',
+  usuarios: 'Users',
+  reportes: 'Reports',
+  filtrarPor: 'Filter by status:',
+  casosMostrados: 'Cases displayed',
+  id: 'ID',
+  nombre: 'Name',
+  email: 'Email',
+  telefono: 'Phone',
+  rol: 'Role',
+  acciones: 'Actions',
+  idUsuario: 'User ID',
+  tipoCaso: 'Case type',
+  descripcion: 'Description',
+  estado: 'Status',
+  guardar: 'Save',
+  cancelar: 'Cancel',
+  editar: 'Edit',
+  eliminar: 'Delete',
+  mensaje: 'Message',
+  mensajeA: 'Send a message to {{nombre}}',
+  errorMensaje: 'Could not open the conversation with {{nombre}}',
+
+  tituloModalEliminar: 'Delete user',
+  confirmarEliminarDetalle: 'You are about to delete the account:',
+  confirmarEliminarAviso: 'This action cannot be undone.',
+  usuarioEliminado: 'User deleted successfully.',
+  errorEliminarUsuario: 'Error deleting user: {{detalle}}',
+  errorCargarUsuarios: 'Error loading users: {{detalle}}',
+  errorCargarReportes: 'Error loading reports: {{detalle}}',
+  usuarioActualizado: 'User updated successfully.',
+  errorActualizarUsuario: 'Error updating user: {{detalle}}',
+  reporteActualizado: 'Report updated successfully.',
+  errorActualizarReporte: 'Error updating report: {{detalle}}',
+
+  buscar: 'Search',
+  buscarPlaceholder: 'Description or case type...',
+  limpiarBusqueda: 'Clear search',
+  ordenarPor: 'Sort by:',
+
+  orden: {
+    recientes: 'Most recent',
+    antiguos: 'Oldest first',
+  },
+
+  sinResultados: 'No reports match your search.',
+  verDetalle: 'View details',
+
+  detalle: {
+    titulo: 'Report details',
+    cargando: 'Loading report...',
+    noEncontrado: 'This report no longer exists.',
+    errorCargar: 'Could not load report: {{detalle}}',
+    autor: 'Reported by',
+    autorDesconocido: 'Unregistered user',
+    fecha: 'Creation date',
+    ubicacion: 'Location',
+    sinUbicacion: 'No location available',
+    sinFoto: 'No photo attached',
+    estadoActual: 'Current status',
+    cambiarEstado: 'Change status',
+    nuevoEstado: 'New status',
+    estadoSinSalida: 'This status does not allow changes. Review the case before updating it.',
+    volver: 'Back to admin panel',
+  },
+
+  cambioEstado: {
+    ok: 'Status updated successfully.',
+    error: 'Could not update status: {{detalle}}',
+    sinCambio: 'Choose a status different from the current one.',
+  },
+
+  tituloModalEliminarReporte: 'Delete report',
+  confirmarEliminarReporte: 'You are about to delete the report:',
+  confirmarEliminarReporteAviso:
+    'The case and its location will be deleted. This action cannot be undone.',
+  reporteEliminado: 'Report deleted successfully.',
+  errorEliminarReporte: 'Error deleting report: {{detalle}}',
+
+  // Claves utilizadas por otros módulos
+  panelAdmin: 'Admin panel',
+  gestionCasos: 'Manage cases',
+  organizaciones: 'Organizations',
+  crear: 'Create',
+  filtros: 'Filters',
+  verReporte: 'View report',
+  dashboard: 'Dashboard',
+  metricas: 'Metrics',
+  grafico: 'Chart',
+  metricasPorCaso: 'Metrics by case',
+  fecha: 'Date',
+  usuario: 'User',
+  accion: 'Action',
+
+  revisarSolicitudesVoluntarios: 'Review volunteer applications',
+},
+
   reportar: {
     tipoReporte: {
       PERDIDA: 'Lost',
@@ -907,7 +1258,18 @@ export const en = {
     },
   },
   // HU-19: notificaciones.
-  notificaciones: 'Notifications',
+  notificaciones: {
+  titulo: 'Notifications',
+  cargando: 'Loading notifications...',
+  vacio: 'You have no notifications.',
+  errorCargar: 'Could not load your notifications.',
+  errorAccion: 'Could not update the notification.',
+  sinLeer: '{{n}} unread',
+  marcarLeida: 'Mark as read',
+  marcarNoLeida: 'Mark as unread',
+  archivar: 'Archive',
+  abrir: 'Open notification',
+},
   // HU-19: bandeja.
   bandeja: 'Inbox',
   // HU-19: mensaje.

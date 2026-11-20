@@ -1,12 +1,17 @@
+
 <section class="perfil-page">
   <app-header variante="app" />
   <app-back-button ruta="/" />
 
   @if (cargandoPerfil()) {
-    <p class="hint">{{ 'perfil.cargandoPerfil' | translate }}</p>
+    <p class="hint">
+      {{ 'perfil.cargandoPerfil' | translate }}
+    </p>
   } @else if (error()) {
     <p class="message">{{ error() }}</p>
   } @else if (usuario(); as u) {
+
+    <!-- ================= PERFIL DEL USUARIO ================= -->
     <div class="perfil-card">
       <div class="avatar">
         <span>{{ iniciales(u.nombre) }}</span>
@@ -24,75 +29,138 @@
           <dd>{{ u.telefono || ('perfil.noRegistrado' | translate) }}</dd>
         </dl>
 
-        <!-- ============ HU23: acceso al panel de usuarios, solo para administradores ============ -->
-        @if (esAdmin()) {
-          <a class="btn-editar-voluntario btn-panel-admin" routerLink="/admin">{{ 'perfil.panelAdmin' | translate }}</a>
+        <!-- ================= ACCIONES SEGÚN EL ROL ================= -->
+        <div class="perfil-acciones">
+
+          <!-- HU-23: Panel administrativo -->
+          @if (esAdmin()) {
+            <a
+              class="btn-perfil-admin"
+              routerLink="/admin"
+            >
+              {{ 'perfil.panelAdmin' | translate }}
+            </a>
+          }
+
+          <!-- HU-17: Registro o edición de voluntariado -->
+          @if (esVoluntario(u)) {
+            <div class="tipos-ayuda-badges">
+              @for (tipo of u.tiposAyuda; track tipo) {
+                <span class="tipo-ayuda-badge">
+                  {{ etiquetaTipoAyuda(tipo) }}
+                </span>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="btn-detalle btn-editar-voluntario"
+              (click)="abrirModalVoluntario()"
+            >
+              {{ 'voluntario.botonEditar' | translate }}
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="primary-btn btn-voluntario"
+              (click)="abrirModalVoluntario()"
+            >
+              {{ 'voluntario.boton' | translate }}
+            </button>
+          }
+
+          <!-- HU-19: Revisión de solicitudes -->
+          @if (puedeRevisar()) {
+            <a
+              class="primary-btn btn-revisar"
+              routerLink="/voluntario/solicitudes"
+            >
+              {{ 'perfil.revisarSolicitudes' | translate }}
+            </a>
+          }
+
+        </div>
+
+        <!-- HU-35: Confirmación de solicitud de voluntariado -->
+        @if (solicitudEnviada()) {
+          <p class="mensaje-solicitud" role="status">
+            {{ 'perfil.mensajeSolicitud' | translate }}
+          </p>
         }
 
-        @if (esVoluntario(u)) {
-          <div class="tipos-ayuda-badges">
-            @for (tipo of u.tiposAyuda; track tipo) {
-              <span class="tipo-ayuda-badge">{{ etiquetaTipoAyuda(tipo) }}</span>
-            }
-          </div>
-          <button type="button" class="btn-detalle btn-editar-voluntario" (click)="abrirModalVoluntario()">
-            {{ 'voluntario.botonEditar' | translate }}
-          </button>
-        } @else {
-          <button type="button" class="primary-btn btn-voluntario" (click)="abrirModalVoluntario()">
-            {{ 'voluntario.boton' | translate }}
-          </button>
-          @if (solicitudEnviada()) {
-            <p class="mensaje-solicitud" role="status">
-              Tu solicitud fue enviada y está pendiente de revisión por el administrador.
-            </p>
-          }
-          @if (!mostrarModalVoluntario() && errorVoluntario()) {
-            <p class="error" role="alert">{{ errorVoluntario() }}</p>
-          }
+        @if (!mostrarModalVoluntario() && errorVoluntario()) {
+          <p class="error" role="alert">
+            {{ errorVoluntario() }}
+          </p>
         }
 
-        <!-- ============ HU-19: voluntarios y admins revisan solicitudes ============ -->
-        @if (puedeRevisar()) {
-          <a class="primary-btn btn-revisar" routerLink="/voluntario/solicitudes">
-            {{ 'perfil.revisarSolicitudes' | translate }}
-          </a>
-        }
       </div>
     </div>
   }
 
-  <!-- ============ HU-19: notificaciones ============ -->
+  <!-- ================= HU-19: NOTIFICACIONES ================= -->
   @if (usuario()) {
     <app-notificaciones />
   }
 
+  <!-- ================= MIS REPORTES ================= -->
   <div class="reportes-section">
     <div class="reportes-head">
       <h2>{{ 'perfil.misReportes' | translate }}</h2>
-      <a class="primary-btn reportes-nuevo" routerLink="/reportes/nuevo">{{ 'perfil.crearNuevoReporte' | translate }}</a>
+
+      <a
+        class="primary-btn reportes-nuevo"
+        routerLink="/reportes/nuevo"
+      >
+        {{ 'perfil.crearNuevoReporte' | translate }}
+      </a>
     </div>
 
     @if (cargandoReportes()) {
-      <p class="hint">{{ 'perfil.cargandoReportes' | translate }}</p>
+      <p class="hint">
+        {{ 'perfil.cargandoReportes' | translate }}
+      </p>
     } @else if (reportes().length === 0) {
-      <p class="hint">{{ 'perfil.sinReportes' | translate }}</p>
+      <p class="hint">
+        {{ 'perfil.sinReportes' | translate }}
+      </p>
     } @else {
       <ul class="reportes-lista">
         @for (reporte of reportes(); track reporte.idReporte) {
           <li class="reporte-item">
             <div class="reporte-info">
-              <strong>{{ etiquetaTipoCaso(reporte.tipoCaso) }}</strong>
+              <strong>
+                {{ etiquetaTipoCaso(reporte.tipoCaso) }}
+              </strong>
               <p>{{ reporte.descripcion }}</p>
             </div>
+
             <div class="reporte-acciones">
               @if (reporte.estadoRevision) {
-                <span [class]="claseRevision(reporte.estadoRevision)">{{ etiquetaRevision(reporte.estadoRevision) }}</span>
+                <span [class]="claseRevision(reporte.estadoRevision)">
+                  {{ etiquetaRevision(reporte.estadoRevision) }}
+                </span>
               }
-              <span [class]="claseEstado(reporte.estado)">{{ etiquetaEstado(reporte.estado) }}</span>
-              <button type="button" class="btn-detalle" (click)="verDetalle(reporte)">{{ 'perfil.ver' | translate }}</button>
-              <!-- HU-22: chat con la organizacion y el voluntario del caso -->
-              <a class="btn-detalle enlace-chat" [routerLink]="['/casos', reporte.idReporte, 'chat']">💬 {{ 'chatCaso.abrir' | translate }}</a>
+
+              <span [class]="claseEstado(reporte.estado)">
+                {{ etiquetaEstado(reporte.estado) }}
+              </span>
+
+              <button
+                type="button"
+                class="btn-detalle"
+                (click)="verDetalle(reporte)"
+              >
+                {{ 'perfil.ver' | translate }}
+              </button>
+
+              <!-- HU-22: Chat del caso -->
+              <a
+                class="btn-detalle enlace-chat"
+                [routerLink]="['/casos', reporte.idReporte, 'chat']"
+              >
+                💬 {{ 'chatCaso.abrir' | translate }}
+              </a>
             </div>
           </li>
         }
@@ -100,15 +168,34 @@
     }
   </div>
 
-  <!-- ============ HU-40: configuración de preferencias ============ -->
+  <!-- ================= HU-40: CONFIGURACIÓN ================= -->
   @if (mostrarConfiguracion()) {
     <section class="configuracion-section">
-      <h3>{{ 'perfil.configuracion.titulo' | translate }}</h3>
-      <p>{{ 'perfil.configuracion.descripcion' | translate }}</p>
-      <app-language-switcher></app-language-switcher>
+
+      <div class="configuracion-encabezado">
+        <div class="configuracion-icono">
+          <span aria-hidden="true">⚙</span>
+        </div>
+
+        <div class="configuracion-textos">
+          <h3>
+            {{ 'perfil.configuracion.titulo' | translate }}
+          </h3>
+
+          <p>
+            {{ 'perfil.configuracion.descripcion' | translate }}
+          </p>
+        </div>
+      </div>
+
+      <div class="configuracion-contenido">
+        <app-language-switcher />
+      </div>
+
     </section>
   }
 
+  <!-- ================= MODAL: DETALLE DEL REPORTE ================= -->
   @if (reporteSeleccionado(); as r) {
     <div class="modal-overlay" (click)="cerrarDetalle()">
       <div
@@ -119,8 +206,16 @@
         (click)="$event.stopPropagation()"
       >
         <div class="modal-head">
-          <h3 id="reporte-titulo">{{ etiquetaTipoCaso(r.tipoCaso) }}</h3>
-          <button type="button" class="btn-cerrar" [attr.aria-label]="'perfil.modal.cerrarAria' | translate" (click)="cerrarDetalle()">
+          <h3 id="reporte-titulo">
+            {{ etiquetaTipoCaso(r.tipoCaso) }}
+          </h3>
+
+          <button
+            type="button"
+            class="btn-cerrar"
+            [attr.aria-label]="'perfil.modal.cerrarAria' | translate"
+            (click)="cerrarDetalle()"
+          >
             &times;
           </button>
         </div>
@@ -130,40 +225,61 @@
           <dd>#{{ r.idReporte }}</dd>
 
           <dt>{{ 'perfil.modal.estado' | translate }}</dt>
-          <dd><span [class]="claseEstado(r.estado)">{{ etiquetaEstado(r.estado) }}</span></dd>
+          <dd>
+            <span [class]="claseEstado(r.estado)">
+              {{ etiquetaEstado(r.estado) }}
+            </span>
+          </dd>
 
           @if (r.estadoRevision) {
             <dt>{{ 'perfil.revision.titulo' | translate }}</dt>
-            <dd><span [class]="claseRevision(r.estadoRevision)">{{ etiquetaRevision(r.estadoRevision) }}</span></dd>
+            <dd>
+              <span [class]="claseRevision(r.estadoRevision)">
+                {{ etiquetaRevision(r.estadoRevision) }}
+              </span>
+            </dd>
           }
 
           @if (r.notaRevision) {
             <dt>{{ 'perfil.revision.nota' | translate }}</dt>
-            <dd class="modal-descripcion">{{ r.notaRevision }}</dd>
+            <dd class="modal-descripcion">
+              {{ r.notaRevision }}
+            </dd>
           }
 
           <dt>{{ 'perfil.modal.descripcion' | translate }}</dt>
-          <dd class="modal-descripcion">{{ r.descripcion }}</dd>
+          <dd class="modal-descripcion">
+            {{ r.descripcion }}
+          </dd>
 
           <dt>{{ 'perfil.modal.fechaCreacion' | translate }}</dt>
           <dd>{{ formatearFecha(r.fechaCreacion) }}</dd>
         </dl>
 
         @if (r.fotoUrl) {
-          <img class="modal-foto" [src]="r.fotoUrl" [attr.alt]="'perfil.modal.fotoAlt' | translate" />
+          <img
+            class="modal-foto"
+            [src]="r.fotoUrl"
+            [attr.alt]="'perfil.modal.fotoAlt' | translate"
+          />
         }
 
-        <!-- ============ HU13: editor de estado (solo voluntarios y admins) ============ -->
+        <!-- HU-13: Actualización de estado -->
         @if (puedeCambiarEstado()) {
           <div class="estado-editor">
-            <label for="nuevoEstado">{{ 'perfil.modal.etiquetaEstado' | translate }}</label>
+            <label for="nuevoEstado">
+              {{ 'perfil.modal.etiquetaEstado' | translate }}
+            </label>
+
             <select
               id="nuevoEstado"
               [ngModel]="nuevoEstado()"
               (ngModelChange)="nuevoEstado.set($event)"
             >
               @for (estado of estadosValidos; track estado) {
-                <option [value]="estado">{{ etiquetaEstado(estado) }}</option>
+                <option [value]="estado">
+                  {{ etiquetaEstado(estado) }}
+                </option>
               }
             </select>
 
@@ -173,23 +289,33 @@
               [disabled]="guardandoEstado()"
               (click)="actualizarEstado()"
             >
-              {{ guardandoEstado() ? ('perfil.modal.guardando' | translate) : ('perfil.modal.actualizarEstado' | translate) }}
+              {{
+                guardandoEstado()
+                  ? ('perfil.modal.guardando' | translate)
+                  : ('perfil.modal.actualizarEstado' | translate)
+              }}
             </button>
 
             @if (mensajeEstado()) {
-              <p class="estado-mensaje">{{ mensajeEstado() }}</p>
+              <p class="estado-mensaje">
+                {{ mensajeEstado() }}
+              </p>
             }
           </div>
         }
 
-        <button type="button" class="primary-btn modal-cerrar-boton" (click)="cerrarDetalle()">
+        <button
+          type="button"
+          class="primary-btn modal-cerrar-boton"
+          (click)="cerrarDetalle()"
+        >
           {{ 'perfil.modal.cerrarBoton' | translate }}
         </button>
       </div>
     </div>
   }
 
-  <!-- ============ HU17: registrarse / editar como voluntario ============ -->
+  <!-- ================= HU-17: MODAL DE VOLUNTARIADO ================= -->
   @if (mostrarModalVoluntario()) {
     <div class="modal-overlay" (click)="cerrarModalVoluntario()">
       <div
@@ -200,13 +326,23 @@
         (click)="$event.stopPropagation()"
       >
         <div class="modal-head">
-          <h3 id="voluntario-titulo">{{ tituloModalVoluntario() }}</h3>
-          <button type="button" class="btn-cerrar" [attr.aria-label]="'perfil.modal.cerrarAria' | translate" (click)="cerrarModalVoluntario()">
+          <h3 id="voluntario-titulo">
+            {{ tituloModalVoluntario() }}
+          </h3>
+
+          <button
+            type="button"
+            class="btn-cerrar"
+            [attr.aria-label]="'perfil.modal.cerrarAria' | translate"
+            (click)="cerrarModalVoluntario()"
+          >
             &times;
           </button>
         </div>
 
-        <p class="modal-subtitulo">{{ 'voluntario.modalSubtitulo' | translate }}</p>
+        <p class="modal-subtitulo">
+          {{ 'voluntario.modalSubtitulo' | translate }}
+        </p>
 
         <ul class="tipos-ayuda-lista">
           @for (tipo of tiposAyudaDisponibles; track tipo) {
@@ -224,7 +360,9 @@
         </ul>
 
         @if (errorVoluntario()) {
-          <p class="message">{{ errorVoluntario() }}</p>
+          <p class="message">
+            {{ errorVoluntario() }}
+          </p>
         }
 
         <button
@@ -233,7 +371,11 @@
           [disabled]="enviandoVoluntario()"
           (click)="confirmarVoluntario()"
         >
-          {{ enviandoVoluntario() ? ('voluntario.enviando' | translate) : ('voluntario.confirmar' | translate) }}
+          {{
+            enviandoVoluntario()
+              ? ('voluntario.enviando' | translate)
+              : ('voluntario.confirmar' | translate)
+          }}
         </button>
       </div>
     </div>

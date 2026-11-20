@@ -1,7 +1,12 @@
+
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+
+import { TranslateService } from '../../../../core/i18n/translate.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslationKey } from '../../../../core/i18n/strings';
 
 import {
   SolicitudVoluntarioDetalle,
@@ -10,31 +15,35 @@ import {
 } from '../../../../core/services/solicitud-voluntario.service';
 
 /**
- * HU-35: el administrador revisa las solicitudes pendientes de voluntarios.
- * Lista + detalle inline; aprobar o rechazar (motivo obligatorio).
+ * HU-35: el administrador revisa solicitudes pendientes
+ * de voluntariado y puede aprobarlas o rechazarlas.
  */
 @Component({
   selector: 'app-solicitudes-voluntarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './solicitudes-voluntarios.component.html',
   styleUrl: './solicitudes-voluntarios.component.css',
 })
 export class SolicitudesVoluntariosComponent implements OnInit {
   readonly cargando = signal(true);
   readonly procesando = signal(false);
-  readonly error = signal<string | null>(null);
+  readonly error = signal<TranslationKey | null>(null);
+
   readonly solicitudes = signal<SolicitudVoluntarioResumen[]>([]);
   readonly seleccionada = signal<SolicitudVoluntarioDetalle | null>(null);
   readonly modalRechazoAbierto = signal(false);
   readonly motivoRechazo = signal('');
-  readonly toast = signal<string | null>(null);
+  readonly toast = signal<TranslationKey | null>(null);
 
   readonly sinSolicitudes = computed(
     () => !this.cargando() && this.solicitudes().length === 0,
   );
+
   readonly motivoInvalido = computed(
-    () => this.motivoRechazo().trim().length === 0 || this.motivoRechazo().length > 500,
+    () =>
+      this.motivoRechazo().trim().length === 0 ||
+      this.motivoRechazo().length > 500,
   );
 
   constructor(private readonly service: SolicitudVoluntarioService) {}
@@ -46,22 +55,29 @@ export class SolicitudesVoluntariosComponent implements OnInit {
   cargarPendientes(): void {
     this.cargando.set(true);
     this.error.set(null);
+
     this.service.listarPendientes().subscribe({
       next: (lista) => {
         this.solicitudes.set(lista);
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudieron cargar las solicitudes.');
+        this.error.set('solicitudesVoluntarios.errorCargar');
         this.cargando.set(false);
       },
     });
   }
 
   verDetalle(id: number): void {
+    this.error.set(null);
+
     this.service.obtenerDetalle(id).subscribe({
-      next: (detalle) => this.seleccionada.set(detalle),
-      error: () => this.error.set('No se pudo cargar el detalle.'),
+      next: (detalle) => {
+        this.seleccionada.set(detalle);
+      },
+      error: () => {
+        this.error.set('solicitudesVoluntarios.errorDetalle');
+      },
     });
   }
 
@@ -71,11 +87,18 @@ export class SolicitudesVoluntariosComponent implements OnInit {
 
   aprobar(): void {
     const actual = this.seleccionada();
+
     if (!actual || this.procesando()) return;
+
     this.procesando.set(true);
+
     this.service.aprobar(actual.idSolicitud).subscribe({
-      next: () => this.trasResolucion('Solicitud aprobada. El usuario ahora es voluntario.'),
-      error: () => this.falloResolucion(),
+      next: () => {
+        this.trasResolucion('solicitudesVoluntarios.aprobada');
+      },
+      error: () => {
+        this.falloResolucion();
+      },
     });
   }
 
@@ -90,27 +113,38 @@ export class SolicitudesVoluntariosComponent implements OnInit {
 
   confirmarRechazo(): void {
     const actual = this.seleccionada();
-    if (!actual || this.procesando() || this.motivoInvalido()) return;
+
+    if (!actual || this.procesando() || this.motivoInvalido()) {
+      return;
+    }
+
     this.procesando.set(true);
-    this.service.rechazar(actual.idSolicitud, this.motivoRechazo().trim()).subscribe({
+
+    this.service.rechazar(
+      actual.idSolicitud,
+      this.motivoRechazo().trim(),
+    ).subscribe({
       next: () => {
         this.modalRechazoAbierto.set(false);
-        this.trasResolucion('Solicitud rechazada. Se notificó al usuario.');
+        this.trasResolucion('solicitudesVoluntarios.rechazada');
       },
-      error: () => this.falloResolucion(),
+      error: () => {
+        this.falloResolucion();
+      },
     });
   }
 
-  private trasResolucion(mensaje: string): void {
+  private trasResolucion(clave: TranslationKey): void {
     this.procesando.set(false);
     this.seleccionada.set(null);
-    this.toast.set(mensaje);
+    this.toast.set(clave);
     this.cargarPendientes();
+
     setTimeout(() => this.toast.set(null), 4000);
   }
 
   private falloResolucion(): void {
     this.procesando.set(false);
-    this.error.set('No se pudo procesar la resolución.');
+    this.error.set('solicitudesVoluntarios.errorProcesar');
   }
 }

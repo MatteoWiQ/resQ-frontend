@@ -76,6 +76,7 @@ export const inicioEn = {
     subtitulo: 'They get alerts for their area and manage their cases from a panel.',
     unete: 'Are you an organization? Join',
     logoAlt: '{{nombre}} logo',
+    refugioPrueba: 'Test Verified Shelter',
   },
   pie: {
     ariaLabel: 'Footer links',

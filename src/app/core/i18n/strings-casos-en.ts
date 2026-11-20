@@ -1,6 +1,8 @@
+
 /** Redesign: Cases page strings (list + map). Merged into `en` in strings.ts. */
 export const casosEn = {
   tituloPagina: 'Cases',
+
   filtros: {
     ariaLabel: 'Filter cases',
     buscar: 'Search cases',
@@ -19,52 +21,60 @@ export const casosEn = {
     pronto: 'Soon',
     limpiar: 'Clear filters',
   },
+
   estados: {
     ABIERTOS: 'Open',
     URGENTES: 'Urgent',
     EN_PROCESO: 'In progress',
-    RESUELTOS: 'Solved',
+    RESUELTOS: 'Resolved',
     TODOS: 'All',
   },
+
   vista: {
     ariaLabel: 'View',
     lista: 'List',
     listaMapa: 'List + map',
     mapa: 'Map',
   },
+
   orden: {
     etiqueta: 'Sort',
-    URGENTES: 'Most urgent',
-    RECIENTES: 'Newest',
-    CERCANOS: 'Closest',
+    URGENTES: 'Most urgent first',
+    RECIENTES: 'Newest first',
+    CERCANOS: 'Closest first',
   },
+
   resultados: {
     uno: '1 case',
     varios: '{{n}} cases',
     enZona: 'in this area',
     quitarZona: 'See all',
   },
+
   insignias: {
     urgente: 'Urgent',
     activo: 'Active',
-    resuelto: 'Solved',
+    resuelto: 'Resolved',
     cancelado: 'Cancelled',
   },
+
   mapa: {
     ariaLabel: 'Cases map',
     leyenda: 'Legend',
-    verCaso: 'See case →',
+    verCaso: 'View case →',
     buscarEnZona: 'Search this area',
     sinUbicacion: 'This case has no location on the map.',
     marcador: 'Case: {{titulo}} ({{estado}})',
   },
+
   ubicacion: {
     pidiendo: 'Finding your location...',
     denegada: 'We could not use your location. Check your browser permissions.',
   },
+
   cargando: 'Loading cases...',
-  error: 'The cases could not be loaded.',
+  error: 'Could not load cases.',
   reintentar: 'Try again',
   vacio: 'No cases match these filters.',
   sinFoto: 'Case without a photo',
-};
+} as const;

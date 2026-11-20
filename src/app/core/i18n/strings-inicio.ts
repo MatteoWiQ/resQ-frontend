@@ -71,12 +71,15 @@ export const inicioEs = {
     alimento: { titulo: 'Alimento e insumos', descripcion: 'Dona comida, mantas o medicamentos.' },
     rescate: { titulo: 'Rescate en terreno', descripcion: 'Coordina intervenciones en emergencias.' },
   },
+  
   organizaciones: {
     titulo: 'Refugios y organizaciones en la red',
     subtitulo: 'Reciben alertas de su zona y gestionan sus casos desde un panel.',
     unete: '¿Eres una organización? Únete',
     logoAlt: 'Logo de {{nombre}}',
+    refugioPrueba: 'Refugio Verificado de Prueba',
   },
+
   pie: {
     ariaLabel: 'Enlaces del pie de página',
     comoAyudar: 'Cómo ayudar',
