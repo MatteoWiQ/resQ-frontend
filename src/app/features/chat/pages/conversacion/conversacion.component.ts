@@ -15,6 +15,7 @@ import { BackButtonComponent } from '../../../../shared/components/back-button/b
 import { AppHeaderComponent } from '../../../../shared/components/app-header/app-header.component';
 import { TextoEnriquecidoPipe } from '../../../../shared/pipes/texto-enriquecido.pipe';
 import { MAX_CARACTERES_MENSAJE, Mensaje } from '../../../../shared/models/mensaje.model';
+import { AdjuntoPrivadoComponent } from './adjunto-privado.component';
 
 /**
  * HU-27: una conversacion con otro usuario o con una organizacion.
@@ -34,6 +35,7 @@ import { MAX_CARACTERES_MENSAJE, Mensaje } from '../../../../shared/models/mensa
     AppHeaderComponent,
     BackButtonComponent,
     TextoEnriquecidoPipe,
+    AdjuntoPrivadoComponent,
   ],
   templateUrl: './conversacion.component.html',
   styleUrl: './conversacion.component.css',
