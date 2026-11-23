@@ -81,10 +81,50 @@
       </div>
     }
 
+    <div class="buscador-conversaciones">
+      <input
+        id="buscar-conversacion"
+        type="text"
+        [ngModel]="busquedaConversaciones()"
+        (ngModelChange)="busquedaConversaciones.set($event)"
+        (keyup.enter)="buscarConversaciones()"
+        [attr.placeholder]="'mensajes.buscarConversacion' | translate"
+        [attr.aria-label]="'mensajes.buscarConversacion' | translate"
+      />
+      <button type="button" class="btn-buscar" (click)="buscarConversaciones()">
+        {{ 'mensajes.buscar' | translate }}
+      </button>
+    </div>
+
+    <div class="pestanas" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        class="pestana"
+        [class.activa]="!verArchivadas()"
+        [attr.aria-selected]="!verArchivadas()"
+        (click)="cambiarVista(false)"
+      >
+        {{ 'mensajes.activas' | translate }}
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="pestana"
+        [class.activa]="verArchivadas()"
+        [attr.aria-selected]="verArchivadas()"
+        (click)="cambiarVista(true)"
+      >
+        {{ 'mensajes.archivadas' | translate }}
+      </button>
+    </div>
+
     @if (cargando()) {
       <p class="hint">{{ 'mensajes.cargando' | translate }}</p>
     } @else if (conversaciones().length === 0) {
-      <p class="hint">{{ 'mensajes.sinConversaciones' | translate }}</p>
+      <p class="hint">
+        {{ (verArchivadas() ? 'mensajes.sinArchivadas' : 'mensajes.sinConversaciones') | translate }}
+      </p>
     } @else {
       <ul class="lista-chats">
         @for (chat of conversaciones(); track chat.idConversacion) {
@@ -106,6 +146,19 @@
                   : ''
               }}
             </small>
+            <button
+              type="button"
+              class="btn-archivar"
+              [disabled]="accionando() === chat.idConversacion"
+              [attr.aria-label]="
+                (chat.archivada ? 'mensajes.desarchivar' : 'mensajes.archivar') | translate
+              "
+              (click)="archivar(chat)"
+            >
+              {{
+                (chat.archivada ? 'mensajes.desarchivar' : 'mensajes.archivar') | translate
+              }}
+            </button>
           </li>
         }
       </ul>

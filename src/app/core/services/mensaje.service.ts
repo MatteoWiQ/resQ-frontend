@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -21,8 +21,25 @@ export class MensajeService {
 
   constructor(private readonly http: HttpClient) {}
 
-  obtenerConversaciones(): Observable<Conversacion[]> {
-    return this.http.get<Conversacion[]>(this.baseUrl);
+  /** TT-50: bandeja filtrada por texto y por estado de archivado. */
+  obtenerConversaciones(
+    filtros: { busqueda?: string; archivadas?: boolean } = {},
+  ): Observable<Conversacion[]> {
+    let params = new HttpParams();
+    if (filtros.busqueda?.trim()) {
+      params = params.set('busqueda', filtros.busqueda.trim());
+    }
+    if (filtros.archivadas !== undefined) {
+      params = params.set('archivadas', String(filtros.archivadas));
+    }
+    return this.http.get<Conversacion[]>(this.baseUrl, { params });
+  }
+
+  /** TT-50: archiva o desarchiva una conversación propia. */
+  archivarConversacion(idConversacion: number, archivar: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${idConversacion}/archivar`, null, {
+      params: { archivar: String(archivar) },
+    });
   }
 
   abrirConversacion(destino: DestinatarioConversacion): Observable<Conversacion> {

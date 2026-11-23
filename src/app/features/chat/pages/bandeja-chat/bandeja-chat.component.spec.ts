@@ -1,12 +1,15 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { BandejaChatComponent } from './bandeja-chat.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MensajeService } from '../../../../core/services/mensaje.service';
 import { OrganizacionService } from '../../../../core/services/organizacion.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
+import { EventoWebSocket } from '../../../../shared/models/evento-websocket.model';
 import { DirectorioUsuario } from '../../../../shared/models/mensaje.model';
 import { Organizacion } from '../../../../shared/models/organizacion.model';
 
@@ -23,22 +26,36 @@ describe('BandejaChatComponent (TT-49)', () => {
   let fixture: ComponentFixture<BandejaChatComponent>;
   let componente: BandejaChatComponent;
   let mensajeService: {
-    obtenerConversaciones: () => Observable<unknown[]>;
+    obtenerConversaciones: ReturnType<typeof vi.fn>;
     buscarUsuarios: ReturnType<typeof vi.fn>;
     abrirConversacion: ReturnType<typeof vi.fn>;
+    archivarConversacion: ReturnType<typeof vi.fn>;
   };
   let organizacionService: { listarDirectorio: ReturnType<typeof vi.fn> };
+  let conectado: ReturnType<typeof signal<boolean>>;
+  let mensajeNuevo$: Subject<EventoWebSocket>;
+  let mensajeEliminado$: Subject<EventoWebSocket>;
   let router: Router;
+
+  const evento = (tipo: 'mensaje.nuevo' | 'mensaje.eliminado'): EventoWebSocket => ({
+    tipo,
+    emitidoEn: '2026-11-14T10:00:00',
+    datos: { idConversacion: 3, idMensaje: 9 },
+  });
 
   beforeEach(() => {
     mensajeService = {
-      obtenerConversaciones: () => of([]),
+      obtenerConversaciones: vi.fn(() => of([])),
       buscarUsuarios: vi.fn(() => of([usuario(5, 'Ana Torres')])),
       abrirConversacion: vi.fn(() => of({ idConversacion: 12 })),
+      archivarConversacion: vi.fn(() => of(undefined)),
     };
     organizacionService = {
       listarDirectorio: vi.fn(() => of([organizacion(7, 'Patitas Felices')])),
     };
+    conectado = signal(false);
+    mensajeNuevo$ = new Subject<EventoWebSocket>();
+    mensajeEliminado$ = new Subject<EventoWebSocket>();
 
     TestBed.configureTestingModule({
       imports: [BandejaChatComponent],
@@ -56,6 +73,16 @@ describe('BandejaChatComponent (TT-49)', () => {
         },
         { provide: MensajeService, useValue: mensajeService },
         { provide: OrganizacionService, useValue: organizacionService },
+        {
+          provide: WebSocketService,
+          useValue: {
+            conectado,
+            enEvento: (tipo: string) =>
+              tipo === 'mensaje.nuevo'
+                ? mensajeNuevo$.asObservable()
+                : mensajeEliminado$.asObservable(),
+          },
+        },
       ],
     });
 
@@ -63,6 +90,7 @@ describe('BandejaChatComponent (TT-49)', () => {
     componente = fixture.componentInstance;
     router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -131,5 +159,126 @@ describe('BandejaChatComponent (TT-49)', () => {
 
     expect(componente.error()).not.toBe('');
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('pide la bandeja activa al iniciar y la archivada al cambiar de pestaña', () => {
+    expect(mensajeService.obtenerConversaciones).toHaveBeenCalledWith({
+      busqueda: undefined,
+      archivadas: false,
+    });
+
+    componente.cambiarVista(true);
+    expect(mensajeService.obtenerConversaciones).toHaveBeenLastCalledWith({
+      busqueda: undefined,
+      archivadas: true,
+    });
+  });
+
+  it('envía el texto de búsqueda de conversaciones al backend', () => {
+    componente.busquedaConversaciones.set('  refugio  ');
+    componente.buscarConversaciones();
+
+    expect(mensajeService.obtenerConversaciones).toHaveBeenLastCalledWith({
+      busqueda: '  refugio  ',
+      archivadas: false,
+    });
+  });
+
+  it('archiva la conversación y recarga la bandeja', () => {
+    const chat = {
+      idConversacion: 3,
+      idOtroUsuario: 3,
+      nombre: 'Luis',
+      esOrganizacion: false,
+      ultimoMensaje: 'hola',
+      fechaUltimoMensaje: null,
+      archivada: false,
+    };
+
+    componente.archivar(chat);
+
+    expect(mensajeService.archivarConversacion).toHaveBeenCalledWith(3, true);
+    expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(2);
+  });
+
+  it('desarchiva una conversación archivada', () => {
+    componente.archivar({
+      idConversacion: 4,
+      idOtroUsuario: 4,
+      nombre: 'Carla',
+      esOrganizacion: false,
+      ultimoMensaje: '',
+      fechaUltimoMensaje: null,
+      archivada: true,
+    });
+
+    expect(mensajeService.archivarConversacion).toHaveBeenCalledWith(4, false);
+  });
+
+  it('muestra un error si falla el archivado', () => {
+    mensajeService.archivarConversacion.mockReturnValue(throwError(() => new Error('500')));
+    componente.archivar({
+      idConversacion: 3,
+      idOtroUsuario: 3,
+      nombre: 'Luis',
+      esOrganizacion: false,
+      ultimoMensaje: '',
+      fechaUltimoMensaje: null,
+      archivada: false,
+    });
+    fixture.detectChanges();
+
+    expect(componente.error()).not.toBe('');
+    expect(componente.accionando()).toBeNull();
+  });
+
+  it('recarga la bandeja al recibir un mensaje nuevo, una sola vez por rafaga', () => {
+    vi.useFakeTimers();
+    try {
+      mensajeNuevo$.next(evento('mensaje.nuevo'));
+      mensajeNuevo$.next(evento('mensaje.nuevo'));
+      mensajeEliminado$.next(evento('mensaje.eliminado'));
+
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(300);
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('recarga la bandeja al recuperar la conexion', () => {
+    vi.useFakeTimers();
+    try {
+      conectado.set(true);
+      fixture.detectChanges();
+      vi.advanceTimersByTime(300);
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(1);
+
+      conectado.set(false);
+      fixture.detectChanges();
+      conectado.set(true);
+      fixture.detectChanges();
+      vi.advanceTimersByTime(300);
+
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('libera las suscripciones de mensajes al salir de la pantalla', () => {
+    vi.useFakeTimers();
+    try {
+      fixture.destroy();
+
+      expect(mensajeNuevo$.observed).toBe(false);
+      expect(mensajeEliminado$.observed).toBe(false);
+
+      vi.advanceTimersByTime(300);
+      expect(mensajeService.obtenerConversaciones).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

@@ -8,6 +8,7 @@ export interface Conversacion {
   esOrganizacion: boolean;
   ultimoMensaje: string;
   fechaUltimoMensaje: string | null;
+  archivada: boolean;
 }
 
 /** HU-27: mensaje de una conversacion. */
