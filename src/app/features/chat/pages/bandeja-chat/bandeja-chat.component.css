@@ -84,6 +84,15 @@
   cursor: pointer;
 }
 
+.grupo {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .lista-org {
   list-style: none;
   margin: 0;
