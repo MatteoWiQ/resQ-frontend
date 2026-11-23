@@ -32,11 +32,23 @@ export class MensajeService {
     return this.http.get<Mensaje[]>(`${this.baseUrl}/${idConversacion}/mensajes`);
   }
 
-  enviarMensaje(idConversacion: number, contenido: string, archivo?: File | null): Observable<Mensaje> {
+  /**
+   * TT-53: `claveEnvio` identifica un intento. Si se repite la misma clave, el
+   * backend devuelve el mensaje ya guardado en vez de duplicarlo.
+   */
+  enviarMensaje(
+    idConversacion: number,
+    contenido: string,
+    archivo?: File | null,
+    claveEnvio?: string | null,
+  ): Observable<Mensaje> {
     const datos = new FormData();
     datos.append('contenido', contenido);
     if (archivo) {
       datos.append('archivo', archivo, archivo.name);
+    }
+    if (claveEnvio) {
+      datos.append('claveEnvio', claveEnvio);
     }
     return this.http.post<Mensaje>(`${this.baseUrl}/${idConversacion}/mensajes`, datos);
   }

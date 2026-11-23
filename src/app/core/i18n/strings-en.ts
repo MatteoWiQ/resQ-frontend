@@ -395,6 +395,7 @@ export const en = {
     enviando: 'Sending...',
     errorCargar: 'Messages could not be loaded.',
     errorEnviar: 'The message could not be sent. Try again.',
+    claveRepetida: 'That message was already sent in another conversation.',
     errorEliminar: 'The message could not be deleted.',
     errorAbrir: 'The conversation could not be opened.',
     errorDemasiadoLargo: 'The message exceeds the character limit.',
