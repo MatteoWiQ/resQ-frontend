@@ -21,7 +21,7 @@ import { TranslationKey } from '../../../../core/i18n/strings';
 import { esAdmin as comprobarAdmin, esGestorDeReportes, esVoluntario as comprobarVoluntario } from '../../../../shared/constants/roles';
 import { normalizarTipoCaso } from '../../../../shared/constants/tipos-caso';
 import { Usuario } from '../../../../shared/models/usuario.model';
-import { Reporte } from '../../../../shared/models/reporte.model';
+import { EstadoReporte, Reporte } from '../../../../shared/models/reporte.model';
 import { TIPOS_AYUDA_VALORES } from '../../../../shared/models/voluntario.model';
 
 @Component({
@@ -52,7 +52,7 @@ export class PerfilComponent implements OnInit {
 
   // ============ HU-13: actualizar estado ============
   readonly estadosValidos = ['PENDIENTE', 'EN_PROCESO', 'RESUELTO', 'CANCELADO'];
-  readonly nuevoEstado = signal<string>('');
+  readonly nuevoEstado = signal<EstadoReporte | ''>('');
   readonly guardandoEstado = signal(false);
   readonly mensajeEstado = signal('');
 
@@ -196,15 +196,7 @@ export class PerfilComponent implements OnInit {
     this.mensajeEstado.set('');
 
     this.reporteService
-      .actualizar(reporte.idReporte, {
-        idUsuario: reporte.idUsuario,
-        tipoCaso: reporte.tipoCaso,
-        descripcion: reporte.descripcion,
-        estado: this.nuevoEstado(),
-        fotoUrl: reporte.fotoUrl,
-        latitud: reporte.latitud,
-        longitud: reporte.longitud,
-      })
+      .cambiarEstado(reporte.idReporte, this.nuevoEstado() as EstadoReporte)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (actualizado) => {
