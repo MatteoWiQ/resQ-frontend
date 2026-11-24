@@ -47,7 +47,7 @@ describe('BandejaChatComponent (TT-49)', () => {
     mensajeService = {
       obtenerConversaciones: vi.fn(() => of([])),
       buscarUsuarios: vi.fn(() => of([usuario(5, 'Ana Torres')])),
-      abrirConversacion: vi.fn(() => of({ idConversacion: 12 })),
+      abrirConversacion: vi.fn(() => of({ idConversacion: 12, nombre: 'Ana Torres' })),
       archivarConversacion: vi.fn(() => of(undefined)),
     };
     organizacionService = {
@@ -120,7 +120,9 @@ describe('BandejaChatComponent (TT-49)', () => {
 
     componente.iniciarConUsuario(5);
     expect(mensajeService.abrirConversacion).toHaveBeenCalledWith({ idUsuario: 5 });
-    expect(router.navigate).toHaveBeenCalledWith(['/chat', 12]);
+    expect(router.navigate).toHaveBeenCalledWith(['/chat', 12], {
+      state: { nombreConversacion: 'Ana Torres' },
+    });
   });
 
   it('no consulta usuarios con menos de dos caracteres', () => {

@@ -92,6 +92,23 @@ describe('ConversacionComponent (HU-27)', () => {
     expect((fixture.nativeElement as HTMLElement).querySelectorAll('.mensaje').length).toBe(2);
   });
 
+  it('muestra el nombre al abrir una conversacion nueva y sale de carga con historial vacio', () => {
+    const estadoAnterior = window.history.state;
+    mensajeService.obtenerMensajes = () => of([]);
+    mensajeService.obtenerConversaciones = () => of([]);
+    window.history.replaceState({ nombreConversacion: 'QA Destino' }, '', window.location.href);
+
+    try {
+      fixture.detectChanges();
+
+      expect(componente.nombreOtro()).toBe('QA Destino');
+      expect(componente.cargando()).toBe(false);
+      expect(texto()).toContain('Todavía no hay mensajes');
+    } finally {
+      window.history.replaceState(estadoAnterior, '', window.location.href);
+    }
+  });
+
   it('indica el remitente: el nombre del otro usuario o "Tu" cuando es propio', () => {
     fixture.detectChanges();
 
@@ -181,6 +198,37 @@ describe('ConversacionComponent (HU-27)', () => {
     componente.borrador.set('Otra cosa');
     componente.enviar();
     expect(servicio.mock.calls[2][3]).not.toBe(primeraClave);
+  });
+
+  it('genera otra clave si cambia el borrador despues de un fallo', () => {
+    fixture.detectChanges();
+    const servicio = mensajeService.enviarMensaje as unknown as ReturnType<typeof vi.fn>;
+    servicio.mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 503 })));
+
+    componente.borrador.set('Primer contenido');
+    componente.enviar();
+    const primeraClave = servicio.mock.calls[0][3] as string;
+
+    componente.borrador.set('Contenido editado');
+    componente.enviar();
+
+    expect(servicio.mock.calls[1][3]).not.toBe(primeraClave);
+  });
+
+  it('genera otra clave si cambia el adjunto despues de un fallo', () => {
+    fixture.detectChanges();
+    const servicio = mensajeService.enviarMensaje as unknown as ReturnType<typeof vi.fn>;
+    servicio.mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 503 })));
+
+    componente.borrador.set('Adjunto de prueba');
+    componente.adjunto.set(new File(['primero'], 'primero.txt'));
+    componente.enviar();
+    const primeraClave = servicio.mock.calls[0][3] as string;
+
+    componente.adjunto.set(new File(['segundo'], 'segundo.txt'));
+    componente.enviar();
+
+    expect(servicio.mock.calls[1][3]).not.toBe(primeraClave);
   });
 
   it('informa cuando la clave ya se uso en otra conversacion', () => {

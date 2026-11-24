@@ -4,7 +4,7 @@ import { Component, DestroyRef, OnDestroy, OnInit, inject, signal } from '@angul
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { MensajeService } from '../../../../core/services/mensaje.service';
@@ -62,6 +62,7 @@ export class ConversacionComponent implements OnInit, OnDestroy {
   private idUsuario = 0;
   /** TT-53: clave del envio en curso, para que los reintentos sean idempotentes. */
   private readonly clavePendiente = signal<string | null>(null);
+  private payloadClavePendiente: { contenido: string; archivo: File | null } | null = null;
   private readonly suscripciones = new Subscription();
 
   get caracteres(): number {
@@ -77,6 +78,13 @@ export class ConversacionComponent implements OnInit, OnDestroy {
     }
     this.idUsuario = idUsuario;
     this.idConversacion = Number(this.route.snapshot.paramMap.get('id'));
+    const estadoNavegacion = typeof window === 'undefined'
+      ? null
+      : window.history.state as { nombreConversacion?: unknown } | null;
+    if (typeof estadoNavegacion?.nombreConversacion === 'string'
+      && estadoNavegacion.nombreConversacion.trim()) {
+      this.nombreOtro.set(estadoNavegacion.nombreConversacion);
+    }
 
     this.cargarMensajes();
     this.cargarNombreOtro();
@@ -91,14 +99,15 @@ export class ConversacionComponent implements OnInit, OnDestroy {
     this.cargando.set(true);
     this.suscripciones.add(
       this.mensajeService.obtenerMensajes(this.idConversacion)
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => this.cargando.set(false)),
+        )
         .subscribe({
           next: (mensajes) => {
             this.mensajes.set(mensajes);
-            this.cargando.set(false);
           },
           error: (err: HttpErrorResponse) => {
-            this.cargando.set(false);
             this.error.set(
               err.status === 403
                 ? this.translate.t('mensajes.errorSinPermiso')
@@ -115,9 +124,13 @@ export class ConversacionComponent implements OnInit, OnDestroy {
       this.mensajeService.obtenerConversaciones().subscribe({
         next: (conversaciones) => {
           const conversacion = conversaciones.find((c) => c.idConversacion === this.idConversacion);
-          this.nombreOtro.set(conversacion?.nombre ?? this.translate.t('mensajes.conversacion'));
+          this.nombreOtro.set(conversacion?.nombre || this.nombreOtro() || this.translate.t('mensajes.conversacion'));
         },
-        error: () => this.nombreOtro.set(this.translate.t('mensajes.conversacion')),
+        error: () => {
+          if (!this.nombreOtro()) {
+            this.nombreOtro.set(this.translate.t('mensajes.conversacion'));
+          }
+        },
       }),
     );
   }
@@ -180,12 +193,13 @@ export class ConversacionComponent implements OnInit, OnDestroy {
     this.enviando.set(true);
     this.error.set('');
     // TT-53: la clave se conserva hasta que el envio se confirma, asi un reintento
-    // (doble clic, reconexion) no crea un mensaje duplicado en el backend.
-    const claveEnvio = this.clavePendiente() ?? this.nuevaClaveEnvio();
-    this.clavePendiente.set(claveEnvio);
+    // (doble clic, reconexion) no crea un mensaje duplicado en el backend. Si el
+    // borrador o el adjunto cambian, la nueva carga debe usar otra clave.
+    const archivo = this.adjunto();
+    const claveEnvio = this.clavePara(contenido, archivo);
     this.suscripciones.add(
       this.mensajeService
-        .enviarMensaje(this.idConversacion, contenido, this.adjunto(), claveEnvio)
+        .enviarMensaje(this.idConversacion, contenido, archivo, claveEnvio)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (mensaje) => {
@@ -193,6 +207,7 @@ export class ConversacionComponent implements OnInit, OnDestroy {
             this.borrador.set('');
             this.adjunto.set(null);
             this.clavePendiente.set(null);
+            this.payloadClavePendiente = null;
             this.enviando.set(false);
           },
           error: (err: HttpErrorResponse) => {
@@ -207,6 +222,19 @@ export class ConversacionComponent implements OnInit, OnDestroy {
           },
         }),
     );
+  }
+
+  private clavePara(contenido: string, archivo: File | null): string {
+    const clave = this.clavePendiente();
+    if (clave
+      && this.payloadClavePendiente?.contenido === contenido
+      && this.payloadClavePendiente.archivo === archivo) {
+      return clave;
+    }
+    const nueva = this.nuevaClaveEnvio();
+    this.payloadClavePendiente = { contenido, archivo };
+    this.clavePendiente.set(nueva);
+    return nueva;
   }
 
   private nuevaClaveEnvio(): string {
