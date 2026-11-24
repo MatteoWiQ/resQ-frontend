@@ -215,7 +215,9 @@ export class BandejaChatComponent implements OnInit, OnDestroy {
       this.mensajeService.abrirConversacion(destino).subscribe({
         next: (conversacion) => {
           this.mostrarNueva.set(false);
-          void this.router.navigate(['/chat', conversacion.idConversacion]);
+          void this.router.navigate(['/chat', conversacion.idConversacion], {
+            state: { nombreConversacion: conversacion.nombre },
+          });
         },
         error: () => this.error.set(this.translate.t('mensajes.errorAbrir')),
       }),
