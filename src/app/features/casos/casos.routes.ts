@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../../core/guards/auth.guard';
 
 /**
  * Las paginas de casos se cargan recien al entrar (loadComponent): usan Leaflet y
@@ -19,5 +20,6 @@ export const casosRoutes: Routes = [
   {
     path: 'casos/:idCaso/chat',
     loadComponent: () => import('./pages/chat-caso/chat-caso.component').then((m) => m.ChatCasoComponent),
+    canActivate: [authGuard],
   },
 ];

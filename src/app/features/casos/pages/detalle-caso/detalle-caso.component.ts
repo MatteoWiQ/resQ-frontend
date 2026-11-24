@@ -290,7 +290,7 @@ export class DetalleCasoComponent implements OnInit {
       return;
     }
     if (!this.haySesion()) {
-      void this.router.navigate(['/login']);
+      void this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       return;
     }
     this.actualizar(this.reporteService.accionNecesidad(caso.idReporte, n.idNecesidad, accion));
@@ -388,7 +388,7 @@ export class DetalleCasoComponent implements OnInit {
       return;
     }
     if (!this.haySesion()) {
-      void this.router.navigate(['/login']);
+      void this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       return;
     }
     this.abriendo.set(true);
@@ -409,6 +409,10 @@ export class DetalleCasoComponent implements OnInit {
   contactarOrganizacion(): void {
     const id = this.caso()?.idOrganizacion;
     if (id == null || this.abriendo()) {
+      return;
+    }
+    if (!this.haySesion()) {
+      void this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       return;
     }
     this.abriendo.set(true);

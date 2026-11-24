@@ -211,6 +211,10 @@ export class BandejaChatComponent implements OnInit, OnDestroy {
   }
 
   private abrir(destino: { idUsuario?: number; idOrganizacion?: number }): void {
+    if (this.authService.obtenerIdUsuarioActual() === null) {
+      void this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
     this.suscripciones.add(
       this.mensajeService.abrirConversacion(destino).subscribe({
         next: (conversacion) => {

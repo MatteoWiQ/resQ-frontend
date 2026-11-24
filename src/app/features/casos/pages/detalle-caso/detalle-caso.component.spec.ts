@@ -169,7 +169,9 @@ describe('DetalleCasoComponent (rediseño)', () => {
     expect(boton.textContent).toContain('Inicia sesión para ofrecerte');
     boton.click();
 
-    expect(navegar).toHaveBeenCalledWith(['/login']);
+    expect(navegar).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnUrl: TestBed.inject(Router).url },
+    });
   });
 
   it('quien reporto confirma una oferta, agrega y quita necesidades', async () => {
@@ -223,7 +225,29 @@ describe('DetalleCasoComponent (rediseño)', () => {
     expect(boton.textContent).toContain('Inicia sesión para ofrecer ayuda');
     boton.click();
 
-    expect(navegar).toHaveBeenCalledWith(['/login']);
+    expect(navegar).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnUrl: TestBed.inject(Router).url },
+    });
+    expect(mensajes.abrirConversacion).not.toHaveBeenCalled();
+  });
+
+  it('sin sesion el boton de contactar organizacion redirige a login', async () => {
+    await crear();
+    responder({ ...CASO, idOrganizacion: 3 });
+    httpMock.expectOne('/api/organizaciones/publicas/3').flush({
+      idOrganizacion: 3,
+      nombre: 'Refugio Patitas',
+      tipo: 'REFUGIO',
+      logoUrl: null,
+      zonasCobertura: null,
+    });
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.contactarOrganizacion();
+
+    expect(navegar).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnUrl: TestBed.inject(Router).url },
+    });
     expect(mensajes.abrirConversacion).not.toHaveBeenCalled();
   });
 

@@ -8,6 +8,7 @@ import { profileRoutes } from './features/profile/profile.routes';
 import { voluntarioRoutes } from './features/voluntario/voluntario.routes';
 import { BandejaChatComponent } from './features/chat/pages/bandeja-chat/bandeja-chat.component';
 import { ConversacionComponent } from './features/chat/pages/conversacion/conversacion.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   ...landingRoutes,
@@ -17,6 +18,6 @@ export const routes: Routes = [
   ...voluntarioRoutes,
   ...notificacionesRoutes,
   ...casosRoutes,
-  { path: 'chat', component: BandejaChatComponent },
-  { path: 'chat/:id', component: ConversacionComponent },
+  { path: 'chat', component: BandejaChatComponent, canActivate: [authGuard] },
+  { path: 'chat/:id', component: ConversacionComponent, canActivate: [authGuard] },
 ];

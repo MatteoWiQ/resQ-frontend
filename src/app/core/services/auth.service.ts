@@ -13,6 +13,7 @@ const CLAVE_TOKEN = 'resq_token';
 export class AuthService {
   private readonly loginEndpoint = '/api/login';
   private readonly registerEndpoint = '/api/usuarios';
+  private sesionExpiradaAlIniciar = false;
 
   readonly usuarioActual = signal<UsuarioActual | null>(this.recuperarUsuarioGuardado());
 
@@ -46,7 +47,26 @@ export class AuthService {
 
   /** HU-23: token que el interceptor envia en Authorization: Bearer. */
   obtenerToken(): string | null {
-    return localStorage.getItem(CLAVE_TOKEN);
+    const token = localStorage.getItem(CLAVE_TOKEN);
+    if (token && this.tokenExpirado(token)) {
+      this.sesionExpiradaAlIniciar = true;
+      this.logout();
+      return null;
+    }
+    return token;
+  }
+
+  /** Permite evitar peticiones protegidas cuando la sesion local ya vencio. */
+  sesionExpirada(): boolean {
+    if (this.sesionExpiradaAlIniciar) {
+      return true;
+    }
+    const token = localStorage.getItem(CLAVE_TOKEN);
+    if (token !== null && this.tokenExpirado(token)) {
+      this.sesionExpiradaAlIniciar = true;
+      return true;
+    }
+    return false;
   }
 
   esAdmin(): boolean {
@@ -54,6 +74,7 @@ export class AuthService {
   }
 
   private guardarUsuario(respuesta: LoginResponse): void {
+    this.sesionExpiradaAlIniciar = false;
     const usuario: UsuarioActual = {
       idUsuario: respuesta.idUsuario,
       email: respuesta.email,
@@ -83,9 +104,30 @@ export class AuthService {
 
     try {
       const usuario = JSON.parse(guardado) as UsuarioActual;
+      if (this.tokenExpirado(token)) {
+        this.sesionExpiradaAlIniciar = true;
+        localStorage.removeItem(CLAVE_STORAGE);
+        localStorage.removeItem(CLAVE_TOKEN);
+        return null;
+      }
       return { ...usuario, rol: normalizarRol(usuario.rol) ?? usuario.rol };
     } catch {
       return null;
+    }
+  }
+
+  private tokenExpirado(token: string): boolean {
+    try {
+      const partePayload = token.split('.')[1];
+      if (!partePayload) {
+        return false;
+      }
+      const base64 = partePayload.replace(/-/g, '+').replace(/_/g, '/');
+      const base64ConPadding = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+      const payload = JSON.parse(atob(base64ConPadding)) as { exp?: unknown };
+      return typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now();
+    } catch {
+      return false;
     }
   }
 }

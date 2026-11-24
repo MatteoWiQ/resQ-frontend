@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { EMPTY, catchError, throwError } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 
@@ -13,6 +13,12 @@ import { AuthService } from '../services/auth.service';
 export const authInterceptor: HttpInterceptorFn = (peticion, siguiente) => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  if (auth.sesionExpirada() && !esPeticionPublica(peticion)) {
+    auth.logout();
+    void router.navigate(['/login']);
+    return EMPTY;
+  }
 
   const token = auth.obtenerToken();
   const conToken = token

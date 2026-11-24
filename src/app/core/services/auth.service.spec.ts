@@ -41,6 +41,14 @@ describe('AuthService: sesion y token (HU-23)', () => {
     return respuesta;
   }
 
+  function tokenConExpiracion(exp: number): string {
+    const payload = btoa(JSON.stringify({ exp }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    return `cabecera.${payload}.firma`;
+  }
+
   it('guarda el token al iniciar sesion', () => {
     login('ADMIN');
 
@@ -86,5 +94,20 @@ describe('AuthService: sesion y token (HU-23)', () => {
 
     expect(nuevo.usuarioActual()).toEqual({ idUsuario: 5, email: 'a@b.com', rol: 'ADMIN' });
     expect(nuevo.esAdmin()).toBe(true);
+  });
+
+  it('descarta al iniciar una sesion guardada con el JWT vencido', () => {
+    localStorage.setItem('resq_token', tokenConExpiracion(Math.floor(Date.now() / 1000) - 1));
+    localStorage.setItem(
+      'resq_usuario_actual',
+      JSON.stringify({ idUsuario: 5, email: 'a@b.com', rol: 'USUARIO' })
+    );
+
+    const nuevo = new AuthService({} as never);
+
+    expect(nuevo.usuarioActual()).toBeNull();
+    expect(nuevo.obtenerToken()).toBeNull();
+    expect(localStorage.getItem('resq_token')).toBeNull();
+    expect(localStorage.getItem('resq_usuario_actual')).toBeNull();
   });
 });

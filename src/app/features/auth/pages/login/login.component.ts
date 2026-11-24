@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { TranslateService } from '../../../../core/i18n/translate.service';
@@ -23,11 +23,16 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   onLogin(): void {
     this.message.set('');
     this.authService.login(this.credentials).subscribe({
-      next: () => this.router.navigate(['/']),
+      next: () => {
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        const destino = returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/';
+        void this.router.navigateByUrl(destino);
+      },
       error: (err) => {
         const mensaje: TranslationKey =
           err?.status === 401

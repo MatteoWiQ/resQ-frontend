@@ -43,6 +43,14 @@ describe('authInterceptor (HU-23)', () => {
     );
   }
 
+  function tokenConExpiracion(exp: number): string {
+    const payload = btoa(JSON.stringify({ exp }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    return `cabecera.${payload}.firma`;
+  }
+
   it('agrega el header Authorization cuando hay token', () => {
     guardarSesion('token-abc', 'ADMIN');
 
@@ -59,6 +67,21 @@ describe('authInterceptor (HU-23)', () => {
     const peticion = httpMock.expectOne('/api/usuarios');
     expect(peticion.request.headers.has('Authorization')).toBe(false);
     peticion.flush([]);
+  });
+
+  it('redirige al login sin llamar a la API si el JWT ya vencio', () => {
+    guardarSesion(tokenConExpiracion(Math.floor(Date.now() / 1000) - 1), 'USUARIO');
+    const auth = TestBed.inject(AuthService);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const error = vi.fn();
+
+    http.get('/api/conversaciones').subscribe({ error });
+
+    httpMock.expectNone('/api/conversaciones');
+    expect(error).not.toHaveBeenCalled();
+    expect(auth.usuarioActual()).toBeNull();
+    expect(localStorage.getItem('resq_token')).toBeNull();
+    expect(navegar).toHaveBeenCalledWith(['/login']);
   });
 
   it('cierra la sesion y manda a login cuando el backend responde 401', () => {
