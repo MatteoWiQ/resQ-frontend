@@ -1,15 +1,10 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { HttpRequest } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { EMPTY, catchError, throwError } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 
-/**
- * HU-23: agrega el token JWT a cada peticion y limpia la sesion cuando el backend
- * responde 401, para que la interfaz no se quede creyendo que hay sesion abierta.
- */
 export const authInterceptor: HttpInterceptorFn = (peticion, siguiente) => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -26,25 +21,54 @@ export const authInterceptor: HttpInterceptorFn = (peticion, siguiente) => {
     : peticion;
 
   return siguiente(conToken).pipe(
-    catchError((error) => {
-      if (error?.status === 401 && !esPeticionPublica(peticion)) {
+    catchError((error: HttpErrorResponse) => {
+      // 1. MANEJO DE ERRORES DE AUTENTICACIÓN (401)
+      if (error.status === 401 && !esPeticionPublica(peticion)) {
         auth.logout();
         void router.navigate(['/login']);
       }
 
-      return throwError(() => error);
+      // 2. CENTRALIZACIÓN Y FORMATEO DE ERRORES (Para todos los demás estados)
+      const errorFormateado = formatearError(error);
+      
+      // Aquí podrías llamar a un Servicio de Notificaciones (Toast/Snackbar) 
+      // para mostrar 'errorFormateado.message' en pantalla de forma global.
+      console.warn(`[Error HTTP ${error.status}]:`, errorFormateado.message);
+
+      return throwError(() => errorFormateado);
     })
   );
 };
 
 /**
- * Un 401 en el login significa "credenciales invalidas", y en el alta publica de
- * cuentas el backend no exige sesion: en ninguno de los dos casos hay que cerrar
- * la sesion ni redirigir. Ojo: no alcanza con mirar la URL, porque /api/usuarios
- * tambien se usa autenticado (listar, ver, editar, eliminar). Por eso se exige
- * metodo POST y coincidencia exacta de la ruta: /api/usuarios/5, /api/usuarios/5/voluntario
- * y las lecturas siguen siendo peticiones protegidas.
+ * Transforma el ApiError del backend a un formato amigable para el usuario
  */
+function formatearError(error: HttpErrorResponse): { status: number; message: string; erroresCampos?: any } {
+  // Si el error viene del backend con nuestro formato ApiError
+  if (error.error && typeof error.error.message === 'string') {
+    return {
+      status: error.status,
+      message: error.error.message,
+      erroresCampos: error.error.errors
+    };
+  }
+
+  // Si el error es de red (el backend está apagado)
+  if (error.status === 0) {
+    return { status: 0, message: 'No se pudo conectar con el servidor. Revisa tu conexión.' };
+  }
+
+  // Mapeo de respaldo por si el backend no devuelve el ApiError
+  switch (error.status) {
+    case 400: return { status: 400, message: 'Los datos enviados no son válidos.' };
+    case 403: return { status: 403, message: 'No tienes permisos para realizar esta acción.' };
+    case 404: return { status: 404, message: 'El recurso solicitado no existe.' };
+    case 409: return { status: 409, message: 'Hubo un conflicto con los datos actuales.' };
+    case 500: return { status: 500, message: 'Error interno del servidor. Inténtalo más tarde.' };
+    default: return { status: error.status, message: 'Ocurrió un error inesperado.' };
+  }
+}
+
 function esPeticionPublica(peticion: HttpRequest<unknown>): boolean {
   const ruta = sinQuery(peticion.url);
   if (ruta === '/api/login') {
@@ -53,7 +77,6 @@ function esPeticionPublica(peticion: HttpRequest<unknown>): boolean {
   return peticion.method === 'POST' && ruta === '/api/usuarios';
 }
 
-/** Quita la query string para que ?algo=1 no impida reconocer la ruta. */
 function sinQuery(url: string): string {
   const corte = url.indexOf('?');
   return corte === -1 ? url : url.slice(0, corte);
